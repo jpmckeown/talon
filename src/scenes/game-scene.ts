@@ -4,27 +4,26 @@ import { Solitaire } from '../lib/solitaire';
 import { Card } from '../lib/card';
 import { FoundationPile } from '../lib/foundation-pile';
 
-// used for drawing out game objects for debugging our player input
 const DEBUG = false;
-// the scale factor that will be applied to our card image game objects
+// scale factor for card image game objects
 const SCALE = 1.5;
-// the vertical gap between stacked cards i.e. in tableau
+// vertical gap between stacked cards i.e. in tableau
 const STACK_Y_GAP = 22; 
-// the frame of the card spritesheet that represents the back of a card
-const CARD_BACK_FRAME = 52;
-// the x & y positions of were the foundation piles will be placed in our game area
+// frame of card spritesheet for back of a card
+const CARD_BACK_FRAME = 56;
+// x & y positions of the 4 foundation piles
 const FOUNDATION_PILE_X_POSITIONS = [360, 425, 490, 555];
 const FOUNDATION_PILE_Y_POSITION = 5;
-// the x & y position of were the discard pile will be placed in our game area
+// x & y position of the Talon or discard pile
 const DISCARD_PILE_X_POSITION = 85;
 const DISCARD_PILE_Y_POSITION = 5;
-// the x & y position of were the draw pile will be placed in our game area
+
 const DRAW_PILE_X_POSITION = 5;
 const DRAW_PILE_Y_POSITION = 5;
-// the x & y position of were the tableau pile will be placed in our game area
+// x & y position of first tableau pile
 const TABLEAU_PILE_X_POSITION = 40;
 const TABLEAU_PILE_Y_POSITION = 92;
-// the starting frame of the card suit in the card spritesheet that represents the various cards
+// starting frame of each Suit in the spritesheet of cards deck
 const SUIT_FRAMES = {
   HEART: 26,
   DIAMOND: 13,
@@ -32,22 +31,22 @@ const SUIT_FRAMES = {
   CLUB: 0,
 };
 type ZoneType = keyof typeof ZONE_TYPE;
-// the different type of drop zones, or areas players can drop cards in the game
+// types of drop zones where player can drop cards
 const ZONE_TYPE = {
   FOUNDATION: 'FOUNDATION',
   TABLEAU: 'TABLEAU',
 } as const;
 
 export class GameScene extends Phaser.Scene {
-  // contains the core Solitaire game logic and has the actual game state
+  // core Patience game logic and game state
   #solitaire!: Solitaire;
-  // keeps track of the card game objects in our draw pile (will have 3 game objects)
+  // keeps track of card game objects in draw pile (3 game objects i.e. not the whole pile)
   #drawPileCards!: Phaser.GameObjects.Image[];
-  // keeps track of the card game objects in our discard pile (will have 2 game objects)
+  // card game objects in our discard pile (2 game objects i.e. only top and the card below)
   #discardPileCards!: Phaser.GameObjects.Image[];
-  // keeps track of the card game objects in each of the foundation piles (4 game objects)
+  // card game objects in each of the foundation piles (4 game objects, i.e. only the top card)
   #foundationPileCards!: Phaser.GameObjects.Image[];
-  // keeps track of the card game object containers for each tableau pile (7 game objects)
+  // tracks containers, one for each tableau pile (7 game objects)
   #tableauContainers!: Phaser.GameObjects.Container[];
 
   constructor() {
@@ -57,11 +56,9 @@ export class GameScene extends Phaser.Scene {
   public create(): void {
     this.cameras.main.fadeIn(1000);
 
-    // create solitaire game instance
     this.#solitaire = new Solitaire();
     this.#solitaire.newGame();
 
-    // setup game objects based on solitaire game state
     this.#createDrawPile();
     this.#createDiscardPile();
     this.#createFoundationPiles();
@@ -94,9 +91,8 @@ export class GameScene extends Phaser.Scene {
         return;
       }
 
-      // if no cards in draw pile, we need to shuffle in discard pile
+      // if no cards in draw pile, need to shuffle in discard pile
       if (this.#solitaire.drawPile.length === 0) {
-        // shuffle in discard pile
         this.#solitaire.shuffleDiscardPile();
         // show no cards in discard pile
         this.#discardPileCards.forEach((card) => card.setVisible(false));
@@ -105,13 +101,13 @@ export class GameScene extends Phaser.Scene {
         return;
       }
 
-      // reaching here means we have cards in the draw pile, so we need to draw a card
+      // reaching here means cards exist in draw pile
       this.#solitaire.drawCard();
-      // update the shown cards in the draw pile to be based on number of cards in pile
+      // update shown cards in draw pile, based on number of cards in pile
       this.#showCardsInDrawPile();
-      // update the bottom card in the discard pile to reflect the top card
+      // update card-below-top in discard pile to reflect the top card
       this.#discardPileCards[0].setFrame(this.#discardPileCards[1].frame).setVisible(this.#discardPileCards[1].visible);
-      // update the top card in the discard pile to reflect card we drew
+      // update top card in the discard pile to reflect card we drew
       const card = this.#solitaire.discardPile[this.#solitaire.discardPile.length - 1];
       this.#discardPileCards[1].setFrame(this.#getCardFrame(card)).setVisible(true);
     });
@@ -125,8 +121,7 @@ export class GameScene extends Phaser.Scene {
     // create outline for pile
     this.#drawCardLocationBox(DISCARD_PILE_X_POSITION, DISCARD_PILE_Y_POSITION);
 
-    // create initial discard pile game object cards, we will only need two game objects, which will represent the two most recently drawn cards
-    // at the start of the game, these will not be visible until the player draws a new card
+    // create initial discard pile game object cards, we only need two game objects, which will represent the two most recently drawn cards, and at the start of game, these will not be visible until the player draws a new card
     this.#discardPileCards = [];
     const bottomCard = this.#createCard(DISCARD_PILE_X_POSITION, DISCARD_PILE_Y_POSITION, true).setVisible(false);
     const topCard = this.#createCard(DISCARD_PILE_X_POSITION, DISCARD_PILE_Y_POSITION, true).setVisible(false);
@@ -225,7 +220,7 @@ export class GameScene extends Phaser.Scene {
         gameObject.setPosition(dragX, dragY);
         gameObject.setDepth(0);
 
-        // if card is part of the tableau, we need to move all cards that are stacked on top of this card
+        // if card is part of tableau, need to move all cards that are stacked on top of this card
         const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
         const cardIndex = gameObject.getData('cardIndex') as number;
         if (tableauPileIndex !== undefined) {
@@ -241,7 +236,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   #createDragEndEventListener(): void {
-    // listen for the drag end event on a game object, this will be used to check were the game object was placed
+    // listen for drag-end event on a game object, this will be used to check were the game object was placed
     // in our scene, and depending on were the object was placed we will check if that is a valid move in our game
     // otherwise, we will reset the objects position back to were the object was originally located at
     this.input.on(
@@ -255,13 +250,13 @@ export class GameScene extends Phaser.Scene {
           gameObject.setDepth(0);
         }
 
-        // if game object was not destroyed, still active, we need to update that game objects data to match were the card was placed
+        // if game object was not destroyed, still active, we need to update that GO's data to match where card was placed
         if (gameObject.active) {
           gameObject.setPosition(gameObject.getData('x') as number, gameObject.getData('y') as number);
           // reset card game objects alpha since we are done moving the object
           gameObject.setAlpha(1);
 
-          // if card is part of the tableau, we need to move all cards that are stacked on top of this card back to the original location as well
+          // if card is part of tableau, also move all cards that are stacked on top of this card back to original location
           const cardIndex = gameObject.getData('cardIndex') as number;
           if (tableauPileIndex !== undefined) {
             const numberOfCardsToMove = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex, cardIndex);
