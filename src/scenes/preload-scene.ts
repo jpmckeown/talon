@@ -12,6 +12,8 @@ export class PreloadScene extends Phaser.Scene {
     this.load.spritesheet(ASSET_KEYS.CARDS, 'assets/images/cards.png', {
       frameWidth: CARD_WIDTH,
       frameHeight: CARD_HEIGHT,
+      spacing: 2,
+      margin: 1,
     });
   }
 

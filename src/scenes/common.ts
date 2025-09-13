@@ -10,5 +10,5 @@ export const ASSET_KEYS = {
   CARDS: 'CARDS',
 } as const;
 
-export const CARD_WIDTH = 37;
-export const CARD_HEIGHT = 52;
+export const CARD_WIDTH = 56;
+export const CARD_HEIGHT = 78;

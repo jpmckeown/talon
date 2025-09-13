@@ -6,11 +6,12 @@ import { FoundationPile } from '../lib/foundation-pile';
 
 const DEBUG = false;
 // scale factor for card image game objects
-const SCALE = 1.5;
+const SCALE = 1;
 // vertical gap between stacked cards i.e. in tableau
-const STACK_Y_GAP = 22; 
+const STACK_Y_GAP = 23; 
 // frame of card spritesheet for back of a card
 const CARD_BACK_FRAME = 56;
+
 // x & y positions of the 4 foundation piles
 const FOUNDATION_PILE_X_POSITIONS = [360, 425, 490, 555];
 const FOUNDATION_PILE_Y_POSITION = 5;
