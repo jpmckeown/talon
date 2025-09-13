@@ -1,8 +1,25 @@
-# Phaser.Js - Patience
+# Phaser.Js - Patience (Solitaire)
 
-Based on a tutorial by Scott Westover, a version of the one-player card game "Patience" implemented in Phaser 3 TypeScript.
+Based on a tutorial by Scott Westover, a version of the one-player card game "Patience", implemented in Phaser TypeScript. Originally version 3.80 and updated to Phaser 3.90
 
-## Local development
+## Requirements
+
+- [Node.js](https://nodejs.org) (version 18 or higher recommended)
+- A package manager: I use pnpm. but it will work with npm which comes with Node.js, or [pnpm](https://pnpm.io/), or [yarn](https://yarnpkg.com/)
+
+## To run the project on your computer.
+
+1. Clone the github repository
+
+2. Check terminal window is at project directory e.g. talon/
+
+3. Install dependencies with command `pnpm install` or `npm install`
+
+4. We don't use the vscode webserver, instead (and I like to get a new Terminal prompt at the project directory for this because once the webserver starts it will be running in its Terminal windows until you close the webserver. Start local webserver with command `pnpm start` or `npm install`
+
+5. It will say at what URL the local webserver is accessible. Likely it is `http://localhost:3000`
+
+6. To close the webserver I normally use Ctrl-C in that Terminal window.
 
 <a href="https://nodejs.org" target="_blank">Node.js</a> and <a href="https://pnpm.io/" target="_blank">pnpm</a> are required to install dependencies and run scripts using pnpm.
 
@@ -12,19 +29,13 @@ Based on a tutorial by Scott Westover, a version of the one-player card game "Pa
 
 | Command | Description |
 |---------|-------------|
-| `pnpm install --frozen-lockfile` | Install project dependencies |
+| `pnpm install` | Install project dependencies |
 | `pnpm start` | Build project and start local webserver running the game |
 | `pnpm build` | Builds code bundle for deployment |
-| `pnpm lint` | Uses ESLint to inspect code |
 
 ### Writing code
 
-After cloning the repo, run `pnpm install --frozen-lockfile` from your project directory. 
-
-Then start a local development server by running `pnpm start`. 
-In a web browser look for `http://localhost:3000`
-
-Once that is done, when any file in the `src` folder is edited Vite will automatically recompile and reload the local server. 
+Once pnpm starts a local webserver (see above), when any file in the `src` folder is edited Vite will automatically recompile and reload that local webserver. 
 
 ### Deploying to itch.io
 
