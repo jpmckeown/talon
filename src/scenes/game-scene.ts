@@ -104,7 +104,7 @@ export class GameScene extends Phaser.Scene {
 
       // reaching here means cards exist in draw pile
       this.#solitaire.drawCard();
-      this.sound.play(AUDIO_KEYS.DRAW_CARD);
+      this.sound.play(AUDIO_KEYS.DRAW_CARD, { volume: 0.03 });
 
       // update shown cards in draw pile, based on number of cards in pile
       this.#showCardsInDrawPile();
@@ -256,7 +256,7 @@ export class GameScene extends Phaser.Scene {
         // if game object was not destroyed, still active, we need to update that GO's data to match where card was placed
         if (gameObject.active) {
           gameObject.setPosition(gameObject.getData('x') as number, gameObject.getData('y') as number);
-          // reset card game objects alpha since we are done moving the object
+          // reset card game object's alpha since we are done moving the object
           gameObject.setAlpha(1);
 
           // if card is part of tableau, also move all cards that are stacked on top of this card back to original location
@@ -275,6 +275,7 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
+  
   /**
    * Determines the number of cards that should also be moved with the current card game object that is being
    * dragged. Example, in a pile I have the cards 5 -> 4 -> 3, and I want to move the whole stack, when I drag the 5
@@ -337,6 +338,7 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
+
   #handleMoveCardToFoundation(gameObject: Phaser.GameObjects.Image): void {
     let isValidMove = false;
     let isCardFromDiscardPile = false;
@@ -350,11 +352,12 @@ export class GameScene extends Phaser.Scene {
       isValidMove = this.#solitaire.moveTableauCardToFoundation(tableauPileIndex);
     }
 
-    // if this is not a valid move, we don't need to update anything on the card since the `dragend` event handler will
-    // move the card back to the original location
+    // if this is not a valid move, we don't need to update anything on the card since the `dragend` event handler will move the card back to the original location
     if (!isValidMove) {
       return;
     }
+
+    this.sound.play(AUDIO_KEYS.FOUNDATION_ADD, { volume: 1 });
 
     // update discard pile cards, or flip over tableau cards if needed
     if (isCardFromDiscardPile) {
@@ -392,8 +395,7 @@ export class GameScene extends Phaser.Scene {
       );
     }
 
-    // if this is not a valid move, we don't need to update anything on the card(s) since the `dragend` event handler will
-    // move the card(s) back to the original location
+    // if this is not a valid move, we don't need to update anything on the card(s) since the `dragend` event handler will move the card(s) back to the original location.
     if (!isValidMove) {
       return;
     }
@@ -440,10 +442,8 @@ export class GameScene extends Phaser.Scene {
     this.#handleRevealingNewTableauCards(tableauPileIndex as number);
   }
 
-  /**
-   * Updates the top and bottom cards in the discard pile to reflect the state from the Solitaire
-   * game instance.
-   */
+
+  // Updates the top and bottom cards in talon/discard pile to reflect the state from Solitaire game instance.
   #updateCardGameObjectsInDiscardPile(): void {
     // update the top card in the discard pile to reflect the card below it
     this.#discardPileCards[1].setFrame(this.#discardPileCards[0].frame).setVisible(this.#discardPileCards[0].visible);
@@ -476,16 +476,13 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /**
-   * Updates each card in the foundation piles to have the latest card frame after a card is dropped in the
-   * foundation zone. Will make the card visible if an Ace is played.
-   */
+
+  // After a card is dropped in foundation zone, updates each card in foundation piles to have the latest card frame. Will make the card visible if an Ace is played.
   #updateFoundationPiles(): void {
     this.#solitaire.foundationPiles.forEach((pile: FoundationPile, pileIndex: number) => {
       if (pile.value === 0) {
         return;
       }
-
       this.#foundationPileCards[pileIndex].setVisible(true).setFrame(this.#getCardFrame(pile));
     });
   }

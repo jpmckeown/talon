@@ -18,6 +18,8 @@ export class PreloadScene extends Phaser.Scene {
     });
 
     this.load.audio(AUDIO_KEYS.DRAW_CARD, 'assets/audio/placeholder.ogg');
+    this.load.audio(AUDIO_KEYS.FOUNDATION_ADD, 'assets/audio/placeholder.ogg');
+
   }
 
   public create(): void {

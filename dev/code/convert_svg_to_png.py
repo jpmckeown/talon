@@ -3,7 +3,7 @@ import os
 
 
 def create_png_card_from_svg_design(value, colour_rgb, filename):
-    """create PNG card using the SVG design but with Pillow for sharp rendering"""
+    """create PNG card using the SVG design with Pillow for sharper rendering"""
     card_width = 70
     card_height = 100
     

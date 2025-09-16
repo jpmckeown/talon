@@ -82,14 +82,14 @@ def create_svg_card(value, colour_rgb, filename):
 
 
 def convert_svg_to_png(svg_filename, png_filename):
-    """convert SVG to PNG using cairosvg (install with: pip install cairosvg)"""
+    """convert SVG to PNG using cairosvg"""
     try:
         import cairosvg
         cairosvg.svg2png(url=svg_filename, write_to=png_filename)
         print(f"converted to PNG: {png_filename}")
         return True
     except ImportError:
-        print("cairosvg not installed. install with: pip install cairosvg")
+        print("cairosvg not installed.q")
         return False
     except Exception as e:
         print(f"conversion error: {e}")
@@ -110,6 +110,4 @@ if __name__ == "__main__":
     converted = convert_svg_to_png(svg_file, png_file)
     
     if not converted:
-        print("\nAlternatively, you can:")
-        print("1. open the SVG in a browser and export as PNG")
-        print("2. use inkscape command line")
+        print("\nAlternatively open the SVG in a browser and export as PNG")

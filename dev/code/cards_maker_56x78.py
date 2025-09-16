@@ -130,7 +130,6 @@ def generate_cards():
         
     except FileNotFoundError:
         print(f"Error: Could not find input file: {input_path}")
-        print("Make sure the file exists and path is correct")
     except Exception as e:
         print(f"Error: {e}")
 

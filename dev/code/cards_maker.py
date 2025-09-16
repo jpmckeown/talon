@@ -1,3 +1,4 @@
+# older script making PNG of cards the same size as in Tutorial
 from PIL import Image, ImageDraw, ImageFont
 import os
 import shutil

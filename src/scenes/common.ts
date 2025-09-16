@@ -19,7 +19,9 @@ export const ASSET_KEYS = {
 
 export const AUDIO_KEYS = {
   DRAW_CARD: 'cardDraw',
-  FOUNDATION_ADD: 'addFoundation',
+  INVALID: 'invalid',
+  FOUNDATION_ADD: 'foundationAdd',
+  TABLEAU_ADD: 'tableauAdd',
   GAME_WIN: 'gameWin',
 };
 
