@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { ASSET_KEYS, CARD_HEIGHT, CARD_WIDTH, SCENE_KEYS } from './common';
+import { CONFIG } from '../lib/common';
 
 export class PreloadScene extends Phaser.Scene {
   constructor() {
@@ -18,7 +19,11 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   public create(): void {
-    // TODO got to .TITLE when start screen design
-    this.scene.start(SCENE_KEYS.GAME);
+    if (CONFIG.skipTitleScene) {
+      this.scene.start(SCENE_KEYS.GAME);
+    } else {
+      this.scene.start(SCENE_KEYS.TITLE);
+    }
+
   }
 }
