@@ -53,7 +53,7 @@ def create_svg_card(value, colour_rgb, filename):
     small_text.set('fill', f'rgb{colour_rgb}')
     small_text.text = value
     
-    # placeholder for team member graphic (bottom area)
+    # placeholder for contributed graphic (mid-lower area)
     placeholder = ET.SubElement(svg, 'rect')
     placeholder.set('x', str(margin))
     placeholder.set('y', str(card_height - 20))
@@ -64,16 +64,14 @@ def create_svg_card(value, colour_rgb, filename):
     placeholder.set('stroke-width', '1')
     placeholder.set('stroke-dasharray', '3,3')
     
-    # add comment for PNG insertion point
     comment = ET.Comment(' PNG graphic would be inserted here as: <image href="graphic.png" x="4" y="76" width="62" height="20"/> ')
     svg.append(comment)
     
-    # pretty print and save
     rough_string = ET.tostring(svg, 'unicode')
     reparsed = minidom.parseString(rough_string)
     pretty_svg = reparsed.toprettyxml(indent="  ")
     
-    # remove extra whitespace from pretty print
+    # remove extra whitespace
     lines = [line for line in pretty_svg.split('\n') if line.strip()]
     clean_svg = '\n'.join(lines)
     
@@ -99,25 +97,19 @@ def convert_svg_to_png(svg_filename, png_filename):
 
 
 if __name__ == "__main__":
-    # test with ace of hearts (red)
-    colour = (255, 15, 15)  # red from your original code
+    # test with ace of hearts
+    colour = (255, 15, 15)
     
-    # ensure output directory exists
     os.makedirs("dev/art/test", exist_ok=True)
     
     svg_file = "dev/art/test/test_card.svg"
     png_file = "dev/art/test/test_card.png"
     
-    # create the SVG
     create_svg_card("A", colour, svg_file)
     
-    # try to convert to PNG
     converted = convert_svg_to_png(svg_file, png_file)
     
     if not converted:
-        print("\nTo convert SVG to PNG, install cairosvg:")
-        print("pip install cairosvg")
         print("\nAlternatively, you can:")
         print("1. open the SVG in a browser and export as PNG")
-        print("2. use online converters")
-        print("3. use inkscape command line")
+        print("2. use inkscape command line")

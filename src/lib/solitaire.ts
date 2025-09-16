@@ -1,8 +1,9 @@
 import { Card } from './card';
-import { CARD_SUIT } from './common';
+import { CARD_SUIT, CONFIG } from './common';
 import { Deck } from './deck';
 import { FoundationPile } from './foundation-pile';
 import { exhaustiveGuard } from './utils';
+
 
 export class Solitaire {
   #deck: Deck;
@@ -280,10 +281,13 @@ export class Solitaire {
       return false;
     }
 
-    // validate next card in a tableau is the opposite color and next card in sequence, example red 8 -> black 7
-    if (lastTableauCard.color === card.color) {
+    // Validate next card in a tableau is opposite colour, e.g. red -> black
+    // if (lastTableauCard.color === card.color) {
+    if (CONFIG.requireAlternatingColours && lastTableauCard.color === card.color) {
       return false;
     }
+
+    // validate next card in a tableau is the next card in sequence, for example 8 -> 7
     if (lastTableauCard.value !== card.value + 1) {
       return false;
     }

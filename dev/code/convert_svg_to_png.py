@@ -12,7 +12,6 @@ def create_png_card_from_svg_design(value, colour_rgb, filename):
     img = Image.new('RGB', (card_width * scale, card_height * scale), 'white')
     draw = ImageDraw.Draw(img)
     
-    # scale all measurements
     cw = card_width * scale
     ch = card_height * scale
     
@@ -59,7 +58,7 @@ def create_png_card_from_svg_design(value, colour_rgb, filename):
         draw.line([margin, y, margin, min(y + dash_length, graphic_y + graphic_height)], fill=colour_rgb, width=2)
         draw.line([cw - margin, y, cw - margin, min(y + dash_length, graphic_y + graphic_height)], fill=colour_rgb, width=2)
     
-    # scale down to final size for crisp result
+    # scale down to final size
     img_final = img.resize((card_width, card_height), Image.LANCZOS)
     
     # save PNG
@@ -68,12 +67,11 @@ def create_png_card_from_svg_design(value, colour_rgb, filename):
 
 
 if __name__ == "__main__":
-    # test with ace of hearts
+    # test with ace of hearts, colour hue from other script
     colour = (255, 15, 15) 
     
     os.makedirs("dev/art/test", exist_ok=True)
     
     png_file = "dev/art/test/test_card_sharp.png"
     
-    # makee the PNG 
     create_png_card_from_svg_design("A", colour, png_file)

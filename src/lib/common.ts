@@ -22,3 +22,21 @@ export const CARD_SUIT_TO_COLOR = {
   [CARD_SUIT.DIAMOND]: CARD_SUIT_COLOR.RED,
   [CARD_SUIT.HEART]: CARD_SUIT_COLOR.RED,
 } as const;
+
+
+export interface Config {
+  // scene control for developer convenience
+  skipTitleScene: boolean;
+  
+  // game-rule changes for easier play progress
+  requireAlternatingColours: boolean;
+
+  // debug & player options
+  allowRevealOnGiveUp: boolean;
+}
+
+export const CONFIG: Config = {
+  skipTitleScene: true,
+  requireAlternatingColours: false,
+  allowRevealOnGiveUp: true,
+};
