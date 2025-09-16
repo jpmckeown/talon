@@ -17,5 +17,11 @@ export const ASSET_KEYS = {
   CARDS: 'CARDS',
 } as const;
 
+export const AUDIO_KEYS = {
+  DRAW_CARD: 'cardDraw',
+  FOUNDATION_ADD: 'addFoundation',
+  GAME_WIN: 'gameWin',
+};
+
 export const CARD_WIDTH = 56;
 export const CARD_HEIGHT = 78;

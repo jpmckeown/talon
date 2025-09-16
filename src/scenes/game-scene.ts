@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { ASSET_KEYS, CARD_HEIGHT, CARD_WIDTH, SCENE_KEYS, UI_CONFIG } from './common';
+import { ASSET_KEYS, AUDIO_KEYS, CARD_HEIGHT, CARD_WIDTH, SCENE_KEYS, UI_CONFIG } from './common';
 import { Solitaire } from '../lib/solitaire';
 import { Card } from '../lib/card';
 import { FoundationPile } from '../lib/foundation-pile';
@@ -23,6 +23,7 @@ const DRAW_PILE_Y_POSITION = 5;
 // x & y position of first tableau pile
 const TABLEAU_PILE_X_POSITION = 40;
 const TABLEAU_PILE_Y_POSITION = 92;
+
 // starting frame of each Suit in the spritesheet of cards deck
 const SUIT_FRAMES = {
   HEART: 26,
@@ -103,6 +104,8 @@ export class GameScene extends Phaser.Scene {
 
       // reaching here means cards exist in draw pile
       this.#solitaire.drawCard();
+      this.sound.play(AUDIO_KEYS.DRAW_CARD);
+
       // update shown cards in draw pile, based on number of cards in pile
       this.#showCardsInDrawPile();
       // update card-below-top in discard pile to reflect the top card

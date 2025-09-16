@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
-import { ASSET_KEYS, CARD_HEIGHT, CARD_WIDTH, SCENE_KEYS } from './common';
-import { CONFIG } from '../lib/common';
+import { ASSET_KEYS, AUDIO_KEYS, CARD_HEIGHT, CARD_WIDTH, SCENE_KEYS } from './common';
+import { UI_CONFIG } from './common';
 
 export class PreloadScene extends Phaser.Scene {
   constructor() {
@@ -16,10 +16,12 @@ export class PreloadScene extends Phaser.Scene {
       spacing: 2,
       margin: 1,
     });
+
+    this.load.audio(AUDIO_KEYS.DRAW_CARD, 'assets/audio/placeholder.ogg');
   }
 
   public create(): void {
-    if (CONFIG.skipTitleScene) {
+    if (UI_CONFIG.skipTitleScene) {
       this.scene.start(SCENE_KEYS.GAME);
     } else {
       this.scene.start(SCENE_KEYS.TITLE);
