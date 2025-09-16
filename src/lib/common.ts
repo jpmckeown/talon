@@ -1,19 +1,9 @@
-export interface Config {
-  // scene control for developer convenience
-  skipTitleScene: boolean;
-  
-  // game-rule changes for easier play progress
-  requireAlternatingColours: boolean;
-
-  // debug & player options
-  allowRevealOnGiveUp: boolean;
-}
-
-export const CONFIG: Config = {
-  skipTitleScene: true,
+export const CONFIG = {
+  // game-rule changes for easier progress
   requireAlternatingColours: false,
+  // player options
   allowRevealOnGiveUp: true,
-};
+} as const;
 
 export type CardSuit = keyof typeof CARD_SUIT;
 

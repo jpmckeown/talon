@@ -1,3 +1,10 @@
+export const UI_CONFIG = {
+  // scene control for developer convenience
+  skipTitleScene: true,
+  // partly transparent red areas show extent of dropzones
+  showDropZones: false,
+} as const;
+
 export const SCENE_KEYS = {
   PRELOAD: 'PRELOAD',
   TITLE: 'TITLE',

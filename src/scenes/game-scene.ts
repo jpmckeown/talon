@@ -1,10 +1,9 @@
 import * as Phaser from 'phaser';
-import { ASSET_KEYS, CARD_HEIGHT, CARD_WIDTH, SCENE_KEYS } from './common';
+import { ASSET_KEYS, CARD_HEIGHT, CARD_WIDTH, SCENE_KEYS, UI_CONFIG } from './common';
 import { Solitaire } from '../lib/solitaire';
 import { Card } from '../lib/card';
 import { FoundationPile } from '../lib/foundation-pile';
 
-const DEBUG = false;
 // scale factor for card image game objects
 const SCALE = 1;
 // vertical gap between stacked cards i.e. in tableau
@@ -113,7 +112,7 @@ export class GameScene extends Phaser.Scene {
       this.#discardPileCards[1].setFrame(this.#getCardFrame(card)).setVisible(true);
     });
 
-    if (DEBUG) {
+    if (UI_CONFIG.showDropZones) {
       this.add.rectangle(drawZone.x, drawZone.y, drawZone.width, drawZone.height, 0xff0000, 0.5).setOrigin(0);
     }
   }
@@ -297,7 +296,7 @@ export class GameScene extends Phaser.Scene {
     let zone = this.add.zone(350, 0, 270, 85).setOrigin(0).setRectangleDropZone(270, 85).setData({
       zoneType: ZONE_TYPE.FOUNDATION,
     });
-    if (DEBUG) {
+    if (UI_CONFIG.showDropZones) {
       this.add.rectangle(350, 0, zone.width, zone.height, 0xff0000, 0.2).setOrigin(0);
     }
 
@@ -312,7 +311,7 @@ export class GameScene extends Phaser.Scene {
           tableauIndex: i,
         })
         .setDepth(-1);
-      if (DEBUG) {
+      if (UI_CONFIG.showDropZones) {
         this.add.rectangle(30 + i * 85, 92, zone.width, zone.height, 0xff0000, 0.5).setOrigin(0);
       }
     }

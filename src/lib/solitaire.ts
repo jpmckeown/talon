@@ -52,22 +52,16 @@ export class Solitaire {
     );
   }
 
-  /**
-   * Resets the solitaire game state and setups up the game state for a new game by building the tableau piles that are needed.
-   */
+  // Resets game state for a new game by building tableau piles.
   public newGame(): void {
     /**
      * Rules for game setup:
      *
-     * To form the tableau, seven piles need to be created. Starting from left to right, place the first card face up to make the first pile,
-     * deal one card face down for the next six piles. Starting again from left to right, place one card face up on the second pile and deal
-     * one card face down on piles three through seven. Starting again from left to right, place one card face up on the third pile and deal
-     * one card face down on piles four through seven. Continue this pattern until pile seven has one card facing up on top of a pile of six
-     * cards facing down.
+     * To form the tableau, seven piles need to be created. Starting from left to right, place the first card face up to make the first pile, deal one card face down for the next six piles. Starting again from left to right, place one card face up on the second pile and deal one card face down on piles three through seven. Starting again from left to right, place one card face up on the third pile and deal one card face down on piles four through seven. Continue this pattern until pile seven has one card facing up on top of a pile of six cards facing down.
      *
      * The remaining cards form the stock (or “hand”) pile and are placed above the tableau.
      *
-     * When starting out, the foundations and waste pile do not have any cards.
+     * When starting, the foundations and waste pile do not have any cards.
      */
     this.#deck.reset();
     this.#tableauPiles = [[], [], [], [], [], [], []];
