@@ -153,8 +153,10 @@ export class GameScene extends Phaser.Scene {
       const x = TABLEAU_PILE_X_POSITION + pileIndex * 85;
       const tableauContainer = this.add.container(x, TABLEAU_PILE_Y_POSITION, []);
       this.#tableauContainers.push(tableauContainer);
+
       pile.forEach((card, cardIndex) => {
-        const cardGameObject = this.#createCard(0, cardIndex * STACK_Y_GAP, false, cardIndex, pileIndex);
+        const horizontalShift = Math.floor(Math.random() * 7) - 3;
+        const cardGameObject = this.#createCard(horizontalShift, cardIndex * STACK_Y_GAP, false, cardIndex, pileIndex);
         tableauContainer.add(cardGameObject);
         if (card.isFaceUp) {
           cardGameObject.setFrame(this.#getCardFrame(card));
@@ -406,8 +408,9 @@ export class GameScene extends Phaser.Scene {
 
     // add single discard pile card to tableau as a new game object
     if (isCardFromDiscardPile) {
+      const horizontalShift = Math.floor(Math.random() * 7) - 3;
       const card = this.#createCard(
-        0,
+        horizontalShift,
         originalTargetPileSize * STACK_Y_GAP,
         true,
         originalTargetPileSize,
@@ -431,8 +434,9 @@ export class GameScene extends Phaser.Scene {
 
       // update phaser game object data to match the new values for tableau and card index
       const cardIndex = originalTargetPileSize + i;
+      const horizontalShift = Math.floor(Math.random() * 7) - 3;
       cardGameObject.setData({
-        x: 0,
+        x: horizontalShift,
         y: cardIndex * STACK_Y_GAP,
         cardIndex,
         pileIndex: targetTableauPileIndex,
@@ -460,10 +464,8 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /**
-   * Checks the tableau pile that the played card came from to see if we now need to flip the next
-   * card in the stack.
-   */
+  /* Checks tableau pile that played card came from to see if we now need to flip next card in the stack.
+  */
   #handleRevealingNewTableauCards(tableauPileIndex: number): void {
     // update tableau container depth
     this.#tableauContainers[tableauPileIndex].setDepth(0);

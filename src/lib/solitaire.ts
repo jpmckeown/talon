@@ -25,6 +25,7 @@ export class Solitaire {
 
     this.#sameColourMoves = CONFIG.sameColourMovesPerGame;
   }
+  
 
   get drawPile(): Card[] {
     return this.#deck.drawPile;
@@ -60,6 +61,7 @@ export class Solitaire {
       this.#foundationPileSpade.value === 13
     );
   }
+
 
   // Resets game state for a new game by building tableau piles.
   public newGame(): void {
@@ -97,6 +99,7 @@ export class Solitaire {
       }
     }
   }
+
 
   public drawCard(): boolean {
     const card = this.#deck.draw();
@@ -160,6 +163,7 @@ export class Solitaire {
     return true;
   }
 
+
   public flipTopTableauCard(tableauIndex: number): boolean {
     // get the last card in the tableau pile that was provided (last element in the pile array)
     const tableauPile = this.#tableauPiles[tableauIndex];
@@ -178,6 +182,7 @@ export class Solitaire {
     card.flip();
     return true;
   }
+
 
   public moveTableauCardsToAnotherTableau(
     initialTableauIndex: number,
@@ -213,6 +218,7 @@ export class Solitaire {
     return true;
   }
 
+
   public moveTableauCardToFoundation(tableauIndex: number): boolean {
     // get the last card in the tableau pile that was provided (last element in the pile array)
     const tableauPile = this.#tableauPiles[tableauIndex];
@@ -236,6 +242,7 @@ export class Solitaire {
     return true;
   }
 
+
   #addCardToFoundation(card: Card): void {
     let foundationPile: FoundationPile;
     switch (card.suit) {
@@ -257,6 +264,7 @@ export class Solitaire {
     foundationPile.addCard();
   }
 
+
   #isValidMoveToAddCardToFoundation(card: Card): boolean {
     let foundationPile: FoundationPile;
     switch (card.suit) {
@@ -277,6 +285,7 @@ export class Solitaire {
     }
     return card.value === foundationPile.value + 1;
   }
+
 
   #isValidMoveToAddCardToTableau(card: Card, tableauPile: Card[]): boolean {
     // if tableau is empty, only allow king (13) to be placed
