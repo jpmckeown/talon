@@ -1,6 +1,8 @@
+# SVG experiment abandoned. Plan was a Phaser Container of 
+# Phaser rectangle, SVG number, SVG suit-symbol, PNG graphic 
+# but game code based on Frame making Image Object and would need big restructuring 
 from PIL import Image, ImageDraw, ImageFont
 import os
-
 
 def create_png_card_from_svg_design(value, colour_rgb, filename):
     """create PNG card using the SVG design with Pillow for sharper rendering"""
@@ -45,7 +47,7 @@ def create_png_card_from_svg_design(value, colour_rgb, filename):
     # small identifier in top-left
     draw.text((6 * scale, 18 * scale - text_height//4), value, fill=colour_rgb, font=small_font)
     
-    # placeholder for team member graphic (dashed border)
+    # placeholder for graphic (dashed border)
     graphic_y = ch - 20 * scale
     graphic_height = 16 * scale
     # draw dashed rectangle manually

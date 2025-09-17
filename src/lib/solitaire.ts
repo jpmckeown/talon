@@ -80,6 +80,12 @@ export class Solitaire {
     this.#foundationPileSpade.reset();
 
     this.#sameColourMoves = CONFIG.sameColourMovesPerGame;
+    if (!CONFIG.requireAlternatingColours) {
+      console.log('Alternating colours for tableau stack is not currently enforced.')
+    }
+    else if (this.#sameColourMoves > 0) {
+      console.log(`${this.#sameColourMoves} cheats (play same colour to tableau stack) are available per game.`)
+    }
 
     for (let i = 0; i < 7; i += 1) {
       for (let j = i; j < 7; j += 1) {
@@ -286,6 +292,11 @@ export class Solitaire {
       return false;
     }
 
+    // validate next card in a tableau is the next card in sequence, for example 8 -> 7
+    if (lastTableauCard.value !== card.value + 1) {
+      return false;
+    }
+
     // Validate next card in a tableau is opposite colour, e.g. red -> black
     if (CONFIG.requireAlternatingColours && lastTableauCard.color === card.color) {
       if (this.#sameColourMoves < 1) {
@@ -293,11 +304,6 @@ export class Solitaire {
       }
       this.#sameColourMoves--;
       console.log(`${this.sameColourMoves} same-colour cheat-moves remaining.`);
-    }
-
-    // validate next card in a tableau is the next card in sequence, for example 8 -> 7
-    if (lastTableauCard.value !== card.value + 1) {
-      return false;
     }
 
     // if (!CONFIG.requireAlternatingColours) {

@@ -1,3 +1,6 @@
+# SVG experiment abandoned. Plan was a Phaser Container of 
+# Phaser rectangle, SVG number, SVG suit-symbol, PNG graphic 
+# but game code based on Frame making Image Object and would need big restructuring 
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 import os
