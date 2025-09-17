@@ -120,15 +120,16 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+
   #createDiscardPile(): void {
     // create outline for pile
     this.#drawCardLocationBox(DISCARD_PILE_X_POSITION, DISCARD_PILE_Y_POSITION);
 
-    // create initial discard pile game object cards, we only need two game objects, which will represent the two most recently drawn cards, and at the start of game, these will not be visible until the player draws a new card
+    // create initial discard pile game object cards. we only need two game objects, which will represent the two most recently drawn cards, and at the start of game these will not be visible until the player draws a new card
     this.#discardPileCards = [];
-    const bottomCard = this.#createCard(DISCARD_PILE_X_POSITION, DISCARD_PILE_Y_POSITION, true).setVisible(false);
+    const lowerCard = this.#createCard(DISCARD_PILE_X_POSITION, DISCARD_PILE_Y_POSITION, true).setVisible(false);
     const topCard = this.#createCard(DISCARD_PILE_X_POSITION, DISCARD_PILE_Y_POSITION, true).setVisible(false);
-    this.#discardPileCards.push(bottomCard, topCard);
+    this.#discardPileCards.push(lowerCard, topCard);
   }
 
   #createFoundationPiles(): void {
@@ -143,6 +144,7 @@ export class GameScene extends Phaser.Scene {
       this.#foundationPileCards.push(card);
     });
   }
+
 
   #createTableauPiles(): void {
     this.#tableauContainers = [];
@@ -162,6 +164,7 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
+
   #drawCardLocationBox(x: number, y: number): void {
     this.add.rectangle(x, y, 56, 78).setOrigin(0).setStrokeStyle(2, 0x000000, 0.5);
   }
@@ -176,7 +179,6 @@ export class GameScene extends Phaser.Scene {
     return this.add
       .image(x, y, ASSET_KEYS.CARDS, CARD_BACK_FRAME)
       .setOrigin(0)
-      .setScale(SCALE)
       .setInteractive({ draggable: draggable })
       .setData({
         x,
@@ -185,6 +187,7 @@ export class GameScene extends Phaser.Scene {
         pileIndex,
       });
   }
+
 
   #createDragEvents(): void {
     this.#createDragStartEventListener();
@@ -213,6 +216,7 @@ export class GameScene extends Phaser.Scene {
       },
     );
   }
+
 
   #createOnDragEventListener(): void {
     // listen for the drag event on a game object, this will be used to move game objects along the mouse path
@@ -275,7 +279,7 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
-  
+
   /**
    * Determines the number of cards that should also be moved with the current card game object that is being
    * dragged. Example, in a pile I have the cards 5 -> 4 -> 3, and I want to move the whole stack, when I drag the 5

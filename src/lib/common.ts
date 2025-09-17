@@ -1,6 +1,8 @@
 export const CONFIG = {
   // game-rule changes for easier progress
-  requireAlternatingColours: false,
+  requireAlternatingColours: true,
+  sameColourMovesPerGame: 7,
+
   // player options
   allowRevealOnGiveUp: true,
 } as const;

@@ -13,6 +13,8 @@ export class Solitaire {
   #foundationPileDiamond: FoundationPile;
   #tableauPiles: Card[][];
 
+  #sameColourMoves: number;
+
   constructor() {
     this.#deck = new Deck();
     this.#foundationPileClub = new FoundationPile(CARD_SUIT.CLUB);
@@ -20,6 +22,8 @@ export class Solitaire {
     this.#foundationPileHeart = new FoundationPile(CARD_SUIT.HEART);
     this.#foundationPileDiamond = new FoundationPile(CARD_SUIT.DIAMOND);
     this.#tableauPiles = [[], [], [], [], [], [], []];
+
+    this.#sameColourMoves = CONFIG.sameColourMovesPerGame;
   }
 
   get drawPile(): Card[] {
@@ -41,6 +45,11 @@ export class Solitaire {
       this.#foundationPileHeart,
       this.#foundationPileDiamond,
     ];
+  }
+
+  // How many same-colour cheat-moves remaining in this game?
+  get sameColourMoves(): number {
+    return this.#sameColourMoves;
   }
 
   get wonGame(): boolean {
@@ -69,6 +78,8 @@ export class Solitaire {
     this.#foundationPileDiamond.reset();
     this.#foundationPileHeart.reset();
     this.#foundationPileSpade.reset();
+
+    this.#sameColourMoves = CONFIG.sameColourMovesPerGame;
 
     for (let i = 0; i < 7; i += 1) {
       for (let j = i; j < 7; j += 1) {
@@ -276,15 +287,22 @@ export class Solitaire {
     }
 
     // Validate next card in a tableau is opposite colour, e.g. red -> black
-    // if (lastTableauCard.color === card.color) {
     if (CONFIG.requireAlternatingColours && lastTableauCard.color === card.color) {
-      return false;
+      if (this.#sameColourMoves < 1) {
+        return false;
+      }
+      this.#sameColourMoves--;
+      console.log(`${this.sameColourMoves} same-colour cheat-moves remaining.`);
     }
 
     // validate next card in a tableau is the next card in sequence, for example 8 -> 7
     if (lastTableauCard.value !== card.value + 1) {
       return false;
     }
+
+    // if (!CONFIG.requireAlternatingColours) {
+    //   console.log('Alternating colours is not currently enforced.')
+    // }
 
     return true;
   }
