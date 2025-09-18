@@ -13,6 +13,14 @@ const maxShiftX = 0;
 // frame of card spritesheet for back of a card
 const CARD_BACK_FRAME = 56;
 
+// shadow settings for cards
+const SHADOW_REST_X = 0; //-1;
+const SHADOW_REST_Y = 0; //-1;
+const SHADOW_REST_INTENSITY = 0; //0.3;
+const SHADOW_DRAG_X = -2;
+const SHADOW_DRAG_Y = -4;
+const SHADOW_DRAG_INTENSITY = 0.8;
+
 // x & y positions of the 4 foundation piles
 const FOUNDATION_PILE_X_POSITIONS = [360, 425, 490, 555];
 const FOUNDATION_PILE_Y_POSITION = 5;
@@ -173,6 +181,7 @@ export class GameScene extends Phaser.Scene {
     this.add.rectangle(x, y, 56, 78).setOrigin(0).setStrokeStyle(2, 0x000000, 0.5);
   }
 
+
   #createCard(
     x: number,
     y: number,
@@ -192,7 +201,10 @@ export class GameScene extends Phaser.Scene {
       });
     
     if (card.preFX) {
-      card.preFX.addShadow(-2, -2, 0.3, 0.5, 0x000000, 6, 0.3);
+      // shadow for cards in Tableau or Talon (not for drawpile)
+      if (draggable || pileIndex !== undefined) {
+        card.preFX!.addShadow(SHADOW_REST_X, SHADOW_REST_Y, 0.1, 1, 0x000000, 8, SHADOW_REST_INTENSITY);
+      }
     }
     return card;
   }
@@ -205,9 +217,9 @@ export class GameScene extends Phaser.Scene {
     this.#createDropEventListener();
   }
 
+
   #createDragStartEventListener(): void {
-    // listen for the drag start event on a game object, this will be used to store the original position of the game
-    // object, that way we can put the object back in the original position if an invalid move is made
+    // listen for the drag start event on a game object, this will be used to store the original position of the game object, that way we can put the object back in the original position if an invalid move is made
     this.input.on(
       Phaser.Input.Events.DRAG_START,
       (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image) => {
@@ -222,14 +234,23 @@ export class GameScene extends Phaser.Scene {
         }
         // update card objects alpha so we know which card is actively being dragged
         gameObject.setAlpha(0.8);
+
+        // more shadow during drag
+        if (gameObject.preFX) {
+          const shadowFx = gameObject.preFX.list.find(fx => fx.type === 5) as any;
+          if (shadowFx) {
+            shadowFx.x = SHADOW_DRAG_X;
+            shadowFx.y = SHADOW_DRAG_Y;
+            shadowFx.intensity = SHADOW_DRAG_INTENSITY;
+          }
+        }
       },
     );
   }
 
 
   #createOnDragEventListener(): void {
-    // listen for the drag event on a game object, this will be used to move game objects along the mouse path
-    // as we click and drag an object in our scene
+    // listen for the drag event on a game object, this will be used to move game objects along the mouse path as we click and drag an object in our scene
     this.input.on(
       Phaser.Input.Events.DRAG,
       (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image, dragX: number, dragY: number) => {
@@ -251,6 +272,7 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
+
   #createDragEndEventListener(): void {
     // listen for drag-end event on a game object, this will be used to check were the game object was placed
     // in our scene, and depending on were the object was placed we will check if that is a valid move in our game
@@ -258,6 +280,17 @@ export class GameScene extends Phaser.Scene {
     this.input.on(
       Phaser.Input.Events.DRAG_END,
       (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image) => {
+
+        // restore shadow to resting state
+        if (gameObject.preFX) {
+          const shadowFx = gameObject.preFX.list.find(fx => fx.type === 5) as any;
+          if (shadowFx) {
+            shadowFx.x = SHADOW_REST_X;
+            shadowFx.y = SHADOW_REST_Y;
+            shadowFx.intensity = SHADOW_REST_INTENSITY;
+          }
+        }
+
         // reset the depth on the container or image game object
         const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
         if (tableauPileIndex !== undefined) {
