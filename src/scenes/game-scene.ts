@@ -19,7 +19,7 @@ const SHADOW_REST_Y = 0; //-1;
 const SHADOW_REST_INTENSITY = 0; //0.3;
 const SHADOW_DRAG_X = -2;
 const SHADOW_DRAG_Y = -4;
-const SHADOW_DRAG_INTENSITY = 0.8;
+const SHADOW_DRAG_INTENSITY = 0.5;
 
 // x & y positions of the 4 foundation piles
 const FOUNDATION_PILE_X_POSITIONS = [360, 425, 490, 555];
@@ -201,10 +201,11 @@ export class GameScene extends Phaser.Scene {
       });
     
     if (card.preFX) {
-      // shadow for cards in Tableau or Talon (not for drawpile)
-      if (draggable || pileIndex !== undefined) {
-        card.preFX!.addShadow(SHADOW_REST_X, SHADOW_REST_Y, 0.1, 1, 0x000000, 8, SHADOW_REST_INTENSITY);
-      }
+      // // shadow for cards in Tableau or Talon (not for drawpile)
+      // if (draggable || pileIndex !== undefined) {
+      // Bugfix: easier to put shadow on all cards
+        card.preFX!.addShadow(SHADOW_REST_X, SHADOW_REST_Y, 0.05, 1, 0x000000, 8, SHADOW_REST_INTENSITY);
+      // }
     }
     return card;
   }
@@ -236,14 +237,15 @@ export class GameScene extends Phaser.Scene {
         gameObject.setAlpha(0.8);
 
         // more shadow during drag
-        if (gameObject.preFX) {
-          const shadowFx = gameObject.preFX.list.find(fx => fx.type === 5) as any;
-          if (shadowFx) {
-            shadowFx.x = SHADOW_DRAG_X;
-            shadowFx.y = SHADOW_DRAG_Y;
-            shadowFx.intensity = SHADOW_DRAG_INTENSITY;
-          }
-        }
+        this.#updateStackedCardsShadow(gameObject, SHADOW_DRAG_X, SHADOW_DRAG_Y, SHADOW_DRAG_INTENSITY);
+        // if (gameObject.preFX) {
+        //   const shadowFx = gameObject.preFX.list.find(fx => fx.type === 5) as any;
+        //   if (shadowFx) {
+        //     shadowFx.x = SHADOW_DRAG_X;
+        //     shadowFx.y = SHADOW_DRAG_Y;
+        //     shadowFx.intensity = SHADOW_DRAG_INTENSITY;
+        //   }
+        // }
       },
     );
   }
@@ -281,15 +283,17 @@ export class GameScene extends Phaser.Scene {
       Phaser.Input.Events.DRAG_END,
       (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image) => {
 
-        // restore shadow to resting state
-        if (gameObject.preFX) {
-          const shadowFx = gameObject.preFX.list.find(fx => fx.type === 5) as any;
-          if (shadowFx) {
-            shadowFx.x = SHADOW_REST_X;
-            shadowFx.y = SHADOW_REST_Y;
-            shadowFx.intensity = SHADOW_REST_INTENSITY;
-          }
-        }
+        // restore shadow to resting state for all cards in stack
+        this.#updateStackedCardsShadow(gameObject, SHADOW_REST_X, SHADOW_REST_Y, SHADOW_REST_INTENSITY);
+
+        // if (gameObject.preFX) {
+        //   const shadowFx = gameObject.preFX.list.find(fx => fx.type === 5) as any;
+        //   if (shadowFx) {
+        //     shadowFx.x = SHADOW_REST_X;
+        //     shadowFx.y = SHADOW_REST_Y;
+        //     shadowFx.intensity = SHADOW_REST_INTENSITY;
+        //   }
+        // }
 
         // reset the depth on the container or image game object
         const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
@@ -543,5 +547,26 @@ export class GameScene extends Phaser.Scene {
 
   #getCardFrame(data: Card | FoundationPile): number {
     return SUIT_FRAMES[data.suit] + data.value - 1;
+  }
+
+
+  #updateStackedCardsShadow(gameObject: Phaser.GameObjects.Image, shadowX: number, shadowY: number, intensity: number): void {
+    const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
+    const cardIndex = gameObject.getData('cardIndex') as number;
+    
+    if (tableauPileIndex !== undefined) {
+      const numberOfCardsToMove = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex, cardIndex);
+      for (let i = 0; i <= numberOfCardsToMove; i += 1) {
+        const stackedCard = this.#tableauContainers[tableauPileIndex].getAt<Phaser.GameObjects.Image>(cardIndex + i);
+        if (stackedCard.preFX) {
+          const stackedShadowFx = stackedCard.preFX.list.find(fx => fx.type === 5) as any;
+          if (stackedShadowFx) {
+            stackedShadowFx.x = shadowX;
+            stackedShadowFx.y = shadowY;
+            stackedShadowFx.intensity = intensity;
+          }
+        }
+      }
+    }
   }
 }
