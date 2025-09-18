@@ -1,11 +1,12 @@
 # Phaser.Js - Patience (Solitaire)
 
-Based on a tutorial by Scott Westover, a version of the one-player card game "Patience", implemented in Phaser TypeScript. Originally version 3.80 and updated to Phaser 3.90
+Based on a tutorial by Scott Westover, a version of the one-player card game "Patience", implemented in Phaser with TypeScript. Originally version 3.80 and updated to Phaser 3.90
 
 ## Requirements
 
-- [Node.js](https://nodejs.org) (version 18 or higher recommended)
-- A package manager: I use pnpm. but it will work with npm which comes with Node.js, or [pnpm](https://pnpm.io/), or [yarn](https://yarnpkg.com/)
+- [Node.js](https://nodejs.org) (version 18 or higher recommended) is needed to install dependencies.
+
+- A package manager, such as npm which comes with Node.js, or [pnpm](https://pnpm.io/), or [yarn](https://yarnpkg.com/) - I use pnpm because if you have many local projects it only stores one copy of each dependency.
 
 ## To run the project on your computer.
 
@@ -13,21 +14,19 @@ Based on a tutorial by Scott Westover, a version of the one-player card game "Pa
 
 2. Check terminal window is at project directory e.g. talon/
 
-3. Install dependencies with command `pnpm install` or `npm install`
+3. Install dependencies with command `pnpm install` or `npm install`. These will appear in a subfolder named /node_modules and include Phaser, and Vite which bundles the web app.
 
-4. We don't use the vscode webserver, instead (and I like to get a new Terminal prompt at the project directory for this because once the webserver starts it will be running in its Terminal windows until you close the webserver. Start local webserver with command `pnpm start` or `npm install`
+4. We don't use the vscode webserver, instead start a local webserver with command `pnpm start` or `npm install`. Before doing that I like to get a new Terminal prompt, at the project directory, ready for this because once the webserver starts it will be running in its Terminal windows until you close the webserver.
 
 5. It will say at what URL the local webserver is accessible. Likely it is `http://localhost:3000`
 
 6. To close the webserver I normally use Ctrl-C in that Terminal window.
 
+* <a href="https://vitejs.dev/" target="_blank">Vite</a> bundles the web application. It's automatically loaded project's dependencies.
+
 In the webpage inspector console you should see: [vite] connected.
 
 Chrome: in inspector I saw a Console message "Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content." I stopped that showing by in a new bowser tab going to chrome://flags/#enable-unsafe-swiftshader and clicking the checkbox. When I restarted Chrome the console was clear.
-
-<a href="https://nodejs.org" target="_blank">Node.js</a> and <a href="https://pnpm.io/" target="_blank">pnpm</a> are required to install dependencies and run scripts using pnpm.
-
-<a href="https://vitejs.dev/" target="_blank">Vite</a> bundles the web application. It's included in the project's dependencies.
 
 ### Commands
 
@@ -53,14 +52,16 @@ dist/* is deployed to itch.io using this command:
 
 ### Asset delivery
 
-Images and audio files should be placed in the `public` folder.
+Images and audio files should be placed in the `public/assets` folder.
 
 Also I have put development files (e.g. Aseprite) in /dev/art
 
-My script generating placeholder cards image is at /dev/code/cards_maker.py
+My script generating a deck of blank cards, and then writing ID characters A[ce], 2, to K[ing] in the top-left of each card, and a suit symbol in the top-right, is in /dev/code
 
-The top of card needs character e.g. "7" and suit symbol, but the lower area of card which currently has a rectangle of Suit colour and placeholder letter is where a contributed graphic will go. A simicould be placed in all cards at once using a similar script.
+The mid-lower area of each card currently has a placeholder graphic drawn with Suit colour and that is where a graphic contributed during the project will appear. You only need to save any graphics in /public/assets/art and I can adjust the script to overlay them on cards within the spritesheet.
 
 ## Credits
 
-This project was made possible by the code in a tutorial created by Scott Westover.</a>
+This project was made possible by the code in a Phaser tutorial created by Scott Westover.
+
+
