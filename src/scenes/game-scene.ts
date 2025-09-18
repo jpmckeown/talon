@@ -7,7 +7,9 @@ import { FoundationPile } from '../lib/foundation-pile';
 // scale factor for card image game objects
 const SCALE = 1;
 // vertical gap between stacked cards i.e. in tableau
-const STACK_Y_GAP = 23; 
+const STACK_Y_GAP = 23;
+// horizontal random shift to make tableau less precise
+const maxShiftX = 0;
 // frame of card spritesheet for back of a card
 const CARD_BACK_FRAME = 56;
 
@@ -155,7 +157,7 @@ export class GameScene extends Phaser.Scene {
       this.#tableauContainers.push(tableauContainer);
 
       pile.forEach((card, cardIndex) => {
-        const horizontalShift = Math.floor(Math.random() * 7) - 3;
+        const horizontalShift = Math.floor(Math.random() * (2*maxShiftX+1)) - maxShiftX;
         const cardGameObject = this.#createCard(horizontalShift, cardIndex * STACK_Y_GAP, false, cardIndex, pileIndex);
         tableauContainer.add(cardGameObject);
         if (card.isFaceUp) {
@@ -178,7 +180,7 @@ export class GameScene extends Phaser.Scene {
     cardIndex?: number,
     pileIndex?: number,
   ): Phaser.GameObjects.Image {
-    return this.add
+    const card = this.add
       .image(x, y, ASSET_KEYS.CARDS, CARD_BACK_FRAME)
       .setOrigin(0)
       .setInteractive({ draggable: draggable })
@@ -188,6 +190,11 @@ export class GameScene extends Phaser.Scene {
         cardIndex,
         pileIndex,
       });
+    
+    if (card.preFX) {
+      card.preFX.addShadow(-2, -2, 0.3, 0.5, 0x000000, 6, 0.3);
+    }
+    return card;
   }
 
 
@@ -408,7 +415,7 @@ export class GameScene extends Phaser.Scene {
 
     // add single discard pile card to tableau as a new game object
     if (isCardFromDiscardPile) {
-      const horizontalShift = Math.floor(Math.random() * 7) - 3;
+      const horizontalShift = Math.floor(Math.random() * (2*maxShiftX+1)) - maxShiftX;
       const card = this.#createCard(
         horizontalShift,
         originalTargetPileSize * STACK_Y_GAP,
@@ -434,7 +441,7 @@ export class GameScene extends Phaser.Scene {
 
       // update phaser game object data to match the new values for tableau and card index
       const cardIndex = originalTargetPileSize + i;
-      const horizontalShift = Math.floor(Math.random() * 7) - 3;
+      const horizontalShift = Math.floor(Math.random() * (2*maxShiftX+1)) - maxShiftX;
       cardGameObject.setData({
         x: horizontalShift,
         y: cardIndex * STACK_Y_GAP,
