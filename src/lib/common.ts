@@ -2,6 +2,7 @@ export const CONFIG = {
   // game-rule changes for easier progress
   requireAlternatingColours: true,
   sameColourMovesPerGame: 7,
+  letQueenBeginTableau: true,
 
   // player options
   allowRevealOnGiveUp: true,

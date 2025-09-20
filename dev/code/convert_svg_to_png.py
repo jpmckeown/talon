@@ -1,6 +1,5 @@
-# SVG experiment abandoned. Plan was a Phaser Container of 
-# Phaser rectangle, SVG number, SVG suit-symbol, PNG graphic 
-# but game code based on Frame making Image Object and would need big restructuring 
+# SVG experiment abandoned: plan was a Phaser Container consisting of Phaser rectangle, SVG number, SVG suit-symbol, and PNG graphic -- but game code ia based on Frame ID from spritesheet making Image Object and would need much restructuring.
+ 
 from PIL import Image, ImageDraw, ImageFont
 import os
 

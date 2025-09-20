@@ -48,6 +48,7 @@ const ZONE_TYPE = {
   TABLEAU: 'TABLEAU',
 } as const;
 
+
 export class GameScene extends Phaser.Scene {
   // core Patience game logic and game state
   #solitaire!: Solitaire;
@@ -142,6 +143,7 @@ export class GameScene extends Phaser.Scene {
     this.#discardPileCards.push(lowerCard, topCard);
   }
 
+
   #createFoundationPiles(): void {
     this.#foundationPileCards = [];
 
@@ -205,9 +207,9 @@ export class GameScene extends Phaser.Scene {
       });
     
     if (card.preFX) {
-      // // shadow for cards in Tableau or Talon (not for drawpile)
+      // // shadow for cards in Tableau or talon (not for drawpile)
       // if (draggable || pileIndex !== undefined) {
-      // Bugfix: easier to put shadow on all cards
+      // Bugfix: easier to put shadow on all cards as drawpile cards never move anyway
         card.preFX!.addShadow(SHADOW_REST_X, SHADOW_REST_Y, 0.05, 1, 0x000000, 8, SHADOW_REST_INTENSITY);
       // }
     }

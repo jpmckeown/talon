@@ -288,9 +288,14 @@ export class Solitaire {
 
 
   #isValidMoveToAddCardToTableau(card: Card, tableauPile: Card[]): boolean {
-    // if tableau is empty, only allow king (13) to be placed
+    // if tableau is empty, only allow a King (13) to be placed
     if (tableauPile.length === 0) {
-      return card.value === 13;
+      // option rule allows a Queen to begin a Tableau stack
+      if (CONFIG.letQueenBeginTableau) {
+        return card.value === 13 || card.value === 12;
+      } else {
+        return card.value === 13;
+      }
     }
 
     // get reference to the last card in the tableau pile
