@@ -17,8 +17,8 @@ const CARD_BACK_FRAME = 56;
 const SHADOW_REST_X = 0; //-1;
 const SHADOW_REST_Y = 0; //-1;
 const SHADOW_REST_INTENSITY = 0; //0.3;
-const SHADOW_DRAG_X = -3;
-const SHADOW_DRAG_Y = -4;
+const SHADOW_DRAG_X = -4;
+const SHADOW_DRAG_Y = -5;
 const SHADOW_DRAG_INTENSITY = 0.5;
 
 // x & y positions of the 4 foundation piles
@@ -242,16 +242,10 @@ export class GameScene extends Phaser.Scene {
         // update card objects alpha so we know which card is actively being dragged
         gameObject.setAlpha(0.8);
 
-        // more shadow during drag
+        // display shadow while dragging card
+        this.#updateDraggedCardShadow(gameObject, SHADOW_DRAG_X, SHADOW_DRAG_Y, SHADOW_DRAG_INTENSITY);
         this.#updateStackedCardsShadow(gameObject, SHADOW_DRAG_X, SHADOW_DRAG_Y, SHADOW_DRAG_INTENSITY);
-        // if (gameObject.preFX) {
-        //   const shadowFx = gameObject.preFX.list.find(fx => fx.type === 5) as any;
-        //   if (shadowFx) {
-        //     shadowFx.x = SHADOW_DRAG_X;
-        //     shadowFx.y = SHADOW_DRAG_Y;
-        //     shadowFx.intensity = SHADOW_DRAG_INTENSITY;
-        //   }
-        // }
+
       },
     );
   }
@@ -290,16 +284,8 @@ export class GameScene extends Phaser.Scene {
       (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image) => {
 
         // restore shadow to resting state for all cards in stack
+        this.#updateDraggedCardShadow(gameObject, SHADOW_REST_X, SHADOW_REST_Y, SHADOW_REST_INTENSITY);
         this.#updateStackedCardsShadow(gameObject, SHADOW_REST_X, SHADOW_REST_Y, SHADOW_REST_INTENSITY);
-
-        // if (gameObject.preFX) {
-        //   const shadowFx = gameObject.preFX.list.find(fx => fx.type === 5) as any;
-        //   if (shadowFx) {
-        //     shadowFx.x = SHADOW_REST_X;
-        //     shadowFx.y = SHADOW_REST_Y;
-        //     shadowFx.intensity = SHADOW_REST_INTENSITY;
-        //   }
-        // }
 
         // reset the depth on the container or image game object
         const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
@@ -556,23 +542,54 @@ export class GameScene extends Phaser.Scene {
   }
 
 
-  #updateStackedCardsShadow(gameObject: Phaser.GameObjects.Image, shadowX: number, shadowY: number, intensity: number): void {
-    const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
-    const cardIndex = gameObject.getData('cardIndex') as number;
-    
-    if (tableauPileIndex !== undefined) {
-      const numberOfCardsToMove = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex, cardIndex);
-      for (let i = 0; i <= numberOfCardsToMove; i += 1) {
-        const stackedCard = this.#tableauContainers[tableauPileIndex].getAt<Phaser.GameObjects.Image>(cardIndex + i);
-        if (stackedCard.preFX) {
-          const stackedShadowFx = stackedCard.preFX.list.find(fx => fx.type === 5) as any;
-          if (stackedShadowFx) {
-            stackedShadowFx.x = shadowX;
-            stackedShadowFx.y = shadowY;
-            stackedShadowFx.intensity = intensity;
-          }
+  #updateDraggedCardShadow(gameObject: Phaser.GameObjects.Image, shadowX: number, shadowY: number, intensity: number): void {
+  if (gameObject.preFX) {
+    const shadowFx = gameObject.preFX.list.find(fx => fx.type === 5) as any;
+    if (shadowFx) {
+      shadowFx.x = shadowX;
+      shadowFx.y = shadowY;
+      shadowFx.intensity = intensity;
+    }
+  }
+}
+
+
+#updateStackedCardsShadow(gameObject: Phaser.GameObjects.Image, shadowX: number, shadowY: number, intensity: number): void {
+  const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
+  const cardIndex = gameObject.getData('cardIndex') as number;
+  
+  if (tableauPileIndex !== undefined) {
+    const numberOfCardsToMove = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex, cardIndex);
+    for (let i = 1; i <= numberOfCardsToMove; i += 1) {
+      const stackedCard = this.#tableauContainers[tableauPileIndex].getAt<Phaser.GameObjects.Image>(cardIndex + i);
+      if (stackedCard.preFX) {
+        const stackedShadowFx = stackedCard.preFX.list.find(fx => fx.type === 5) as any;
+        if (stackedShadowFx) {
+          stackedShadowFx.x = shadowX;
+          stackedShadowFx.y = shadowY;
+          stackedShadowFx.intensity = intensity;
         }
       }
     }
   }
+}
+  // #updateStackedCardsShadow(gameObject: Phaser.GameObjects.Image, shadowX: number, shadowY: number, intensity: number): void {
+  //   const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
+  //   const cardIndex = gameObject.getData('cardIndex') as number;
+    
+  //   if (tableauPileIndex !== undefined) {
+  //     const numberOfCardsToMove = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex, cardIndex);
+  //     for (let i = 0; i <= numberOfCardsToMove; i += 1) {
+  //       const stackedCard = this.#tableauContainers[tableauPileIndex].getAt<Phaser.GameObjects.Image>(cardIndex + i);
+  //       if (stackedCard.preFX) {
+  //         const stackedShadowFx = stackedCard.preFX.list.find(fx => fx.type === 5) as any;
+  //         if (stackedShadowFx) {
+  //           stackedShadowFx.x = shadowX;
+  //           stackedShadowFx.y = shadowY;
+  //           stackedShadowFx.intensity = intensity;
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 }
