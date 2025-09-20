@@ -2,7 +2,7 @@
 
 Based on a tutorial by Scott Westover, a version of the one-player card game "Patience", implemented in Phaser with TypeScript. Originally version 3.80 and updated to Phaser 3.90
 
-## Requirements
+### Requirements
 
 - [Node.js](https://nodejs.org) (version 18 or higher recommended) is needed to install dependencies.
 
@@ -61,5 +61,4 @@ The mid-lower area of each card currently has a placeholder graphic drawn with S
 ## Credits
 
 This project was made possible by the code in a Phaser tutorial created by Scott Westover.
-
 

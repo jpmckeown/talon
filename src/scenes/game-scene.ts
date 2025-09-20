@@ -17,7 +17,7 @@ const CARD_BACK_FRAME = 56;
 const SHADOW_REST_X = 0; //-1;
 const SHADOW_REST_Y = 0; //-1;
 const SHADOW_REST_INTENSITY = 0; //0.3;
-const SHADOW_DRAG_X = -2;
+const SHADOW_DRAG_X = -3;
 const SHADOW_DRAG_Y = -4;
 const SHADOW_DRAG_INTENSITY = 0.5;
 
@@ -65,7 +65,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   public create(): void {
-    this.cameras.main.fadeIn(1000);
+    // this.cameras.main.fadeIn(1000);
 
     this.#solitaire = new Solitaire();
     this.#solitaire.newGame();
