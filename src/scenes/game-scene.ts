@@ -178,7 +178,11 @@ export class GameScene extends Phaser.Scene {
 
 
   #drawCardLocationBox(x: number, y: number): void {
-    this.add.rectangle(x, y, 56, 78).setOrigin(0).setStrokeStyle(2, 0x000000, 0.5);
+    const graphics = this.add.graphics();
+    graphics.lineStyle(2, 0x000000, 0.3);
+    graphics.strokeRoundedRect(x, y, CARD_WIDTH, CARD_HEIGHT, 7);
+    // const box = this.add.rectangle(x, y, CARD_WIDTH, CARD_HEIGHT).setOrigin(0)
+    // box.setStrokeStyle(1, 0x000000, 0.5);
   }
 
 
@@ -309,7 +313,7 @@ export class GameScene extends Phaser.Scene {
           // reset card game object's alpha since we are done moving the object
           gameObject.setAlpha(1);
 
-          // if card is part of tableau, also move all cards that are stacked on top of this card back to original location
+          // if card is part of a tableau, also move all the cards that are stacked on top of this card back to original location
           const cardIndex = gameObject.getData('cardIndex') as number;
           if (tableauPileIndex !== undefined) {
             const numberOfCardsToMove = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex, cardIndex);
