@@ -6,17 +6,20 @@ import { FoundationPile } from '../lib/foundation-pile';
 
 // scale factor for card image game objects
 const SCALE = 1;
+
 // vertical gap between stacked cards i.e. in tableau
 const STACK_Y_GAP = 23;
+
 // horizontal random shift to make tableau less precise
 const maxShiftX = 0;
+
 // frame of card spritesheet for back of a card
 const CARD_BACK_FRAME = 56;
 
 // shadow settings for cards
-const SHADOW_REST_X = 0; //-1;
-const SHADOW_REST_Y = 0; //-1;
-const SHADOW_REST_INTENSITY = 0; //0.3;
+const SHADOW_REST_X = 0;
+const SHADOW_REST_Y = +4;
+const SHADOW_REST_INTENSITY = 0.2;
 const SHADOW_DRAG_X = -4;
 const SHADOW_DRAG_Y = -5;
 const SHADOW_DRAG_INTENSITY = 0.5;
@@ -119,8 +122,12 @@ export class GameScene extends Phaser.Scene {
 
       // update shown cards in draw pile, based on number of cards in pile
       this.#showCardsInDrawPile();
+
       // update card-below-top in discard pile to reflect the top card
-      this.#discardPileCards[0].setFrame(this.#discardPileCards[1].frame).setVisible(this.#discardPileCards[1].visible);
+      const lowerCard = this.#discardPileCards[0]
+      lowerCard.setFrame(this.#discardPileCards[1].frame)
+      lowerCard.setVisible(this.#discardPileCards[1].visible);
+
       // update top card in the discard pile to reflect card we drew
       const card = this.#solitaire.discardPile[this.#solitaire.discardPile.length - 1];
       this.#discardPileCards[1].setFrame(this.#getCardFrame(card)).setVisible(true);
@@ -239,8 +246,8 @@ export class GameScene extends Phaser.Scene {
         } else {
           gameObject.setDepth(2);
         }
-        // update card objects alpha so we know which card is actively being dragged
-        gameObject.setAlpha(0.8);
+        // // update card objects alpha so we know which card is actively being dragged
+        // gameObject.setAlpha(0.8);
 
         // display shadow while dragging card
         this.#updateDraggedCardShadow(gameObject, SHADOW_DRAG_X, SHADOW_DRAG_Y, SHADOW_DRAG_INTENSITY);
