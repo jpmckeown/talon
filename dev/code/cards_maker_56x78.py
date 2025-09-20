@@ -7,9 +7,8 @@ def generate_cards():
     # card dimensions and layout
     card_width = 56
     card_height = 78
-    card_spacing = 2 # 0 for tight deck spritesheet
+    card_spacing = 1 # 0 for tight deck spritesheet
     cards_across = 3
-    border_size = 1
     
     # suit colours (hearts, diamonds, spades, clubs)
     suit_colours = [
@@ -28,8 +27,8 @@ def generate_cards():
     suit_letters = ['c', 'd', 'h', 's']
 
     # load blank cards image
-    input_path = "dev/art/cards_blank_56x78_corner-7.png"; # version with card edging
-    output_path = "public/assets/images/cards.png"
+    input_path = "dev/art/cards_blank_56x78_corner-7_edge-0.png"; # version with card edging
+    output_path = "public/assets/images/cards_edge_0.png"
     # input_path = "dev/art/cards_blank_56x78_corner-7-tight.png"; # version with card edging
     # output_path = "public/assets/images/cards-tight.png"
     
@@ -56,12 +55,16 @@ def generate_cards():
                 col = card_position % cards_across
 
                 # get card top left corner
-                xt = border_size + col * (card_width + card_spacing) 
-                yt = border_size + row * (card_height + card_spacing) 
+                xt = card_spacing + col * (card_width + card_spacing + 1)
+                yt = card_spacing + row * (card_height + card_spacing + 1)
+                # xt = border_size + col * (card_width + card_spacing) 
+                # yt = border_size + row * (card_height + card_spacing) 
               
                 # get card centre, in pixels
-                x = border_size + col * (card_width + card_spacing) + card_width // 2
-                y = border_size + row * (card_height + card_spacing) + card_height // 2
+                x = card_spacing + col * (card_width + card_spacing + 1) + card_width // 2
+                y = card_spacing + row * (card_height + card_spacing + 1) + card_height // 2
+                # x = border_size + col * (card_width + card_spacing) + card_width // 2
+                # y = border_size + row * (card_height + card_spacing) + card_height // 2
                 
                 # draw text centred, get text bounding box
                 bbox = draw.textbbox((0, 0), value, font=phFont)
