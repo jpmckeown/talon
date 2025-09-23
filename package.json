@@ -1,6 +1,7 @@
 {
 	"name": "talon",
-	"version": "0.1",
+	"version": "0.2",
+  "type": "module",
 	"description": "Phaser 3 implementation of the game Patience, based on a tutorial by Scott Westover.",
 	"scripts": {
 		"start": "vite --config config/vite.config.js",
@@ -10,11 +11,17 @@
 	"author": "jpmckeown",
 	"license": "MIT",
 	"devDependencies": {
+		"esbuild": "^0.25.10",
 		"ts-node": "10.9.2",
 		"typescript": "5.5.4",
-		"vite": "2.9.13"
+		"vite": "5.4.20"
 	},
 	"dependencies": {
 		"phaser": "3.90.0"
-	}
+	},
+  "pnpm": {
+    "overrides": {
+      "esbuild": "0.25.10"
+    }
+  }
 }
