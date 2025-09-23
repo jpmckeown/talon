@@ -393,12 +393,29 @@ export class GameScene extends Phaser.Scene {
 
     // check if card is from discard pile or tableau pile based on the pileIndex in the data manager
     const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
-    if (tableauPileIndex === undefined) {
+
+    // if from tableau, check if a stack is being dragged
+    if (tableauPileIndex !== undefined) {
+      const cardIndex = gameObject.getData('cardIndex') as number;
+      const pileLength = this.#tableauContainers[tableauPileIndex].length;
+      
+      // if dragging a stack reject the move
+      if (cardIndex < pileLength - 1) {
+        return; // dragend handler will return cards to original position
+      }
+      
+      isValidMove = this.#solitaire.moveTableauCardToFoundation(tableauPileIndex);
+    } else {
       isValidMove = this.#solitaire.playDiscardPileCardToFoundation();
       isCardFromDiscardPile = true;
-    } else {
-      isValidMove = this.#solitaire.moveTableauCardToFoundation(tableauPileIndex);
     }
+    // // Below fails to stop a stack of Tableau cards trying to drop
+    // if (tableauPileIndex === undefined) {
+    //   isValidMove = this.#solitaire.playDiscardPileCardToFoundation();
+    //   isCardFromDiscardPile = true;
+    // } else {
+    //   isValidMove = this.#solitaire.moveTableauCardToFoundation(tableauPileIndex);
+    // }
 
     // if this is not a valid move, we don't need to update anything on the card since the `dragend` event handler will move the card back to the original location
     if (!isValidMove) {
