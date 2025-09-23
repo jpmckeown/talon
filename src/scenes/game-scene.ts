@@ -213,6 +213,10 @@ export class GameScene extends Phaser.Scene {
         pileIndex,
       });
     
+    //   // add top border for stacked card separation
+    // const border = this.#drawCardTopBorder(x, y);
+    // card.setData({ ...card.data.values, borderGraphics: border });
+
     if (card.preFX) {
       // // shadow for cards in Tableau or talon (not for drawpile)
       // if (draggable || pileIndex !== undefined) {
@@ -221,6 +225,20 @@ export class GameScene extends Phaser.Scene {
       // }
     }
     return card;
+  }
+
+
+  #drawCardTopBorder(x: number, y: number): Phaser.GameObjects.Graphics {
+    const border = this.add.graphics();
+    border.lineStyle(1, 0x000000, 0.3);
+    border.beginPath();
+    border.arc(x + 7, y + 7, 7, Math.PI, Math.PI * 1.5);
+    border.arc(x + CARD_WIDTH - 7, y + 7, 7, Math.PI * 1.5, 0);
+    border.lineTo(x + CARD_WIDTH, y);
+    border.lineTo(x, y);
+    border.closePath();
+    border.strokePath();
+    return border;
   }
 
 
