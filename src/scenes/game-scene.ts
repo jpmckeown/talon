@@ -371,8 +371,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   #createDropEventListener(): void {
-    // listen for drop events on a game object, this will be used for knowing which card pile a player is trying to add a card game object to
-    // which will then trigger validation logic to check if a valid move was maded
+    // listen for drop events on a game object, this will be used for knowing which card pile a player is trying to add a card game object to which will then trigger validation logic to check if a valid move was maded
     this.input.on(
       Phaser.Input.Events.DROP,
       (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image, dropZone: Phaser.GameObjects.Zone) => {
@@ -382,7 +381,7 @@ export class GameScene extends Phaser.Scene {
           return;
         }
         const tableauIndex = dropZone.getData('tableauIndex') as number;
-        this.#handleMoveCardTableau(gameObject, tableauIndex);
+        this.#handleMoveCardToTableau(gameObject, tableauIndex);
       },
     );
   }
@@ -423,7 +422,7 @@ export class GameScene extends Phaser.Scene {
     this.#updateFoundationPiles();
   }
 
-  #handleMoveCardTableau(gameObject: Phaser.GameObjects.Image, targetTableauPileIndex: number): void {
+  #handleMoveCardToTableau(gameObject: Phaser.GameObjects.Image, targetTableauPileIndex: number): void {
     let isValidMove = false;
     let isCardFromDiscardPile = false;
 
@@ -448,6 +447,7 @@ export class GameScene extends Phaser.Scene {
     if (!isValidMove) {
       return;
     }
+    this.#tableauContainers[targetTableauPileIndex].setDepth(0);
 
     // add single discard pile card to tableau as a new game object
     if (isCardFromDiscardPile) {
@@ -466,8 +466,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    // for each card in the current stack that is being moved, we need to remove the card from
-    // the existing container and add to the target tableau container
+    // for each card in the current stack that is being moved, we need to remove the card from the existing container and add to the target tableau container
     const numberOfCardsToMove = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex as number, tableauCardIndex);
     for (let i = 0; i <= numberOfCardsToMove; i += 1) {
       const cardGameObject =
@@ -506,6 +505,7 @@ export class GameScene extends Phaser.Scene {
       this.#discardPileCards[0].setFrame(this.#getCardFrame(discardPileCard)).setVisible(true);
     }
   }
+
 
   /* Checks tableau pile that played card came from to see if we now need to flip next card in the stack.
   */
