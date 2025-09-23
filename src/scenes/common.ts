@@ -15,6 +15,7 @@ export const ASSET_KEYS = {
   TITLE: 'TITLE',
   CLICK_TO_START: 'CLICK_TO_START',
   CARDS: 'CARDS',
+  TABLE_BACKGROUND: 'TABLE_BACKGROUND',
 } as const;
 
 export const AUDIO_KEYS = {

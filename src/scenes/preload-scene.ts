@@ -8,6 +8,7 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   public preload(): void {
+    this.load.image(ASSET_KEYS.TABLE_BACKGROUND, 'assets/images/green-felt.png');
     this.load.image(ASSET_KEYS.TITLE, 'assets/images/title.png');
     this.load.image(ASSET_KEYS.CLICK_TO_START, 'assets/images/clickToStart.png');
     this.load.spritesheet(ASSET_KEYS.CARDS, 'assets/images/cards_edge-0.png', {
@@ -16,7 +17,7 @@ export class PreloadScene extends Phaser.Scene {
       spacing: 2,
       margin: 1,
     });
-
+    
     this.load.audio(AUDIO_KEYS.DRAW_CARD, 'assets/audio/placeholder.ogg');
     this.load.audio(AUDIO_KEYS.FOUNDATION_ADD, 'assets/audio/placeholder.ogg');
 

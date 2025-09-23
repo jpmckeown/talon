@@ -73,6 +73,8 @@ export class GameScene extends Phaser.Scene {
   public create(): void {
     // this.cameras.main.fadeIn(1000);
 
+    this.#createTableBackground();
+
     this.#solitaire = new Solitaire();
     this.#solitaire.newGame();
 
@@ -84,6 +86,11 @@ export class GameScene extends Phaser.Scene {
     // setup drop zones for interactions and events for drag
     this.#createDragEvents();
     this.#createDropZones();
+  }
+
+  #createTableBackground(): void {
+    let bg = this.add.tileSprite(0, 0, 1200, 1200, ASSET_KEYS.TABLE_BACKGROUND);
+    bg.setOrigin(0, 0);
   }
 
   #createDrawPile(): void {
