@@ -33,6 +33,8 @@ const DISCARD_PILE_Y_POSITION = 5;
 
 const DRAW_PILE_X_POSITION = 5;
 const DRAW_PILE_Y_POSITION = 5;
+const DRAW_PILE_X_OFFSET = 0;
+
 // x & y position of first tableau pile
 const TABLEAU_PILE_X_POSITION = 40;
 const TABLEAU_PILE_Y_POSITION = 92;
@@ -55,11 +57,11 @@ const ZONE_TYPE = {
 export class GameScene extends Phaser.Scene {
   // core Patience game logic and game state
   #solitaire!: Solitaire;
-  // keeps track of card game objects in draw pile (3 game objects i.e. not the whole pile)
+  // keeps track of card game objects in draw pile (3 i.e. not whole pile)
   #drawPileCards!: Phaser.GameObjects.Image[];
-  // card game objects in our discard pile (2 game objects i.e. only top and the card below)
+  // card GO in discard pile (2 i.e. only top and the card below)
   #discardPileCards!: Phaser.GameObjects.Image[];
-  // card game objects in each of the foundation piles (4 game objects, i.e. only the top card)
+  // card GO in each foundation pile (4, i.e. only the top card)
   #foundationPileCards!: Phaser.GameObjects.Image[];
   // tracks containers, one for each tableau pile (7 game objects)
   #tableauContainers!: Phaser.GameObjects.Container[];
@@ -91,7 +93,7 @@ export class GameScene extends Phaser.Scene {
     // create initial draw pile game object cards
     this.#drawPileCards = [];
     for (let i = 0; i < 3; i += 1) {
-      this.#drawPileCards.push(this.#createCard(DRAW_PILE_X_POSITION + i * 5, DRAW_PILE_Y_POSITION, false));
+      this.#drawPileCards.push(this.#createCard(DRAW_PILE_X_POSITION + i * DRAW_PILE_X_OFFSET, DRAW_PILE_Y_POSITION, false));
     }
 
     // create zone to listen for click events, which triggers the drawing card logic
