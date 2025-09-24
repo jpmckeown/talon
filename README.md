@@ -18,7 +18,7 @@ Based on a tutorial by Scott Westover, a version of the one-player card game "Pa
 
 4. We don't use the vscode webserver, instead start a local webserver with command `pnpm start` or `npm install`. Before doing that I like to get a new Terminal prompt, at the project directory, ready for this because once the webserver starts it will be running in its Terminal windows until you close the webserver.
 
-5. It will say at what URL the local webserver is accessible. Likely it is `http://localhost:3000`
+5. It will say at what URL the local webserver is accessible. Likely it is `http://localhost:5173`
 
 6. To close the webserver I normally use Ctrl-C in that Terminal window.
 

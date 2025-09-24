@@ -13,10 +13,8 @@ def generate_cards():
     # suit colours (hearts, diamonds, spades, clubs)
     suit_colours = [
         (90, 90, 90), # clubs - dark grey
-        # (100, 150, 255), # clubs - light blue
         (237, 74, 123), # diamonds - light red 
         (255, 15, 15),   # hearts - red
-        # (68, 51, 194)    # spades - blue
         (20, 20, 20)    # spades - black
     ]
     
@@ -26,18 +24,18 @@ def generate_cards():
     suit_symbols = ['♣', '♦', '♥', '♠']  # clubs, diamonds, hearts, spades
     suit_letters = ['c', 'd', 'h', 's']
 
-    # load blank cards image
-    input_path = "dev/art/cards_blank_56x78_corner-7_edge-0.png"; # version with card edging
-    output_path = "public/assets/images/cards_edge_0.png"
-    # input_path = "dev/art/cards_blank_56x78_corner-7-tight.png"; # version with card edging
-    # output_path = "public/assets/images/cards-tight.png"
+    # load blank cards deck image, version with 1-pixel black border on each card
+    input_path = "dev/art/cards_blank_56x78_corner-7_edge-0.png"; 
+    output_path = "public/assets/images/cards_edge-0.png"
     
     try:
         img = Image.open(input_path)
         draw = ImageDraw.Draw(img)
-        phFont = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 38)  # was 24
-        fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 19)  # was 13
-        fontSymbol = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 24)  # was 15           
+        # font for placeholder text
+        phFont = ImageFont.truetype("/System/Library/Fonts/Verdana.ttf", 38)
+        # font for top-left identifier
+        fontsmall = ImageFont.truetype("/System/Library/Fonts/Verdana.ttf", 20)
+        fontSymbol = ImageFont.truetype("/System/Library/Fonts/Apple Symbols.ttf", 24)  # was 15           
         
         # generate 52 cards (4 suits × 13 values)
         card_position = 0
