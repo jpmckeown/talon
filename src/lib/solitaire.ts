@@ -14,7 +14,7 @@ export class Solitaire {
   #foundationPileDiamond: FoundationPile;
   #tableauPiles: Card[][];
   #sameColourMoves: number;
-  #fx: Scene;
+  #fx: Effects;
 
   constructor(sceneFx:Effects) {
     this.#fx = sceneFx; // used to trigger particle effects

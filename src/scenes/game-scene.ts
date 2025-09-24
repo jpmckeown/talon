@@ -67,7 +67,7 @@ export class GameScene extends Phaser.Scene {
   // tracks containers, one for each tableau pile (7 game objects)
   #tableauContainers!: Phaser.GameObjects.Container[];
   // spawns particle effects during the game
-  #fx: Effects;
+  #fx!: Effects;
 
   constructor() {
     super({ key: SCENE_KEYS.GAME });

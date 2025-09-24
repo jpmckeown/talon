@@ -6,10 +6,10 @@ import { ASSET_KEYS } from '../scenes/common';
 // when the player does certain things in the game
 export class Effects {
 
-    parentScene : Scene;
-    poofEmitter : ParticleEmitter;
+    parentScene!: Phaser.Scene;
+    poofEmitter!: Phaser.GameObjects.Particles.ParticleEmitter;
 
-    constructor(currentScene:Scene) {
+    constructor(currentScene: Phaser.Scene) {
         console.log("creating particle effect emitters!");
         if (!currentScene) {
             console.log("ERROR: Effects has no scene to add particles to!");
@@ -30,7 +30,7 @@ export class Effects {
         
         // FIXME: this seems to have no effect
         // only spawn particles around the edges of a card!
-        this.poofEmitter.addEmitZone({ type: 'edge', source: new Phaser.Geom.Rectangle(-150, -150, 300, 300) });
+        this.poofEmitter.addEmitZone({ type: 'edge', source: new Phaser.Geom.Rectangle(-150, -150, 300, 300), quantity: 50 });
 
     } // end constructor
 
