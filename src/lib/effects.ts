@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 //import { Phaser, Scene, ParticleEmitter } from 'phaser';
-import { ASSET_KEYS } from '../scenes/common';
+import { ASSET_KEYS, CARD_WIDTH, CARD_HEIGHT } from '../scenes/common';
 
 // a way to show some particle poof explosions
 // when the player does certain things in the game
@@ -19,19 +19,18 @@ export class Effects {
         this.poofEmitter = currentScene.add.particles(0,0,ASSET_KEYS.PARTICLE, {
             alpha: { start:1, end:0 }, // fade out
             lifespan: { min: 500, max: 1000 }, // ms until it fades out
-            speed: { min: 150, max: 250 }, // pixels per second
+            speed: { min: 50, max: 100 }, // pixels per second
             angle: { min: 0, max: 360 }, // spin
             scale: { start: 1, end: 0.1 }, // shrink
-            gravityY: 400, // fall
+            gravityY: 100, // fall
             blendMode: 'ADD', // lighten
             maxParticles: 1000, // good perf
             frequency: -1, // wait to be triggered
+            // spawn in a rectangle shape along the card edges
+            // works, but positions are not relative to card
+            // emitZone: [ { type: 'edge', source: new Phaser.Geom.Rectangle(0, 0, 100, 100), quantity: 250 }],
         });
         
-        // FIXME: this seems to have no effect
-        // only spawn particles around the edges of a card!
-        this.poofEmitter.addEmitZone({ type: 'edge', source: new Phaser.Geom.Rectangle(-150, -150, 300, 300), quantity: 50 });
-
     } // end constructor
 
     // emit a burst of particles
@@ -39,7 +38,22 @@ export class Effects {
         console.log("effects creating a poof at "+x+","+y);
         if (!this.poofEmitter) return;
         let particleCount = 100;
-        this.poofEmitter.explode(particleCount,x,y);
+        
+        // explode in a circle from the center of the card
+        // this.poofEmitter.explode(particleCount,x,y);
+        
+        // manually explode along the edges of the card only
+        for (let px,py,i=0; i<particleCount; i++) {
+            if (Math.random()<0.5) {
+                px = Math.round(x + (Math.random()<0.5?0:CARD_WIDTH));
+                py = Math.round(y + (Math.random()*CARD_HEIGHT));
+            } else {
+                px = Math.round(x + (Math.random()*CARD_WIDTH));
+                py = Math.round(y + (Math.random()<0.5?0:CARD_HEIGHT));
+            }
+            console.log(px+","+py);
+            this.poofEmitter.explode(1,px,py);
+        }
     }
 
 } // end Effects class

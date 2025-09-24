@@ -537,8 +537,8 @@ export class GameScene extends Phaser.Scene {
       // TODO: add different types of poofs especially on a WIN
       // spawn a particle effect
       // where is the card on screen?
-      let px = horizontalShift + cardGameObject.parentContainer.x + (CARD_WIDTH/2);
-      let py = cardIndex * STACK_Y_GAP + cardGameObject.parentContainer.y + (CARD_HEIGHT/2);
+      let px = horizontalShift + cardGameObject.parentContainer.x;// + (CARD_WIDTH/2);
+      let py = cardIndex * STACK_Y_GAP + cardGameObject.parentContainer.y;// + (CARD_HEIGHT/2);
       this.#fx.poof(px,py);
 
     }
