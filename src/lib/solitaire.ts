@@ -3,6 +3,7 @@ import { CARD_SUIT, CONFIG } from './common';
 import { Deck } from './deck';
 import { FoundationPile } from './foundation-pile';
 import { exhaustiveGuard } from './utils';
+import { Effects } from './effects';
 
 
 export class Solitaire {
@@ -12,10 +13,11 @@ export class Solitaire {
   #foundationPileHeart: FoundationPile;
   #foundationPileDiamond: FoundationPile;
   #tableauPiles: Card[][];
-
   #sameColourMoves: number;
+  #fx: Scene;
 
-  constructor() {
+  constructor(sceneFx:Effects) {
+    this.#fx = sceneFx; // used to trigger particle effects
     this.#deck = new Deck();
     this.#foundationPileClub = new FoundationPile(CARD_SUIT.CLUB);
     this.#foundationPileSpade = new FoundationPile(CARD_SUIT.SPADE);

@@ -3,6 +3,7 @@ import { ASSET_KEYS, AUDIO_KEYS, CARD_HEIGHT, CARD_WIDTH, SCENE_KEYS, UI_CONFIG 
 import { Solitaire } from '../lib/solitaire';
 import { Card } from '../lib/card';
 import { FoundationPile } from '../lib/foundation-pile';
+import { Effects } from '../lib/effects';
 
 // scale factor for card image game objects
 const SCALE = 1;
@@ -65,6 +66,8 @@ export class GameScene extends Phaser.Scene {
   #foundationPileCards!: Phaser.GameObjects.Image[];
   // tracks containers, one for each tableau pile (7 game objects)
   #tableauContainers!: Phaser.GameObjects.Container[];
+  // spawns particle effects during the game
+  #fx: Effects;
 
   constructor() {
     super({ key: SCENE_KEYS.GAME });
@@ -74,8 +77,9 @@ export class GameScene extends Phaser.Scene {
     // this.cameras.main.fadeIn(1000);
 
     this.#createTableBackground();
+    this.#fx = new Effects(this); // particles
 
-    this.#solitaire = new Solitaire();
+    this.#solitaire = new Solitaire(this.#fx);
     this.#solitaire.newGame();
 
     this.#createDrawPile();
@@ -527,6 +531,16 @@ export class GameScene extends Phaser.Scene {
         cardIndex,
         pileIndex: targetTableauPileIndex,
       });
+
+      // WORK IN PROGRESS!
+      // FIXME: only poof when you do something awesome
+      // TODO: add different types of poofs especially on a WIN
+      // spawn a particle effect
+      // where is the card on screen?
+      let px = horizontalShift + cardGameObject.parentContainer.x + (CARD_WIDTH/2);
+      let py = cardIndex * STACK_Y_GAP + cardGameObject.parentContainer.y + (CARD_HEIGHT/2);
+      this.#fx.poof(px,py);
+
     }
 
     // update depth on container to be the original value

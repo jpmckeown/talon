@@ -8,6 +8,7 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   public preload(): void {
+    this.load.image(ASSET_KEYS.PARTICLE, 'assets/images/particle.png');
     this.load.image(ASSET_KEYS.TABLE_BACKGROUND, 'assets/images/green-felt.png');
     this.load.image(ASSET_KEYS.TITLE, 'assets/images/title.png');
     this.load.image(ASSET_KEYS.CLICK_TO_START, 'assets/images/clickToStart.png');

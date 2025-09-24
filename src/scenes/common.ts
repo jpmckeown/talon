@@ -16,6 +16,7 @@ export const ASSET_KEYS = {
   CLICK_TO_START: 'CLICK_TO_START',
   CARDS: 'CARDS',
   TABLE_BACKGROUND: 'TABLE_BACKGROUND',
+  PARTICLE: 'PARTICLE',
 } as const;
 
 export const AUDIO_KEYS = {
