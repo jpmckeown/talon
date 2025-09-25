@@ -4,20 +4,19 @@ import os
 
 def create_blank_cards_template():
     """make deck of blank playing cards at 56 by 78 pixels per card"""
-    card_width = 56
-    card_height = 78
+    scale = 4
+    card_width = 56 * scale
+    card_height = 78 * scale
     cards_across = 3
     cards_down = 19
     border_size = 0
-    card_spacing = 1  # spacing between card frames
+    card_spacing = 1 * scale  # spacing between card frames
     
     # calculate total image size
-    total_width = cards_across * card_width + card_spacing * (cards_across + 1) + (cards_across - 1)
-    total_height = cards_down * card_height + card_spacing * (cards_down + 1) + (cards_down - 1)
-    # total_width = cards_across * card_width + card_spacing * (cards_across + 1)
-    # total_height = cards_down * card_height + card_spacing * (cards_down + 1)
-    # total_width = border_size * 2 + cards_across * card_width + card_spacing * (cards_across - 1)
-    # total_height = border_size * 2 + cards_down * card_height + card_spacing * (cards_down - 1)
+    total_width = cards_across * card_width + (cards_across + 1) * card_spacing
+    total_height = cards_down * card_height + (cards_down + 1) * card_spacing
+    # total_width = cards_across * card_width + card_spacing * (cards_across + 1) + (cards_across - 1)
+    # total_height = cards_down * card_height + card_spacing * (cards_down + 1) + (cards_down - 1)
     
     print(f"Making blank cards template: {total_width}x{total_height}px")
     print(f"Card size: {card_width}x{card_height}px")
@@ -28,7 +27,7 @@ def create_blank_cards_template():
     
     # card settings
     fill_colour = (255, 250, 240, 255)  # cream white
-    corner_radius = 7  # rounded corners
+    corner_radius = 7 * scale # rounded corners
 
     ## border essential when cards are stacked or otherwise overlap.
     outline_colour = (0, 0, 0, 255)  # black
@@ -38,15 +37,17 @@ def create_blank_cards_template():
     for row in range(cards_down):
         for col in range(cards_across):
           # calculate card position
-          x = card_spacing + col * (card_width + card_spacing + 1)
-          y = card_spacing + row * (card_height + card_spacing + 1)
+          x = card_spacing + col * (card_width + card_spacing)
+          y = card_spacing + row * (card_height + card_spacing)
+          # x = card_spacing + col * (card_width + card_spacing + 1*scale)
+          # y = card_spacing + row * (card_height + card_spacing + 1*scale)
             
           # draw rounded rectangle for card - outline and fill
           draw_rounded_rectangle(
                           draw, 
                           x, y, 
-                          x + card_width - 1, 
-                          y + card_height -1,
+                          x + card_width - 1,   #1*scale, 
+                          y + card_height - 1,   #1*scale,
                           corner_radius,
                           fill_colour,
                           outline_colour,
@@ -54,7 +55,8 @@ def create_blank_cards_template():
                       )
     
     # save the blank template
-    output_path = "dev/art/cards_blank_56x78_corner-7_edge-0.png"
+    output_path = "dev/art/cards_blank_56x78_corner-7_edge-0_scale-4.png"
+    # output_path = "dev/art/cards_blank_56x78_corner-7_edge-0.png"
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     img.save(output_path)
     print(f"Saved blank cards template at: {output_path}")

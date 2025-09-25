@@ -4,7 +4,7 @@ import { TitleScene } from './scenes/title-scene';
 import { GameScene } from './scenes/game-scene';
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
-  type: Phaser.WEBGL,
+  type: Phaser.AUTO,
   pixelArt: true,
   roundPixels: true,
   antialias: false,

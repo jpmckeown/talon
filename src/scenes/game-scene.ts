@@ -6,10 +6,10 @@ import { FoundationPile } from '../lib/foundation-pile';
 import { Effects } from '../lib/effects';
 
 // scale factor for card image game objects
-const SCALE = 1;
+const SCALE = 1; //0.25;
 
 // vertical gap between stacked cards i.e. in tableau
-const STACK_Y_GAP = 23;
+const STACK_Y_GAP = 22;
 
 // horizontal random shift to make tableau less precise
 const maxShiftX = 0;
@@ -219,6 +219,7 @@ export class GameScene extends Phaser.Scene {
       .image(x, y, ASSET_KEYS.CARDS, CARD_BACK_FRAME)
       .setOrigin(0)
       .setInteractive({ draggable: draggable })
+      .setScale(SCALE)
       .setData({
         x,
         y,
