@@ -6,6 +6,7 @@ import { FoundationPile } from '../lib/foundation-pile';
 import { Effects } from '../lib/effects';
 
 // scale factor for card image game objects // not used
+const OBJECT_SCALE = 1;
 
 // vertical gap between stacked cards i.e. in tableau
 const STACK_Y_GAP = 28 * UI_CONFIG.scale;
@@ -20,12 +21,12 @@ const CARD_BACK_FRAME = 56;
 const SHADOW_REST_X = 0;
 const SHADOW_REST_Y = 0;
 const SHADOW_REST_INTENSITY = 0;
-const SHADOW_DRAG_X = -4 * UI_CONFIG.scale;
-const SHADOW_DRAG_Y = -6 * UI_CONFIG.scale;
+const SHADOW_DRAG_X = -4;
+const SHADOW_DRAG_Y = -6;
 const SHADOW_DRAG_INTENSITY = 0.9;
 
 // x & y positions of the 4 foundation piles
-const FOUNDATION_PILE_X_POSITIONS = [360, 425, 490, 555];
+const FOUNDATION_PILE_X_POSITIONS = [360* UI_CONFIG.scale, 425* UI_CONFIG.scale, 490* UI_CONFIG.scale, 555* UI_CONFIG.scale];
 const FOUNDATION_PILE_Y_POSITION = 5 * UI_CONFIG.scale;
 // x & y position of the Talon or discard pile
 const DISCARD_PILE_X_POSITION = 85 * UI_CONFIG.scale;
@@ -223,6 +224,7 @@ export class GameScene extends Phaser.Scene {
       .image(x, y, ASSET_KEYS.CARDS, CARD_BACK_FRAME)
       .setOrigin(0)
       .setInteractive({ draggable: draggable })
+      .setScale(OBJECT_SCALE)
       .setData({
         x,
         y,
@@ -396,7 +398,7 @@ export class GameScene extends Phaser.Scene {
     // drop zone for each tableau pile in the game (the 7 main piles)
     for (let i = 0; i < 7; i += 1) {
       zone = this.add
-        .zone(30 + i * 85*UI_CONFIG.scale, 92*UI_CONFIG.scale, 75.5*UI_CONFIG.scale, 585*UI_CONFIG.scale)
+        .zone(30* UI_CONFIG.scale + i * 85*UI_CONFIG.scale, 92*UI_CONFIG.scale, 75.5*UI_CONFIG.scale, 585*UI_CONFIG.scale)
         .setOrigin(0)
         .setRectangleDropZone(75.5*UI_CONFIG.scale, 585*UI_CONFIG.scale)
         .setData({
@@ -405,7 +407,7 @@ export class GameScene extends Phaser.Scene {
         })
         .setDepth(-1);
       if (UI_CONFIG.showDropZones) {
-        this.add.rectangle(30 + i * 85*UI_CONFIG.scale, 92*UI_CONFIG.scale, zone.width, zone.height, 0xff0000, 0.5).setOrigin(0);
+        this.add.rectangle(30* UI_CONFIG.scale + i * 85*UI_CONFIG.scale, 92*UI_CONFIG.scale, zone.width, zone.height, 0xff0000, 0.5).setOrigin(0);
       }
     }
   }

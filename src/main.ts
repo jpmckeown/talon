@@ -14,13 +14,13 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
     width: 640 * UI_CONFIG.scale,
     height: 480 * UI_CONFIG.scale,
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    // mode: Phaser.Scale.NONE,
-    mode: Phaser.Scale.FIT,
-    min: {
-      width: 640,
-      height: 480
-    },
-    zoom: 1
+    mode: Phaser.Scale.NONE,
+    // mode: Phaser.Scale.FIT,
+    // min: {
+    //   width: 640,
+    //   height: 480
+    // },
+    zoom: 0.5
   },
   backgroundColor: '#387F3C',
   scene: [PreloadScene, TitleScene, GameScene],
