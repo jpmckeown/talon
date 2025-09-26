@@ -14,7 +14,7 @@ export class PreloadScene extends Phaser.Scene {
     this.load.image(ASSET_KEYS.CLICK_TO_START, 'assets/images/clickToStart.png');
 
     // this.load.spritesheet(ASSET_KEYS.CARDS, 'assets/images/cards_edge-0.png', {
-    this.load.spritesheet(ASSET_KEYS.CARDS, 'assets/images/cards_edge-0_alias-4.png', { // 56x78, from 4x blanks
+    this.load.spritesheet(ASSET_KEYS.CARDS, 'assets/images/cards_edge-0-top-1.png', { // 56x78, from 4x blanks
     // this.load.spritesheet(ASSET_KEYS.CARDS, 'assets/images/cards_edge-0_scale-4.png', {
       frameWidth: CARD_WIDTH,
       frameHeight: CARD_HEIGHT,

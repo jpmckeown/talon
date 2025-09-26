@@ -4,7 +4,7 @@ import os
 
 def create_blank_cards_template():
     """make deck of blank playing cards at 56 by 78 pixels per card"""
-    scale = 4
+    scale = 1
     card_width = 56 * scale
     card_height = 78 * scale
     cards_across = 3
@@ -15,8 +15,6 @@ def create_blank_cards_template():
     # calculate total image size
     total_width = cards_across * card_width + (cards_across + 1) * card_spacing
     total_height = cards_down * card_height + (cards_down + 1) * card_spacing
-    # total_width = cards_across * card_width + card_spacing * (cards_across + 1) + (cards_across - 1)
-    # total_height = cards_down * card_height + card_spacing * (cards_down + 1) + (cards_down - 1)
     
     print(f"Making blank cards template: {total_width}x{total_height}px")
     print(f"Card size: {card_width}x{card_height}px")
@@ -39,8 +37,6 @@ def create_blank_cards_template():
           # calculate card position
           x = card_spacing + col * (card_width + card_spacing)
           y = card_spacing + row * (card_height + card_spacing)
-          # x = card_spacing + col * (card_width + card_spacing + 1*scale)
-          # y = card_spacing + row * (card_height + card_spacing + 1*scale)
             
           # draw rounded rectangle for card - outline and fill
           draw_rounded_rectangle(
@@ -53,10 +49,44 @@ def create_blank_cards_template():
                           outline_colour,
                           stroke_width
                       )
+          
+    # after drawing all cards, add top borders
+    for row in range(cards_down):
+        for col in range(cards_across):
+            # calculate card position
+            x = card_spacing + col * (card_width + card_spacing)
+            y = card_spacing + row * (card_height + card_spacing)
+            
+            # draw top border elements
+            border_colour = (0, 0, 0, 100)  # black
+            
+            # top-left corner arc
+            draw.arc(
+                [x, y, x + corner_radius * 2, y + corner_radius * 2],
+                180, 270,
+                fill=border_colour,
+                width=1
+            )
+            
+            # straight line across top (between corners)
+            draw.line(
+                [(x + corner_radius, y), (x + card_width - corner_radius - 1, y)],
+                fill=border_colour,
+                width=1
+            )
+            
+            # top-right corner arc
+            draw.arc(
+                [x + card_width - corner_radius * 2 - 1, y, 
+                x + card_width - 1, y + corner_radius * 2],
+                270, 0,
+                fill=border_colour,
+                width=1
+            )
     
     # save the blank template
-    output_path = "dev/art/cards_blank_56x78_corner-7_edge-0_scale-4.png"
-    # output_path = "dev/art/cards_blank_56x78_corner-7_edge-0.png"
+    #output_path = "dev/art/cards_blank_56x78_corner-7_edge-0_scale-4.png"
+    output_path = "dev/art/cards_blank_56x78_corner-7_edge-0-top-1.png"
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     img.save(output_path)
     print(f"Saved blank cards template at: {output_path}")

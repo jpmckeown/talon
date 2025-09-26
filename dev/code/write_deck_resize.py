@@ -5,7 +5,7 @@ from datetime import datetime
 
 def generate_cards():
     # card dimensions and layout
-    scale = 4
+    scale = 1
     card_width = 56 * scale
     card_height = 78 * scale
     card_spacing = 1 * scale # 0 for tight deck spritesheet
@@ -27,9 +27,11 @@ def generate_cards():
 
     # load blank cards deck image
     # old version had 1-pixel black border on each card
-    input_path = "dev/art/cards_blank_56x78_corner-7_edge-0_scale-4.png"
-    output_path = "public/assets/images/cards_edge-0-top-1_alias-4.png"
-    # output_path = "public/assets/images/cards_edge-0_alias-4.png"
+    # input_path = "dev/art/cards_blank_56x78_corner-7_edge-0_scale-4.png"
+    input_path = "dev/art/cards_blank_56x78_corner-7_edge-0-top-1.png"
+
+    #output_path = "public/assets/images/cards_edge-0-top-1_alias-4.png"
+    output_path = "public/assets/images/cards_edge-0-top-1.png"
 
     # version for 4x big image
     # output_path = "public/assets/images/cards_edge-0_scale-4.png"
@@ -38,9 +40,7 @@ def generate_cards():
         img = Image.open(input_path)
         draw = ImageDraw.Draw(img)
         # font for placeholder text
-        phFont = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 32 * scale)
-        # font for top-left identifier
-        fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 24 * scale)      
+        phFont = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 36 * scale)     
         
         # generate 52 cards (4 suits × 13 values)
         card_position = 0
@@ -70,14 +70,15 @@ def generate_cards():
                 text_width = bbox[2] - bbox[0]
                 text_height = bbox[3] - bbox[1]
 
-                # 1. Colored rectangle (card area minus a white margin)
+                # 1. Colored rectangle (card area minus a white sideMargin)
                 # Placeholder will be replaced by Suit theme art
-                margin = 6 * scale
-                topmargin = 28 * scale # how much space above graphic
-                rect_x1 = x - card_width//2 + margin
-                rect_y1 = y - card_height//2 + topmargin 
-                rect_x2 = x + card_width//2 - margin
-                rect_y2 = y + card_height//2 - margin
+                phMargin = 5 * scale
+                header = 28 * scale # how much space above graphic
+
+                rect_x1 = x - card_width//2 + phMargin
+                rect_y1 = y - card_height//2 + header 
+                rect_x2 = x + card_width//2 - phMargin
+                rect_y2 = y + card_height//2 - phMargin
 
                 # draw.rectangle([rect_x1, rect_y1, rect_x2, rect_y2], fill=colour)
                 graphic_y = rect_y1 + 4 * scale  # start below top area
@@ -92,71 +93,55 @@ def generate_cards():
                 draw.text((text_x, text_y), suitLetter, fill=(255,255,255), font=phFont)
 
                 # 3. Small identifiers visible when card stacked
-                draw.text((xt + 7 * scale, yt + 0 * scale), value, fill=colour, font=fontsmall)
-
-                #4. suit symbol, diamond small in font
-                if (suitLetter == 'd'):
-                  fontSymbol = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 26 * scale)    
+                # font for top-left identifier
+                if (value == 'Q'):
+                  fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 30 * scale)
+                  leftMargin = 4
                 else:
-                  fontSymbol = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 24 * scale)
+                  fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 30 * scale)
+                  leftMargin = 6
 
-                topIndent = -4 * scale
-                rightIndent = 21 * scale
+
+                draw.text((xt + leftMargin * scale, yt - 2 * scale), value, fill=colour, font=fontsmall)
+
+                #4. suit symbol
+                symbolFontSize = 36
+                if (suitLetter == 'h'):
+                  fontSymbol = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", (symbolFontSize-2) * scale)
+                elif (suitLetter == 'c'):
+                  fontSymbol = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", (symbolFontSize-2) * scale)     
+                else:
+                  fontSymbol = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", symbolFontSize * scale)
+
+                topIndent = -7 * scale
+                rightIndent = 24 * scale
 
                 if (suitLetter == 'h'):
                   topIndent = topIndent + 1 * scale
                   rightIndent = rightIndent + 2 * scale
 
                 elif (suitLetter == 'c'):
-                  topIndent = topIndent
-                  rightIndent = rightIndent + 3 * scale
+                  topIndent = topIndent + 1 * scale
+                  rightIndent = rightIndent + 4 * scale
 
                 elif (suitLetter == 'd'):
-                  topIndent = topIndent - 1 * scale
+                  topIndent = topIndent * scale
 
                 draw.text((xt + card_width - rightIndent, yt + topIndent), symbol, fill=colour, font=fontSymbol)
                 
                 card_position += 1
         
-        # backup existing file before saving
-        if os.path.exists(output_path):
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M")
-            backup_path = f"dev/art/archive/cards_{timestamp}.png"
-            shutil.copy2(output_path, backup_path)
-            print(f"Backed up existing cards image to: {backup_path}")
+        # # backup existing file before saving
+        # if os.path.exists(output_path):
+        #     timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+        #     backup_path = f"dev/art/archive/cards_{timestamp}.png"
+        #     shutil.copy2(output_path, backup_path)
+        #     print(f"Backed up existing cards image to: {backup_path}")
 
-        # resize down to 56x78 cards with best quality
-        final_width = img.width // scale
-        final_height = img.height // scale
-        img = img.resize((final_width, final_height), Image.Resampling.LANCZOS)
-
-        # # add top and top-corners edge/border
-        # draw_final = ImageDraw.Draw(img)
-        # corner_radius = 7
-
-        # for card_num in range(57):  # all cards including backs
-        #     row = card_num // cards_across
-        #     col = card_num % cards_across
-            
-        #     card_spacing_final = 1
-        #     card_width_final = 56
-        #     card_height_final = 78
-            
-        #     x = card_spacing_final + col * (card_width_final + card_spacing_final)
-        #     y = card_spacing_final + row * (card_height_final + card_spacing_final)
-            
-        #     # draw rounded border - arc for top left corner
-        #     draw_final.arc([x, y, x + corner_radius*2, y + corner_radius*2], 
-        #                   180, 270, fill=(0, 0, 0, 77), width=1)
-            
-        #     # straight line across top (between corners)
-        #     draw_final.line([(x + corner_radius, y), (x + card_width_final - corner_radius - 1, y)], 
-        #                     fill=(0, 0, 0, 77), width=1)
-            
-        #     # arc for top right corner
-        #     draw_final.arc([x + card_width_final - corner_radius*2 - 1, y, 
-        #                     x + card_width_final - 1, y + corner_radius*2], 
-        #                   270, 0, fill=(0, 0, 0, 77), width=1)
+        # # resize down to 56x78 cards with best quality
+        # final_width = img.width // scale
+        # final_height = img.height // scale
+        # img = img.resize((final_width, final_height), Image.Resampling.LANCZOS)
 
         # save the result
         img.save(output_path)

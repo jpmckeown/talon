@@ -8,7 +8,7 @@ import { Effects } from '../lib/effects';
 // scale factor for card image game objects // not used
 
 // vertical gap between stacked cards i.e. in tableau
-const STACK_Y_GAP = 22 * UI_CONFIG.scale;
+const STACK_Y_GAP = 28 * UI_CONFIG.scale;
 
 // horizontal random shift to make tableau less precise
 const maxShiftX = 0;
@@ -18,11 +18,11 @@ const CARD_BACK_FRAME = 56;
 
 // shadow settings for cards
 const SHADOW_REST_X = 0;
-const SHADOW_REST_Y = +2;
-const SHADOW_REST_INTENSITY = 0.2;
+const SHADOW_REST_Y = 0;
+const SHADOW_REST_INTENSITY = 0;
 const SHADOW_DRAG_X = -4;
-const SHADOW_DRAG_Y = -5;
-const SHADOW_DRAG_INTENSITY = 0.5;
+const SHADOW_DRAG_Y = -6;
+const SHADOW_DRAG_INTENSITY = 0.9;
 
 // x & y positions of the 4 foundation piles
 const FOUNDATION_PILE_X_POSITIONS = [360, 425, 490, 555];
