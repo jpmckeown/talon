@@ -85,10 +85,10 @@ export class Solitaire {
 
     this.#sameColourMoves = CONFIG.sameColourMovesPerGame;
     if (!CONFIG.requireAlternatingColours) {
-      console.log('Alternating colours for tableau stack is not currently enforced.')
+      console.log('Alternating colour for tableau is not currently enforced.')
     }
     else if (this.#sameColourMoves > 0) {
-      console.log(`${this.#sameColourMoves} cheats (play same colour to tableau stack) are available per game.`)
+      console.log(`${this.#sameColourMoves} cheats (play same colour on tableau) available per game.`)
     }
 
     for (let i = 0; i < 7; i += 1) {

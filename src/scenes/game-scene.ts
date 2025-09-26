@@ -69,6 +69,9 @@ export class GameScene extends Phaser.Scene {
   // spawns particle effects during the game
   #fx!: Effects;
 
+  #lastTime: number = 0;
+  #logTimer: number = 0;
+
   constructor() {
     super({ key: SCENE_KEYS.GAME });
   }
@@ -90,6 +93,21 @@ export class GameScene extends Phaser.Scene {
     // setup drop zones for interactions and events for drag
     this.#createDragEvents();
     this.#createDropZones();
+
+    this.#lastTime = 0;
+    this.#logTimer = 0;
+  }
+
+  update(time: number, delta: number) {
+      const frameTime = time - this.#lastTime;
+      this.#lastTime = time;
+      
+      // log every 500ms
+      this.#logTimer += frameTime;
+      if (this.#logTimer > 10000) {
+          console.log('FPS:', this.game.loop.actualFps.toFixed(1));
+          this.#logTimer = 0;
+      }
   }
 
   #scale(value: number): number {
