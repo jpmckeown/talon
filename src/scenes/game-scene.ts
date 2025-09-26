@@ -231,13 +231,9 @@ export class GameScene extends Phaser.Scene {
         cardIndex,
         pileIndex,
       });
-    
-    //   // add top border for stacked card separation
-    // const border = this.#drawCardTopBorder(x, y);
-    // card.setData({ ...card.data.values, borderGraphics: border });
 
-    if (card.preFX) {
-      // // shadow for cards in Tableau or talon (not for drawpile)
+    if (card.preFX && UI_CONFIG.enableShadows) {
+      // shadow for cards in Tableau or talon (not for drawpile)
       // if (draggable || pileIndex !== undefined) {
       // Bugfix: easier to put shadow on all cards as drawpile cards never move anyway
         card.preFX!.addShadow(SHADOW_REST_X, SHADOW_REST_Y, 0.05, 1, 0x000000, 8, SHADOW_REST_INTENSITY);
@@ -616,6 +612,7 @@ export class GameScene extends Phaser.Scene {
 
 
   #updateDraggedCardShadow(gameObject: Phaser.GameObjects.Image, shadowX: number, shadowY: number, intensity: number): void {
+    if (!UI_CONFIG.enableShadows) return;
     if (gameObject.preFX) {
       const shadowFx = gameObject.preFX.list.find(fx => fx.type === 5) as any;
       if (shadowFx) {
@@ -627,6 +624,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   #updateStackedCardsShadow(gameObject: Phaser.GameObjects.Image, shadowX: number, shadowY: number, intensity: number): void {
+    if (!UI_CONFIG.enableShadows) return;
+
     const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
     const cardIndex = gameObject.getData('cardIndex') as number;
     

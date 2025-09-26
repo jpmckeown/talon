@@ -4,6 +4,7 @@ export const UI_CONFIG = {
   skipTitleScene: true,
   // partly transparent red areas show extent of dropzones
   showDropZones: false,
+  enableShadows: false,
 } as const;
 
 export const SCENE_KEYS = {
