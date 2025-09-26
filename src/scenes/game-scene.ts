@@ -301,7 +301,7 @@ export class GameScene extends Phaser.Scene {
       Phaser.Input.Events.DRAG,
       (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image, dragX: number, dragY: number) => {
         gameObject.setPosition(dragX, dragY);
-        gameObject.setDepth(0);
+        // gameObject.setDepth(0);
 
         // if card is part of tableau, need to move all cards that are stacked on top of this card
         const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
@@ -500,6 +500,10 @@ export class GameScene extends Phaser.Scene {
       return;
     }
     this.#tableauContainers[targetTableauPileIndex].setDepth(0);
+    // ensure source container depth is also reset
+    if (tableauPileIndex !== undefined) {
+      this.#tableauContainers[tableauPileIndex].setDepth(0);
+    }
 
     // add single discard pile card to tableau as a new game object
     if (isCardFromDiscardPile) {
