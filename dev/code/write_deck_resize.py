@@ -38,9 +38,9 @@ def generate_cards():
         img = Image.open(input_path)
         draw = ImageDraw.Draw(img)
         # font for placeholder text
-        phFont = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 38 * scale)
+        phFont = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 32 * scale)
         # font for top-left identifier
-        fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 20 * scale)      
+        fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 24 * scale)      
         
         # generate 52 cards (4 suits × 13 values)
         card_position = 0
@@ -72,8 +72,8 @@ def generate_cards():
 
                 # 1. Colored rectangle (card area minus a white margin)
                 # Placeholder will be replaced by Suit theme art
-                margin = 8 * scale
-                topmargin = 22 * scale
+                margin = 6 * scale
+                topmargin = 28 * scale # how much space above graphic
                 rect_x1 = x - card_width//2 + margin
                 rect_y1 = y - card_height//2 + topmargin 
                 rect_x2 = x + card_width//2 - margin
@@ -81,13 +81,13 @@ def generate_cards():
 
                 # draw.rectangle([rect_x1, rect_y1, rect_x2, rect_y2], fill=colour)
                 graphic_y = rect_y1 + 4 * scale  # start below top area
-                graphic_height = (rect_y2 - rect_y1) - 15 * scale # most of the remaining card height
+                # graphic_height = (rect_y2 - rect_y1) - 15 * scale # most of the remaining card height
                 draw.rounded_rectangle([rect_x1, graphic_y, rect_x2, rect_y2], 
                                       radius=9 * scale, fill=colour, outline=colour, width=1)
 
                 # 2. White text super-imposed on colour rectangle
                 text_x = x - text_width // 2
-                text_y = y - text_height // 2 + 4
+                text_y = y - text_height // 2 + 4 * scale
 
                 draw.text((text_x, text_y), suitLetter, fill=(255,255,255), font=phFont)
 
@@ -130,33 +130,33 @@ def generate_cards():
         final_height = img.height // scale
         img = img.resize((final_width, final_height), Image.Resampling.LANCZOS)
 
-        # add top and top-corners edge/border
-        draw_final = ImageDraw.Draw(img)
-        corner_radius = 7
+        # # add top and top-corners edge/border
+        # draw_final = ImageDraw.Draw(img)
+        # corner_radius = 7
 
-        for card_num in range(57):  # all cards including backs
-            row = card_num // cards_across
-            col = card_num % cards_across
+        # for card_num in range(57):  # all cards including backs
+        #     row = card_num // cards_across
+        #     col = card_num % cards_across
             
-            card_spacing_final = 1
-            card_width_final = 56
-            card_height_final = 78
+        #     card_spacing_final = 1
+        #     card_width_final = 56
+        #     card_height_final = 78
             
-            x = card_spacing_final + col * (card_width_final + card_spacing_final)
-            y = card_spacing_final + row * (card_height_final + card_spacing_final)
+        #     x = card_spacing_final + col * (card_width_final + card_spacing_final)
+        #     y = card_spacing_final + row * (card_height_final + card_spacing_final)
             
-            # draw rounded border - arc for top left corner
-            draw_final.arc([x, y, x + corner_radius*2, y + corner_radius*2], 
-                          180, 270, fill=(0, 0, 0, 77), width=1)
+        #     # draw rounded border - arc for top left corner
+        #     draw_final.arc([x, y, x + corner_radius*2, y + corner_radius*2], 
+        #                   180, 270, fill=(0, 0, 0, 77), width=1)
             
-            # straight line across top (between corners)
-            draw_final.line([(x + corner_radius, y), (x + card_width_final - corner_radius - 1, y)], 
-                            fill=(0, 0, 0, 77), width=1)
+        #     # straight line across top (between corners)
+        #     draw_final.line([(x + corner_radius, y), (x + card_width_final - corner_radius - 1, y)], 
+        #                     fill=(0, 0, 0, 77), width=1)
             
-            # arc for top right corner
-            draw_final.arc([x + card_width_final - corner_radius*2 - 1, y, 
-                            x + card_width_final - 1, y + corner_radius*2], 
-                          270, 0, fill=(0, 0, 0, 77), width=1)
+        #     # arc for top right corner
+        #     draw_final.arc([x + card_width_final - corner_radius*2 - 1, y, 
+        #                     x + card_width_final - 1, y + corner_radius*2], 
+        #                   270, 0, fill=(0, 0, 0, 77), width=1)
 
         # save the result
         img.save(output_path)

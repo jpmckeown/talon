@@ -1,8 +1,9 @@
 export const UI_CONFIG = {
+  scale: 1,
   // scene control for developer convenience
   skipTitleScene: true,
   // partly transparent red areas show extent of dropzones
-  showDropZones: false,
+  showDropZones: true,
 } as const;
 
 export const SCENE_KEYS = {
@@ -27,5 +28,8 @@ export const AUDIO_KEYS = {
   GAME_WIN: 'gameWin',
 };
 
-export const CARD_WIDTH = 56;
-export const CARD_HEIGHT = 78;
+export const CARD_WIDTH = 56 * UI_CONFIG.scale;
+export const CARD_HEIGHT = 78 * UI_CONFIG.scale;
+
+export const GAME_WIDTH = 640 * UI_CONFIG.scale;
+export const GAME_HEIGHT = 480 * UI_CONFIG.scale;

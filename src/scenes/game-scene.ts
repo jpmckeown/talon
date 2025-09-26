@@ -1,15 +1,14 @@
 import * as Phaser from 'phaser';
-import { ASSET_KEYS, AUDIO_KEYS, CARD_HEIGHT, CARD_WIDTH, SCENE_KEYS, UI_CONFIG } from './common';
+import { ASSET_KEYS, AUDIO_KEYS, CARD_HEIGHT, CARD_WIDTH, GAME_HEIGHT, GAME_WIDTH, SCENE_KEYS, UI_CONFIG } from './common';
 import { Solitaire } from '../lib/solitaire';
 import { Card } from '../lib/card';
 import { FoundationPile } from '../lib/foundation-pile';
 import { Effects } from '../lib/effects';
 
-// scale factor for card image game objects
-const SCALE = 1; //0.25;
+// scale factor for card image game objects // not used
 
 // vertical gap between stacked cards i.e. in tableau
-const STACK_Y_GAP = 22;
+const STACK_Y_GAP = 22 * UI_CONFIG.scale;
 
 // horizontal random shift to make tableau less precise
 const maxShiftX = 0;
@@ -19,7 +18,7 @@ const CARD_BACK_FRAME = 56;
 
 // shadow settings for cards
 const SHADOW_REST_X = 0;
-const SHADOW_REST_Y = +4;
+const SHADOW_REST_Y = +2;
 const SHADOW_REST_INTENSITY = 0.2;
 const SHADOW_DRAG_X = -4;
 const SHADOW_DRAG_Y = -5;
@@ -27,18 +26,18 @@ const SHADOW_DRAG_INTENSITY = 0.5;
 
 // x & y positions of the 4 foundation piles
 const FOUNDATION_PILE_X_POSITIONS = [360, 425, 490, 555];
-const FOUNDATION_PILE_Y_POSITION = 5;
+const FOUNDATION_PILE_Y_POSITION = 5 * UI_CONFIG.scale;
 // x & y position of the Talon or discard pile
-const DISCARD_PILE_X_POSITION = 85;
-const DISCARD_PILE_Y_POSITION = 5;
+const DISCARD_PILE_X_POSITION = 85 * UI_CONFIG.scale;
+const DISCARD_PILE_Y_POSITION = 5 * UI_CONFIG.scale;
 
-const DRAW_PILE_X_POSITION = 5;
-const DRAW_PILE_Y_POSITION = 5;
-const DRAW_PILE_X_OFFSET = 0;
+const DRAW_PILE_X_POSITION = 5 * UI_CONFIG.scale;
+const DRAW_PILE_Y_POSITION = 5 * UI_CONFIG.scale;
+const DRAW_PILE_X_OFFSET = 0 * UI_CONFIG.scale;
 
 // x & y position of first tableau pile
-const TABLEAU_PILE_X_POSITION = 40;
-const TABLEAU_PILE_Y_POSITION = 92;
+const TABLEAU_PILE_X_POSITION = 40 * UI_CONFIG.scale;
+const TABLEAU_PILE_Y_POSITION = 92 * UI_CONFIG.scale;
 
 // starting frame of each Suit in the spritesheet of cards deck
 const SUIT_FRAMES = {
@@ -92,8 +91,12 @@ export class GameScene extends Phaser.Scene {
     this.#createDropZones();
   }
 
+  #scale(value: number): number {
+    return value * UI_CONFIG.scale;
+  }
+
   #createTableBackground(): void {
-    let bg = this.add.tileSprite(0, 0, 1200, 1200, ASSET_KEYS.TABLE_BACKGROUND);
+    let bg = this.add.tileSprite(0, 0, GAME_WIDTH, GAME_HEIGHT, ASSET_KEYS.TABLE_BACKGROUND);
     bg.setOrigin(0, 0);
   }
 
@@ -109,7 +112,7 @@ export class GameScene extends Phaser.Scene {
 
     // create zone to listen for click events, which triggers the drawing card logic
     const drawZone = this.add
-      .zone(0, 0, CARD_WIDTH * SCALE + 20, CARD_HEIGHT * SCALE + 12)
+      .zone(0, 0, CARD_WIDTH + 20, CARD_HEIGHT + 12)
       .setOrigin(0)
       .setInteractive();
 
@@ -182,7 +185,7 @@ export class GameScene extends Phaser.Scene {
     this.#tableauContainers = [];
 
     this.#solitaire.tableauPiles.forEach((pile, pileIndex) => {
-      const x = TABLEAU_PILE_X_POSITION + pileIndex * 85;
+      const x = TABLEAU_PILE_X_POSITION + pileIndex * 85 * UI_CONFIG.scale;
       const tableauContainer = this.add.container(x, TABLEAU_PILE_Y_POSITION, []);
       this.#tableauContainers.push(tableauContainer);
 
@@ -202,6 +205,7 @@ export class GameScene extends Phaser.Scene {
   #drawCardLocationBox(x: number, y: number): void {
     const graphics = this.add.graphics();
     graphics.lineStyle(2, 0x000000, 0.3);
+    // corner radius = 7
     graphics.strokeRoundedRect(x, y, CARD_WIDTH, CARD_HEIGHT, 7);
     // const box = this.add.rectangle(x, y, CARD_WIDTH, CARD_HEIGHT).setOrigin(0)
     // box.setStrokeStyle(1, 0x000000, 0.5);
@@ -219,7 +223,6 @@ export class GameScene extends Phaser.Scene {
       .image(x, y, ASSET_KEYS.CARDS, CARD_BACK_FRAME)
       .setOrigin(0)
       .setInteractive({ draggable: draggable })
-      .setScale(SCALE)
       .setData({
         x,
         y,
@@ -242,18 +245,18 @@ export class GameScene extends Phaser.Scene {
   }
 
 
-  #drawCardTopBorder(x: number, y: number): Phaser.GameObjects.Graphics {
-    const border = this.add.graphics();
-    border.lineStyle(1, 0x000000, 0.3);
-    border.beginPath();
-    border.arc(x + 7, y + 7, 7, Math.PI, Math.PI * 1.5);
-    border.arc(x + CARD_WIDTH - 7, y + 7, 7, Math.PI * 1.5, 0);
-    border.lineTo(x + CARD_WIDTH, y);
-    border.lineTo(x, y);
-    border.closePath();
-    border.strokePath();
-    return border;
-  }
+  // #drawCardTopBorder(x: number, y: number): Phaser.GameObjects.Graphics {
+  //   const border = this.add.graphics();
+  //   border.lineStyle(1, 0x000000, 0.3);
+  //   border.beginPath();
+  //   border.arc(x + 7, y + 7, 7, Math.PI, Math.PI * 1.5);
+  //   border.arc(x + CARD_WIDTH - 7, y + 7, 7, Math.PI * 1.5, 0);
+  //   border.lineTo(x + CARD_WIDTH, y);
+  //   border.lineTo(x, y);
+  //   border.closePath();
+  //   border.strokePath();
+  //   return border;
+  // }
 
 
   #createDragEvents(): void {
@@ -376,28 +379,33 @@ export class GameScene extends Phaser.Scene {
   }
 
   #createDropZones(): void {
-    // create drop zone for foundation piles, in the game we will have 1 drop zone and then automatically place the card in the pile it belongs
-    // for each drop zone, we add custom data so when the `drag` event listener is invoked, we can run specific logic to that zone type
-    let zone = this.add.zone(350, 0, 270, 85).setOrigin(0).setRectangleDropZone(270, 85).setData({
+    // Foundation (F) and  Tableau (T) are 2 types of dropzone: for each zone add custom data so when the `drag` event listener is invoked can run specific logic for that zone type.
+
+    // One drop zone for all foundation piles (game automatically places the card in correct pile)
+    const F_zone_topleft = this.#scale(350);
+    const F_zone_width = this.#scale(270);
+    const F_zone_height = this.#scale(85);
+
+    let zone = this.add.zone(F_zone_topleft, 0, F_zone_width, F_zone_height).setOrigin(0).setRectangleDropZone(F_zone_width, F_zone_height).setData({
       zoneType: ZONE_TYPE.FOUNDATION,
     });
     if (UI_CONFIG.showDropZones) {
-      this.add.rectangle(350, 0, zone.width, zone.height, 0xff0000, 0.2).setOrigin(0);
+      this.add.rectangle(F_zone_topleft, 0, zone.width, zone.height, 0xff0000, 0.2).setOrigin(0);
     }
 
     // drop zone for each tableau pile in the game (the 7 main piles)
     for (let i = 0; i < 7; i += 1) {
       zone = this.add
-        .zone(30 + i * 85, 92, 75.5, 585)
+        .zone(30 + i * 85*UI_CONFIG.scale, 92*UI_CONFIG.scale, 75.5*UI_CONFIG.scale, 585*UI_CONFIG.scale)
         .setOrigin(0)
-        .setRectangleDropZone(75.5, 585)
+        .setRectangleDropZone(75.5*UI_CONFIG.scale, 585*UI_CONFIG.scale)
         .setData({
           zoneType: ZONE_TYPE.TABLEAU,
           tableauIndex: i,
         })
         .setDepth(-1);
       if (UI_CONFIG.showDropZones) {
-        this.add.rectangle(30 + i * 85, 92, zone.width, zone.height, 0xff0000, 0.5).setOrigin(0);
+        this.add.rectangle(30 + i * 85*UI_CONFIG.scale, 92*UI_CONFIG.scale, zone.width, zone.height, 0xff0000, 0.5).setOrigin(0);
       }
     }
   }
@@ -441,13 +449,6 @@ export class GameScene extends Phaser.Scene {
       isValidMove = this.#solitaire.playDiscardPileCardToFoundation();
       isCardFromDiscardPile = true;
     }
-    // // Below fails to stop a stack of Tableau cards trying to drop
-    // if (tableauPileIndex === undefined) {
-    //   isValidMove = this.#solitaire.playDiscardPileCardToFoundation();
-    //   isCardFromDiscardPile = true;
-    // } else {
-    //   isValidMove = this.#solitaire.moveTableauCardToFoundation(tableauPileIndex);
-    // }
 
     // if this is not a valid move, we don't need to update anything on the card since the `dragend` event handler will move the card back to the original location
     if (!isValidMove) {
@@ -609,53 +610,34 @@ export class GameScene extends Phaser.Scene {
 
 
   #updateDraggedCardShadow(gameObject: Phaser.GameObjects.Image, shadowX: number, shadowY: number, intensity: number): void {
-  if (gameObject.preFX) {
-    const shadowFx = gameObject.preFX.list.find(fx => fx.type === 5) as any;
-    if (shadowFx) {
-      shadowFx.x = shadowX;
-      shadowFx.y = shadowY;
-      shadowFx.intensity = intensity;
+    if (gameObject.preFX) {
+      const shadowFx = gameObject.preFX.list.find(fx => fx.type === 5) as any;
+      if (shadowFx) {
+        shadowFx.x = shadowX;
+        shadowFx.y = shadowY;
+        shadowFx.intensity = intensity;
+      }
     }
   }
-}
 
-
-#updateStackedCardsShadow(gameObject: Phaser.GameObjects.Image, shadowX: number, shadowY: number, intensity: number): void {
-  const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
-  const cardIndex = gameObject.getData('cardIndex') as number;
-  
-  if (tableauPileIndex !== undefined) {
-    const numberOfCardsToMove = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex, cardIndex);
-    for (let i = 1; i <= numberOfCardsToMove; i += 1) {
-      const stackedCard = this.#tableauContainers[tableauPileIndex].getAt<Phaser.GameObjects.Image>(cardIndex + i);
-      if (stackedCard.preFX) {
-        const stackedShadowFx = stackedCard.preFX.list.find(fx => fx.type === 5) as any;
-        if (stackedShadowFx) {
-          stackedShadowFx.x = shadowX;
-          stackedShadowFx.y = shadowY;
-          stackedShadowFx.intensity = intensity;
+  #updateStackedCardsShadow(gameObject: Phaser.GameObjects.Image, shadowX: number, shadowY: number, intensity: number): void {
+    const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
+    const cardIndex = gameObject.getData('cardIndex') as number;
+    
+    if (tableauPileIndex !== undefined) {
+      const numberOfCardsToMove = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex, cardIndex);
+      for (let i = 1; i <= numberOfCardsToMove; i += 1) {
+        const stackedCard = this.#tableauContainers[tableauPileIndex].getAt<Phaser.GameObjects.Image>(cardIndex + i);
+        if (stackedCard.preFX) {
+          const stackedShadowFx = stackedCard.preFX.list.find(fx => fx.type === 5) as any;
+          if (stackedShadowFx) {
+            stackedShadowFx.x = shadowX;
+            stackedShadowFx.y = shadowY;
+            stackedShadowFx.intensity = intensity;
+          }
         }
       }
     }
   }
-}
-  // #updateStackedCardsShadow(gameObject: Phaser.GameObjects.Image, shadowX: number, shadowY: number, intensity: number): void {
-  //   const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
-  //   const cardIndex = gameObject.getData('cardIndex') as number;
-    
-  //   if (tableauPileIndex !== undefined) {
-  //     const numberOfCardsToMove = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex, cardIndex);
-  //     for (let i = 0; i <= numberOfCardsToMove; i += 1) {
-  //       const stackedCard = this.#tableauContainers[tableauPileIndex].getAt<Phaser.GameObjects.Image>(cardIndex + i);
-  //       if (stackedCard.preFX) {
-  //         const stackedShadowFx = stackedCard.preFX.list.find(fx => fx.type === 5) as any;
-  //         if (stackedShadowFx) {
-  //           stackedShadowFx.x = shadowX;
-  //           stackedShadowFx.y = shadowY;
-  //           stackedShadowFx.intensity = intensity;
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
+
 }

@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import { PreloadScene } from './scenes/preload-scene';
 import { TitleScene } from './scenes/title-scene';
 import { GameScene } from './scenes/game-scene';
+import { UI_CONFIG } from './scenes/common';
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -10,16 +11,16 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   antialias: false,
   scale: {
     parent: 'game-container',
-    width: 640,
-    height: 480,
+    width: 640 * UI_CONFIG.scale,
+    height: 480 * UI_CONFIG.scale,
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    mode: Phaser.Scale.NONE,
-    // mode: Phaser.Scale.FIT,
-    // min: {
-    //   width: 480,
-    //   height: 360
-    // },
-    // zoom: 1
+    // mode: Phaser.Scale.NONE,
+    mode: Phaser.Scale.FIT,
+    min: {
+      width: 480,
+      height: 360
+    },
+    zoom: 1
   },
   backgroundColor: '#387F3C',
   scene: [PreloadScene, TitleScene, GameScene],
