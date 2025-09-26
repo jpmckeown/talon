@@ -5,7 +5,7 @@ from datetime import datetime
 
 def generate_cards():
     # card dimensions and layout
-    scale = 1
+    scale = 2
     card_width = 56 * scale
     card_height = 78 * scale
     card_spacing = 1 * scale # 0 for tight deck spritesheet
@@ -28,10 +28,10 @@ def generate_cards():
     # load blank cards deck image
     # old version had 1-pixel black border on each card
     # input_path = "dev/art/cards_blank_56x78_corner-7_edge-0_scale-4.png"
-    input_path = "dev/art/cards_blank_56x78_corner-7_edge-0-top-1.png"
+    input_path = "dev/art/cards_blank_56x78_corner-7_edge-0-top-1_scale-2.png"
 
     #output_path = "public/assets/images/cards_edge-0-top-1_alias-4.png"
-    output_path = "public/assets/images/cards_edge-0-top-1.png"
+    output_path = "public/assets/images/cards_edge-0-top-1_scale-2.png"
 
     # version for 4x big image
     # output_path = "public/assets/images/cards_edge-0_scale-4.png"
@@ -125,7 +125,7 @@ def generate_cards():
                   rightIndent = rightIndent + 4 * scale
 
                 elif (suitLetter == 'd'):
-                  topIndent = topIndent * scale
+                  topIndent = topIndent + (0*scale)
 
                 draw.text((xt + card_width - rightIndent, yt + topIndent), symbol, fill=colour, font=fontSymbol)
                 

@@ -4,7 +4,7 @@ import os
 
 def create_blank_cards_template():
     """make deck of blank playing cards at 56 by 78 pixels per card"""
-    scale = 1
+    scale = 2
     card_width = 56 * scale
     card_height = 78 * scale
     cards_across = 3
@@ -57,7 +57,7 @@ def create_blank_cards_template():
             x = card_spacing + col * (card_width + card_spacing)
             y = card_spacing + row * (card_height + card_spacing)
             
-            # draw top border elements
+            border_size = 2
             border_colour = (0, 0, 0, 100)  # black
             
             # top-left corner arc
@@ -65,14 +65,14 @@ def create_blank_cards_template():
                 [x, y, x + corner_radius * 2, y + corner_radius * 2],
                 180, 270,
                 fill=border_colour,
-                width=1
+                width=border_size
             )
             
             # straight line across top (between corners)
             draw.line(
                 [(x + corner_radius, y), (x + card_width - corner_radius - 1, y)],
                 fill=border_colour,
-                width=1
+                width=border_size
             )
             
             # top-right corner arc
@@ -81,12 +81,12 @@ def create_blank_cards_template():
                 x + card_width - 1, y + corner_radius * 2],
                 270, 0,
                 fill=border_colour,
-                width=1
+                width=border_size
             )
     
     # save the blank template
     #output_path = "dev/art/cards_blank_56x78_corner-7_edge-0_scale-4.png"
-    output_path = "dev/art/cards_blank_56x78_corner-7_edge-0-top-1.png"
+    output_path = "dev/art/cards_blank_56x78_corner-7_edge-0-top-1_scale-2.png"
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     img.save(output_path)
     print(f"Saved blank cards template at: {output_path}")

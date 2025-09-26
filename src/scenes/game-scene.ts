@@ -20,8 +20,8 @@ const CARD_BACK_FRAME = 56;
 const SHADOW_REST_X = 0;
 const SHADOW_REST_Y = 0;
 const SHADOW_REST_INTENSITY = 0;
-const SHADOW_DRAG_X = -4;
-const SHADOW_DRAG_Y = -6;
+const SHADOW_DRAG_X = -4 * UI_CONFIG.scale;
+const SHADOW_DRAG_Y = -6 * UI_CONFIG.scale;
 const SHADOW_DRAG_INTENSITY = 0.9;
 
 // x & y positions of the 4 foundation piles
