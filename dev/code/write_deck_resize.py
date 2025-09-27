@@ -122,7 +122,10 @@ def generate_cards():
 
                 elif (suitLetter == 'c'):
                   topIndent = topIndent + 1 * scale
-                  rightIndent = rightIndent + 4 * scale
+                  rightIndent = rightIndent + 3 * scale
+
+                elif (suitLetter == 's'):
+                  topIndent = topIndent + (-1*scale)
 
                 elif (suitLetter == 'd'):
                   topIndent = topIndent + (0*scale)

@@ -11,6 +11,9 @@ const OBJECT_SCALE = 1;
 // vertical gap between stacked cards i.e. in tableau
 const STACK_Y_GAP = 28 * UI_CONFIG.scale;
 
+// corner of card radius pixels
+const CARD_RADIUS = 7 * UI_CONFIG.scale;
+
 // horizontal random shift to make tableau less precise
 const maxShiftX = 0;
 
@@ -222,12 +225,10 @@ export class GameScene extends Phaser.Scene {
 
 
   #drawCardLocationBox(x: number, y: number): void {
+    // using grapics instead of rectangle GO because in Phaser 3.90 graphics offers rounded corners. 
     const graphics = this.add.graphics();
-    graphics.lineStyle(2, 0x000000, 0.3);
-    // corner radius = 7
-    graphics.strokeRoundedRect(x, y, CARD_WIDTH, CARD_HEIGHT, 7);
-    // const box = this.add.rectangle(x, y, CARD_WIDTH, CARD_HEIGHT).setOrigin(0)
-    // box.setStrokeStyle(1, 0x000000, 0.5);
+    graphics.lineStyle(2, 0x000000, 0.5);
+    graphics.strokeRoundedRect(x, y, CARD_WIDTH, CARD_HEIGHT, CARD_RADIUS);
   }
 
 
@@ -261,20 +262,6 @@ export class GameScene extends Phaser.Scene {
   }
 
 
-  // #drawCardTopBorder(x: number, y: number): Phaser.GameObjects.Graphics {
-  //   const border = this.add.graphics();
-  //   border.lineStyle(1, 0x000000, 0.3);
-  //   border.beginPath();
-  //   border.arc(x + 7, y + 7, 7, Math.PI, Math.PI * 1.5);
-  //   border.arc(x + CARD_WIDTH - 7, y + 7, 7, Math.PI * 1.5, 0);
-  //   border.lineTo(x + CARD_WIDTH, y);
-  //   border.lineTo(x, y);
-  //   border.closePath();
-  //   border.strokePath();
-  //   return border;
-  // }
-
-
   #createDragEvents(): void {
     this.#createDragStartEventListener();
     this.#createOnDragEventListener();
@@ -297,8 +284,8 @@ export class GameScene extends Phaser.Scene {
         } else {
           gameObject.setDepth(2);
         }
-        // // update card objects alpha so we know which card is actively being dragged
-        // gameObject.setAlpha(0.8);
+        // update card alpha to show which card is being dragged
+        gameObject.setAlpha(0.8);
 
         // display shadow while dragging card
         this.#updateDraggedCardShadow(gameObject, SHADOW_DRAG_X, SHADOW_DRAG_Y, SHADOW_DRAG_INTENSITY);
@@ -356,7 +343,7 @@ export class GameScene extends Phaser.Scene {
         // if game object was not destroyed, still active, we need to update that GO's data to match where card was placed
         if (gameObject.active) {
           gameObject.setPosition(gameObject.getData('x') as number, gameObject.getData('y') as number);
-          // reset card game object's alpha since we are done moving the object
+          // reset card GO alpha since we are done moving it
           gameObject.setAlpha(1);
 
           // if card is part of a tableau, also move all the cards that are stacked on top of this card back to original location
