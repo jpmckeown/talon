@@ -35,7 +35,7 @@ export class Effects {
 
     // emit a burst of particles
     poof(x:number,y:number) {
-        console.log("effects creating a poof at "+x+","+y);
+        //console.log("effects creating a poof at "+x+","+y);
         if (!this.poofEmitter) return;
         let particleCount = 100;
         
@@ -51,11 +51,10 @@ export class Effects {
                 px = Math.round(x + (Math.random()*CARD_WIDTH));
                 py = Math.round(y + (Math.random()<0.5?0:CARD_HEIGHT));
             }
-            console.log(px+","+py);
+            // console.log(px+","+py);
             this.poofEmitter.explode(1,px,py);
         }
     }
 
 } // end Effects class
-
 

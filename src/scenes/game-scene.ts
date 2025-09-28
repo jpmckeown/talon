@@ -107,7 +107,7 @@ export class GameScene extends Phaser.Scene {
       
       // log every 500ms
       this.#logTimer += frameTime;
-      if (this.#logTimer > 10000) {
+      if (this.#logTimer > 50000) {
           console.log('FPS:', this.game.loop.actualFps.toFixed(1));
           this.#logTimer = 0;
       }
@@ -518,6 +518,11 @@ export class GameScene extends Phaser.Scene {
       );
       card.setFrame(gameObject.frame);
       this.#tableauContainers[targetTableauPileIndex].add(card);
+
+      const px = horizontalShift + this.#tableauContainers[targetTableauPileIndex].x;
+      const py = originalTargetPileSize * STACK_Y_GAP + this.#tableauContainers[targetTableauPileIndex].y;
+      this.#fx.poof(px, py);
+      
       // update the remaining cards in discard pile
       this.#updateCardGameObjectsInDiscardPile();
       return;

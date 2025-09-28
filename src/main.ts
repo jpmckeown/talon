@@ -6,9 +6,9 @@ import { UI_CONFIG } from './scenes/common';
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  pixelArt: true,
+  pixelArt: false,
   roundPixels: true,
-  antialias: false,
+  antialias: true,
   scale: {
     parent: 'game-container',
     width: 640 * UI_CONFIG.scale,
