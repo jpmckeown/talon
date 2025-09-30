@@ -109,6 +109,10 @@ export class GameScene extends Phaser.Scene {
     this.input.keyboard!.on('keydown-M', () => {
       this.scene.start(SCENE_KEYS.TITLE);
     });
+
+    this.input.keyboard!.on('keydown-Q', () => {
+      this.quitAndSaveScore();
+    });
   }
 
   update(time: number, delta: number) {
@@ -135,6 +139,20 @@ export class GameScene extends Phaser.Scene {
       stroke: '#000000',
       strokeThickness: 2
     }).setOrigin(0.5);
+  }
+
+  quitAndSaveScore(): void {
+    const highScores = JSON.parse(localStorage.getItem('solitaireHighScores') || '[]') as number[];
+    
+    highScores.push(this.score);
+    highScores.sort((a, b) => b - a); // highest first
+    highScores.splice(7); // keep only top 7
+
+    localStorage.setItem('solitaireHighScores', JSON.stringify(highScores));  
+    console.log(`Score: ${this.score}, Top scores: ${highScores.join(', ')}`);
+
+    this.score = 0;
+    this.scene.start(SCENE_KEYS.TITLE);
   }
 
   resetScore(): void {
