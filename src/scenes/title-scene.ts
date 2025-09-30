@@ -36,5 +36,9 @@ export class TitleScene extends Phaser.Scene {
     //     this.scene.start(SCENE_KEYS.GAME);
     //   });
     });
+
+    this.input.keyboard!.on('keydown-S', () => {
+      this.scene.start(SCENE_KEYS.SCORES);
+    });
   }
 }

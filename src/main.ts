@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import { PreloadScene } from './scenes/preload-scene';
 import { TitleScene } from './scenes/title-scene';
 import { GameScene } from './scenes/game-scene';
+import { ScoreScene } from './scenes/scores-scene';
 import { UI_CONFIG } from './scenes/common';
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -23,7 +24,7 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
     zoom: 1
   },
   backgroundColor: '#387F3C',
-  scene: [PreloadScene, TitleScene, GameScene],
+  scene: [PreloadScene, TitleScene, GameScene, ScoreScene],
 };
 
 window.onload = () => {

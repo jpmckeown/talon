@@ -11,6 +11,7 @@ export const SCENE_KEYS = {
   PRELOAD: 'PRELOAD',
   TITLE: 'TITLE',
   GAME: 'GAME',
+  SCORES: 'SCORE',
 } as const;
 
 export const ASSET_KEYS = {
