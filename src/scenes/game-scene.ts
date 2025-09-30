@@ -105,6 +105,10 @@ export class GameScene extends Phaser.Scene {
     this.#logTimer = 0;
 
     this.makeScore();
+
+    this.input.keyboard!.on('keydown-M', () => {
+      this.scene.start(SCENE_KEYS.TITLE);
+    });
   }
 
   update(time: number, delta: number) {
