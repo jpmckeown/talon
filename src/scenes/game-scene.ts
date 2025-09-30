@@ -76,6 +76,9 @@ export class GameScene extends Phaser.Scene {
   #lastTime: number = 0;
   #logTimer: number = 0;
 
+  score: number = 0;
+  scoreText!: Phaser.GameObjects.Text;
+
   constructor() {
     super({ key: SCENE_KEYS.GAME });
   }
@@ -100,6 +103,8 @@ export class GameScene extends Phaser.Scene {
 
     this.#lastTime = 0;
     this.#logTimer = 0;
+
+    this.makeScore();
   }
 
   update(time: number, delta: number) {
@@ -113,6 +118,28 @@ export class GameScene extends Phaser.Scene {
           this.#logTimer = 0;
       }
   }
+
+
+  makeScore(){
+    // position between talon/discard pile and leftmost foundation pile
+    const x = (DISCARD_PILE_X_POSITION + CARD_WIDTH + FOUNDATION_PILE_X_POSITIONS[0]) / 2;
+    const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT / 2;
+    
+    this.scoreText = this.add.text(x, y, 'Score 0', {
+      fontSize: `${24 * UI_CONFIG.scale}px`,
+      color: '#ffffff',
+      stroke: '#000000',
+      strokeThickness: 2
+    }).setOrigin(0.5);
+  }
+
+  resetScore(): void {
+    this.score = 0;
+    if (this.scoreText) {
+      this.scoreText.setText('Score 0');
+    }
+  }
+
 
   #scale(value: number): number {
     return value * UI_CONFIG.scale;
@@ -474,6 +501,9 @@ export class GameScene extends Phaser.Scene {
     }
     // update our phaser game objects
     this.#updateFoundationPiles();
+
+    this.score += 1;
+    this.scoreText.setText(`Score ${this.score}`);
   }
 
   #handleMoveCardToTableau(gameObject: Phaser.GameObjects.Image, targetTableauPileIndex: number): void {
