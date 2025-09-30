@@ -6,6 +6,9 @@ export const CONFIG = {
 
   // player options
   allowRevealOnGiveUp: true,
+
+  // UI constraints
+  maxTableauStack: 11,
 } as const;
 
 export type CardSuit = keyof typeof CARD_SUIT;

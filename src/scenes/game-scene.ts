@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { ASSET_KEYS, AUDIO_KEYS, CARD_HEIGHT, CARD_WIDTH, GAME_HEIGHT, GAME_WIDTH, SCENE_KEYS, UI_CONFIG } from './common';
+import { CONFIG } from '../lib/common';
 import { Solitaire } from '../lib/solitaire';
 import { Card } from '../lib/card';
 import { FoundationPile } from '../lib/foundation-pile';
@@ -479,12 +480,24 @@ export class GameScene extends Phaser.Scene {
     let isValidMove = false;
     let isCardFromDiscardPile = false;
 
-    // store reference to the original size of the tableau pile so we know were to place game object
+    // get original size of Tableau pile: enables check on length limit; and where to put card(s)
     const originalTargetPileSize = this.#tableauContainers[targetTableauPileIndex].length;
 
     // check if card is from discard pile or tableau pile based on the pileIndex in the data manager
     const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
     const tableauCardIndex = gameObject.getData('cardIndex') as number;
+
+    let quantityCardsMoving = 1;
+    if (tableauPileIndex !== undefined) {
+      quantityCardsMoving = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex, tableauCardIndex) + 1;
+    }
+    
+    // check target tableau stack length limit before attempting move
+    if (originalTargetPileSize + quantityCardsMoving > CONFIG.maxTableauStack) {
+      console.log(`Sorry, moving ${quantityCardsMoving} card(s) to tableau pile ${targetTableauPileIndex}: would exceed stack length limit of ${CONFIG.maxTableauStack} cards`);
+      return;
+    }
+
     if (tableauPileIndex === undefined) {
       isValidMove = this.#solitaire.playDiscardPileCardToTableau(targetTableauPileIndex);
       isCardFromDiscardPile = true;
