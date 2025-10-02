@@ -24,17 +24,21 @@ export class TitleScene extends Phaser.Scene {
       yoyo: true,
     });
 
+    const tutorialContent = [
+      "Draw new card by clicking top-left of screen.",
+      "Drag card to any tableau, from another tableau stack or from draw.", 
+      "Tableau allows card with next number down and opposite colour.",
+      "Foundation piles top-right, one for each suit: begin with Ace.",
+      "Score by adding cards to foundation and win by completing 4 suits."
+    ];
+
+    this.add.text(100, 400, tutorialContent, { fontFamily: 'Arial', fontSize: 28, color: '#ffffff', lineSpacing: 32, align: 'left' })
+
     this.input.once(Phaser.Input.Events.POINTER_DOWN, () => {
       this.cameras.main.fadeOut(50, 0, 0, 0);
       this.cameras.main.once('camerafadeoutcomplete', () => {
         this.scene.start(SCENE_KEYS.GAME);
       });
-      // this.cameras.main.fadeOut(1000, 0, 0, 0, (camera, progress: number) => {
-      //   if (progress !== 1) {
-      //     return;
-      //   }
-    //     this.scene.start(SCENE_KEYS.GAME);
-    //   });
     });
 
     this.input.keyboard!.on('keydown-S', () => {
