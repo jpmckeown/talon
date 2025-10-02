@@ -23,8 +23,10 @@ export class PreloadScene extends Phaser.Scene {
       margin: 1 * UI_CONFIG.scale,
     });
     
-    this.load.audio(AUDIO_KEYS.DRAW_CARD, 'assets/audio/placeholder.ogg');
-    this.load.audio(AUDIO_KEYS.FOUNDATION_ADD, 'assets/audio/placeholder.ogg');
+    this.load.audio(AUDIO_KEYS.DRAW_CARD, 'assets/audio/card-pick-up.ogg');
+    this.load.audio(AUDIO_KEYS.FOUNDATION_ADD, 'assets/audio/card-put-down.ogg');
+    this.load.audio(AUDIO_KEYS.PLACE_CARD, 'assets/audio/card-put-down.ogg');
+    this.load.audio(AUDIO_KEYS.SHUFFLE_DECK, 'assets/audio/card-shuffle.ogg');
 
   }
 

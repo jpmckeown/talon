@@ -113,6 +113,12 @@ export class GameScene extends Phaser.Scene {
     this.input.keyboard!.on('keydown-Q', () => {
       this.quitAndSaveScore();
     });
+
+    // game is starting so play an intro sound
+    // if this seems to play too late, it is because
+    // phaser defers sounds until after the first user input
+    // due to browser restrictions against autoplay
+    this.sound.play(AUDIO_KEYS.SHUFFLE_DECK, { volume: 1 });
   }
 
   update(time: number, delta: number) {
@@ -206,7 +212,7 @@ export class GameScene extends Phaser.Scene {
 
       // reaching here means cards exist in draw pile
       this.#solitaire.drawCard();
-      this.sound.play(AUDIO_KEYS.DRAW_CARD, { volume: 0.03 });
+      this.sound.play(AUDIO_KEYS.DRAW_CARD, { volume: 1 });
 
       // update shown cards in draw pile, based on number of cards in pile
       this.#showCardsInDrawPile();
@@ -340,6 +346,8 @@ export class GameScene extends Phaser.Scene {
         // display shadow while dragging card
         this.#updateDraggedCardShadow(gameObject, SHADOW_DRAG_X, SHADOW_DRAG_Y, SHADOW_DRAG_INTENSITY);
         this.#updateStackedCardsShadow(gameObject, SHADOW_DRAG_X, SHADOW_DRAG_Y, SHADOW_DRAG_INTENSITY);
+
+        this.sound.play(AUDIO_KEYS.DRAW_CARD, { volume: 1 });
 
       },
     );
@@ -565,6 +573,9 @@ export class GameScene extends Phaser.Scene {
     if (!isValidMove) {
       return;
     }
+
+    this.sound.play(AUDIO_KEYS.PLACE_CARD, { volume: 1 });
+
     this.#tableauContainers[targetTableauPileIndex].setDepth(0);
     // ensure source container depth is also reset
     if (tableauPileIndex !== undefined) {

@@ -28,6 +28,8 @@ export const AUDIO_KEYS = {
   FOUNDATION_ADD: 'foundationAdd',
   TABLEAU_ADD: 'tableauAdd',
   GAME_WIN: 'gameWin',
+  PLACE_CARD: 'placeCard',
+  SHUFFLE_DECK: 'shuffleDeck',
 };
 
 export const CARD_WIDTH = 56 * UI_CONFIG.scale;
