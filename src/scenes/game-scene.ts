@@ -114,6 +114,10 @@ export class GameScene extends Phaser.Scene {
       this.quitAndSaveScore();
     });
 
+    this.input.keyboard?.on('keydown-U', () => {
+      this.#revealAllCards();
+    });
+
     // game is starting so play an intro sound
     // if this seems to play too late, it is because
     // phaser defers sounds until after the first user input
@@ -683,6 +687,23 @@ export class GameScene extends Phaser.Scene {
       this.#foundationPileCards[pileIndex].setVisible(true).setFrame(this.#getCardFrame(pile));
     });
   }
+
+
+  #revealAllCards(): void {
+    this.#solitaire.revealAllTableauCards();
+
+    this.#tableauContainers.forEach((container, pileIndex) => {
+      const pile = this.#solitaire.tableauPiles[pileIndex];
+      pile.forEach((card, cardIndex) => {
+        if (card.isFaceUp) {
+          const cardGameObject = container.getAt<Phaser.GameObjects.Image>(cardIndex);
+          cardGameObject.setFrame(this.#getCardFrame(card));
+          this.input.setDraggable(cardGameObject);
+        }
+      });
+    });
+  }
+
 
   #showCardsInDrawPile(): void {
     const numberOfCardsToShow = Math.min(this.#solitaire.drawPile.length, 3);

@@ -102,7 +102,16 @@ export class Solitaire {
     }
   }
 
-
+  public revealAllTableauCards(): void {
+    this.#tableauPiles.forEach((pile) => {
+      pile.forEach((card) => {
+        if (!card.isFaceUp) {
+          card.flip();
+        }
+      });
+    });
+  }
+  
   public drawCard(): boolean {
     const card = this.#deck.draw();
     if (card === undefined) {
