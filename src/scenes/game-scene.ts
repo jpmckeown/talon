@@ -3,6 +3,7 @@ import { ASSET_KEYS, AUDIO_KEYS, CARD_HEIGHT, CARD_WIDTH, GAME_HEIGHT, GAME_WIDT
 import { CONFIG } from '../lib/common';
 import { Solitaire } from '../lib/solitaire';
 import { Card } from '../lib/card';
+import { exhaustiveGuard, countEmptyTableau } from '../lib/utils';
 import { FoundationPile } from '../lib/foundation-pile';
 import { Effects } from '../lib/effects';
 
@@ -51,6 +52,7 @@ const SUIT_FRAMES = {
   SPADE: 39,
   CLUB: 0,
 };
+
 type ZoneType = keyof typeof ZONE_TYPE;
 // types of drop zones where player can drop cards
 const ZONE_TYPE = {
@@ -75,6 +77,9 @@ export class GameScene extends Phaser.Scene {
 
   #lastTime: number = 0;
   #logTimer: number = 0;
+
+  #fastCompleteOfferDismissed: boolean = false;
+  #fastCompleteOverlay?: Phaser.GameObjects.Container;
 
   score: number = 0;
   scoreText!: Phaser.GameObjects.Text;
@@ -183,6 +188,7 @@ export class GameScene extends Phaser.Scene {
     this.saveCurrentScore();
     this.score = 0;
     this.scoreText.setText('Score 0');
+    this.#fastCompleteOfferDismissed = false;
 
     this.#solitaire.newGame();
 
@@ -563,7 +569,12 @@ export class GameScene extends Phaser.Scene {
 
     this.score += 1;
     this.scoreText.setText(`Score ${this.score}`);
+
+    if (!this.#fastCompleteOfferDismissed && this.#checkFastCompleteCondition()) {
+      this.#showFastCompleteOverlay();
+    }
   }
+
 
   #handleMoveCardToTableau(gameObject: Phaser.GameObjects.Image, targetTableauPileIndex: number): void {
     let isValidMove = false;
@@ -667,6 +678,104 @@ export class GameScene extends Phaser.Scene {
 
     // get the cards tableau pile and check to see if the new card at the bottom of the stack should be flipped over
     this.#handleRevealingNewTableauCards(tableauPileIndex as number);
+
+    if (!this.#fastCompleteOfferDismissed && this.#checkFastCompleteCondition()) {
+      this.#showFastCompleteOverlay();
+    }
+  }
+
+
+  #checkFastCompleteCondition(): boolean {
+    // console.log('Checking if game complete but not yet in Foundation piles (fast complete condition)...');
+    if (this.#solitaire.drawPile.length > 0 || this.#solitaire.discardPile.length > 0) {
+      return false;
+    }
+
+    const nEmptyTableau = countEmptyTableau(this.#solitaire.tableauPiles);
+    // console.log('Empty tableau ', nEmptyTableau)
+    if (nEmptyTableau !== 3) {
+      return false;
+    }
+
+    for (const pile of this.#solitaire.tableauPiles) {
+      if (pile.length > 0) {
+        const topCard = pile[pile.length - 1];
+        // console.log('top card value = ', topCard.value)
+        if (topCard.value !== 13 || !topCard.isFaceUp) {
+          return false;
+        }
+
+        for (const card of pile) {
+          // console.log('other card value ', card.value)
+          if (!card.isFaceUp) {
+            return false;
+          }
+        }
+      }
+    }
+
+    console.log('Game completion is inevitable now and it only requires moving cards from tableau to Foundation piles');
+    return true;
+  }
+
+
+  #showFastCompleteOverlay(): void {
+
+    const overlay = this.add.container(0, 0);
+    const bg = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.7).setOrigin(0);
+
+    const messageText = this.add.text(
+      GAME_WIDTH / 2,
+      GAME_HEIGHT / 2 - 40 * UI_CONFIG.scale,
+      'Success - end game early with full score?',
+      {
+        fontSize: `${28 * UI_CONFIG.scale}px`,
+        color: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 3,
+        align: 'center'
+      }
+    ).setOrigin(0.5);
+
+    const yesText = this.add.text(
+      GAME_WIDTH / 2 - 80 * UI_CONFIG.scale,
+      GAME_HEIGHT / 2 + 40 * UI_CONFIG.scale,
+      'Yes',
+      {
+        fontSize: `${32 * UI_CONFIG.scale}px`,
+        color: '#00ff00'
+      }
+    ).setOrigin(0.5).setInteractive();
+
+    const noText = this.add.text(
+      GAME_WIDTH / 2 + 80 * UI_CONFIG.scale,
+      GAME_HEIGHT / 2 + 40 * UI_CONFIG.scale,
+      'No',
+      {
+        fontSize: `${32 * UI_CONFIG.scale}px`,
+        color: '#ff0000'
+      }
+    ).setOrigin(0.5).setInteractive();
+
+    yesText.on('pointerover', () => yesText.setColor('#ffffff'));
+    yesText.on('pointerout', () => yesText.setColor('#00ff00'));
+    yesText.on('pointerdown', () => {
+      this.score = 52;
+      this.saveCurrentScore();
+      overlay.destroy();
+      this.scene.pause();
+      this.scene.launch(SCENE_KEYS.MENU);
+    });
+
+    noText.on('pointerover', () => noText.setColor('#ffffff'));
+    noText.on('pointerout', () => noText.setColor('#ff0000'));
+    noText.on('pointerdown', () => {
+      this.#fastCompleteOfferDismissed = true;
+      overlay.destroy();
+    });
+
+    overlay.add([bg, messageText, yesText, noText]);
+    this.#fastCompleteOverlay = overlay;
   }
 
 

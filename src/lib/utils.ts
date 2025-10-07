@@ -1,3 +1,6 @@
+import { Card } from './card';
+
+
 export function shuffleArray<T>(array: T[]): void {
   for (let i = array.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * i);
@@ -5,6 +8,17 @@ export function shuffleArray<T>(array: T[]): void {
     array[i] = array[j];
     array[j] = temp;
   }
+}
+
+
+export function countEmptyTableau(tableauPiles: Card[][]): number {
+  let count = 0;
+  for (const pile of tableauPiles) {
+    if (pile.length === 0) {
+      count++;
+    }
+  }
+  return count;
 }
 
 /**
