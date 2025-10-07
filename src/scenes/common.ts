@@ -11,6 +11,7 @@ export const SCENE_KEYS = {
   PRELOAD: 'PRELOAD',
   TITLE: 'TITLE',
   GAME: 'GAME',
+  MENU: 'MENU',
   SCORES: 'SCORE',
 } as const;
 

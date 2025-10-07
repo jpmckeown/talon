@@ -107,7 +107,8 @@ export class GameScene extends Phaser.Scene {
     this.makeScore();
 
     this.input.keyboard!.on('keydown-M', () => {
-      this.scene.start(SCENE_KEYS.TITLE);
+      this.scene.pause();
+      this.scene.launch(SCENE_KEYS.MENU);
     });
 
     this.input.keyboard!.on('keydown-Q', () => {
@@ -152,17 +153,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   quitAndSaveScore(): void {
-    const highScores = JSON.parse(localStorage.getItem('solitaireHighScores') || '[]') as number[];
-    
-    highScores.push(this.score);
-    highScores.sort((a, b) => b - a); // highest first
-    highScores.splice(7); // keep only top 7
-
-    localStorage.setItem('solitaireHighScores', JSON.stringify(highScores));  
-    console.log(`Score: ${this.score}, Top scores: ${highScores.join(', ')}`);
-
+    this.saveCurrentScore();
     this.score = 0;
-    this.scene.start(SCENE_KEYS.TITLE);
+    this.game.destroy(true);
   }
 
   resetScore(): void {
@@ -172,6 +165,38 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  saveCurrentScore(): void {
+    if (this.score === 0) return;
+
+    const highScores = JSON.parse(localStorage.getItem('solitaireHighScores') || '[]') as number[];
+
+    highScores.push(this.score);
+    highScores.sort((a, b) => b - a);
+    highScores.splice(7);
+
+    localStorage.setItem('solitaireHighScores', JSON.stringify(highScores));
+    console.log(`Saved score: ${this.score}`);
+  }
+
+
+  resetGame(): void {
+    this.saveCurrentScore();
+    this.score = 0;
+    this.scoreText.setText('Score 0');
+
+    this.#solitaire.newGame();
+
+    // rebuild all card displays
+    this.#tableauContainers.forEach(container => container.destroy());
+    this.#drawPileCards.forEach(card => card.destroy());
+    this.#discardPileCards.forEach(card => card.destroy());
+    this.#foundationPileCards.forEach(card => card.destroy());
+
+    this.#createDrawPile();
+    this.#createDiscardPile();
+    this.#createFoundationPiles();
+    this.#createTableauPiles();
+  }
 
   #scale(value: number): number {
     return value * UI_CONFIG.scale;

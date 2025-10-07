@@ -30,8 +30,9 @@ export class TitleScene extends Phaser.Scene {
       "Tableau allows card with next number down and opposite colour.",
       "Foundation piles top-right, one for each suit: begin with Ace.",
       "Score by adding cards to foundation and win by completing 4 suits.",
-      "Keys: M to return here, S for high-scores, U to reveal, C for credits."
+      "Keys: M for menu, S for high-scores, U to reveal."
     ];
+    // , C for credits
 
     this.add.text(100, 400, tutorialContent, { fontFamily: 'Arial', fontSize: 28, color: '#ffffff', lineSpacing: 32, align: 'left' })
 
