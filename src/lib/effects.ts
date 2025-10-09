@@ -1,6 +1,8 @@
 import * as Phaser from 'phaser';
 //import { Phaser, Scene, ParticleEmitter } from 'phaser';
 import { ASSET_KEYS, AUDIO_KEYS, CARD_WIDTH, CARD_HEIGHT } from '../scenes/common';
+import { FOUNDATION_PILE_X_POSITIONS, FOUNDATION_PILE_Y_POSITION } from '../scenes/game-scene';
+
 
 // a way to show some particle poof explosions
 // when the player does certain things in the game
@@ -61,12 +63,10 @@ export class Effects {
     winFX() {
         console.log("starting game win animation!");
         this.parentScene.sound.play(AUDIO_KEYS.GAME_WIN, { volume: 0.25 });
-        // FIXME: these x,y should be calculated not hardcoded here
-        // q) how do we grab a reference to these four card sprites?
-        this.poof(720,16);
-        this.poof(850,16);
-        this.poof(980,16);
-        this.poof(1120,16);
+        this.poof(FOUNDATION_PILE_X_POSITIONS[0], FOUNDATION_PILE_Y_POSITION);
+        this.poof(FOUNDATION_PILE_X_POSITIONS[1], FOUNDATION_PILE_Y_POSITION);
+        this.poof(FOUNDATION_PILE_X_POSITIONS[2], FOUNDATION_PILE_Y_POSITION);
+        this.poof(FOUNDATION_PILE_X_POSITIONS[3], FOUNDATION_PILE_Y_POSITION);
     }
 
 } // end Effects class

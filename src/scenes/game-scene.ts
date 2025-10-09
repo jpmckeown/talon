@@ -32,8 +32,8 @@ const SHADOW_DRAG_Y = 0;
 const SHADOW_DRAG_INTENSITY = 0.9;
 
 // x & y positions of the 4 foundation piles
-const FOUNDATION_PILE_X_POSITIONS = [360* UI_CONFIG.scale, 425* UI_CONFIG.scale, 490* UI_CONFIG.scale, 555* UI_CONFIG.scale];
-const FOUNDATION_PILE_Y_POSITION = 5 * UI_CONFIG.scale;
+export const FOUNDATION_PILE_X_POSITIONS = [360* UI_CONFIG.scale, 425* UI_CONFIG.scale, 490* UI_CONFIG.scale, 555* UI_CONFIG.scale];
+export const FOUNDATION_PILE_Y_POSITION = 5 * UI_CONFIG.scale;
 // x & y position of the Talon or discard pile
 const DISCARD_PILE_X_POSITION = 85 * UI_CONFIG.scale;
 const DISCARD_PILE_Y_POSITION = 5 * UI_CONFIG.scale;
