@@ -1,9 +1,11 @@
 import * as Phaser from 'phaser';
 //import { Phaser, Scene, ParticleEmitter } from 'phaser';
-import { ASSET_KEYS, CARD_WIDTH, CARD_HEIGHT } from '../scenes/common';
+import { ASSET_KEYS, AUDIO_KEYS, CARD_WIDTH, CARD_HEIGHT } from '../scenes/common';
 
 // a way to show some particle poof explosions
 // when the player does certain things in the game
+// also use to play sounds effects, because
+// some classes don't hold a ref to current scene
 export class Effects {
 
     parentScene!: Phaser.Scene;
@@ -54,6 +56,17 @@ export class Effects {
             // console.log(px+","+py);
             this.poofEmitter.explode(1,px,py);
         }
+    }
+
+    winFX() {
+        console.log("starting game win animation!");
+        this.parentScene.sound.play(AUDIO_KEYS.GAME_WIN, { volume: 0.25 });
+        // FIXME: these x,y should be calculated not hardcoded here
+        // q) how do we grab a reference to these four card sprites?
+        this.poof(720,16);
+        this.poof(850,16);
+        this.poof(980,16);
+        this.poof(1120,16);
     }
 
 } // end Effects class

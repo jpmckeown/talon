@@ -4,6 +4,7 @@ import { Deck } from './deck';
 import { FoundationPile } from './foundation-pile';
 import { exhaustiveGuard } from './utils';
 import { Effects } from './effects';
+import { AUDIO_KEYS } from '../scenes/common';
 
 
 export class Solitaire {
@@ -64,13 +65,13 @@ export class Solitaire {
     );
   }
 
-    public checkForWin(): boolean {
-    if (this.wonGame) {
-      console.log('Win - all foundation piles complete.');
-      // TODO: play win sound 
-      return true;
-    }
-    return false;
+  public checkForWin(): boolean {
+      if (this.wonGame) {
+        console.log('Win - all foundation piles complete.');
+        this.#fx.winFX();
+        return true;
+      }
+      return false;
   }
 
   // Resets game state for a new game by building tableau piles.

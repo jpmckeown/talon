@@ -27,6 +27,7 @@ export class PreloadScene extends Phaser.Scene {
     this.load.audio(AUDIO_KEYS.FOUNDATION_ADD, 'assets/audio/card-put-down.ogg');
     this.load.audio(AUDIO_KEYS.PLACE_CARD, 'assets/audio/card-put-down.ogg');
     this.load.audio(AUDIO_KEYS.SHUFFLE_DECK, 'assets/audio/card-shuffle.ogg');
+    this.load.audio(AUDIO_KEYS.GAME_WIN, 'assets/audio/win-sound.ogg');
 
   }
 
