@@ -64,6 +64,14 @@ export class Solitaire {
     );
   }
 
+    public checkForWin(): boolean {
+    if (this.wonGame) {
+      console.log('Win - all foundation piles complete.');
+      // TODO: play win sound 
+      return true;
+    }
+    return false;
+  }
 
   // Resets game state for a new game by building tableau piles.
   public newGame(): void {
@@ -273,6 +281,7 @@ export class Solitaire {
         exhaustiveGuard(card.suit);
     }
     foundationPile.addCard();
+    this.checkForWin();
   }
 
 

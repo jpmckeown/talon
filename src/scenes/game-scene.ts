@@ -6,6 +6,7 @@ import { Card } from '../lib/card';
 import { exhaustiveGuard, countEmptyTableau } from '../lib/utils';
 import { FoundationPile } from '../lib/foundation-pile';
 import { Effects } from '../lib/effects';
+import { TestUtils } from '../lib/test-utils';
 
 // scale factor for card image game objects // not used
 const OBJECT_SCALE = 1;
@@ -72,8 +73,10 @@ export class GameScene extends Phaser.Scene {
   #foundationPileCards!: Phaser.GameObjects.Image[];
   // tracks containers, one for each tableau pile (7 game objects)
   #tableauContainers!: Phaser.GameObjects.Container[];
+
   // spawns particle effects during the game
   #fx!: Effects;
+  #testUtils!: TestUtils;
 
   #lastTime: number = 0;
   #logTimer: number = 0;
@@ -96,6 +99,8 @@ export class GameScene extends Phaser.Scene {
 
     this.#solitaire = new Solitaire(this.#fx);
     this.#solitaire.newGame();
+    this.#testUtils = new TestUtils(this.#solitaire);
+    (window as any).testUtils = this.#testUtils;
 
     this.#createDrawPile();
     this.#createDiscardPile();
@@ -105,6 +110,12 @@ export class GameScene extends Phaser.Scene {
     // setup drop zones for interactions and events for drag
     this.#createDragEvents();
     this.#createDropZones();
+
+    this.input.keyboard?.on('keydown-W', () => {
+      console.log('W key pressed: advancing Foundation piles for instant win');
+      this.#testUtils.advanceFoundations();
+      this.#updateFoundationPiles();
+    });
 
     this.#lastTime = 0;
     this.#logTimer = 0;
@@ -366,8 +377,14 @@ export class GameScene extends Phaser.Scene {
     this.input.on(
       Phaser.Input.Events.DRAG_START,
       (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image) => {
+        // don't allow starting new drag while card is returning from a failed drop
+        if (gameObject.getData('returning')) {
+          return;
+        }
+
         // store objects position
         gameObject.setData({ x: gameObject.x, y: gameObject.y });
+
         // update depth on container or image game object, so when we drag the card it is visible above all other game objects
         const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
         if (tableauPileIndex !== undefined) {
@@ -414,16 +431,14 @@ export class GameScene extends Phaser.Scene {
 
 
   #createDragEndEventListener(): void {
-    // listen for drag-end event on a game object, this will be used to check were the game object was placed
-    // in our scene, and depending on were the object was placed we will check if that is a valid move in our game
-    // otherwise, we will reset the objects position back to were the object was originally located at
+    // listen for drag-end event on a game object, this will be used to check where GO was placed in scene, and  if that is a valid move, otherwise reset GO position to original location.
     this.input.on(
       Phaser.Input.Events.DRAG_END,
       (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image) => {
 
-        // restore shadow to resting state for all cards in stack
-        this.#updateDraggedCardShadow(gameObject, SHADOW_REST_X, SHADOW_REST_Y, SHADOW_REST_INTENSITY);
-        this.#updateStackedCardsShadow(gameObject, SHADOW_REST_X, SHADOW_REST_Y, SHADOW_REST_INTENSITY);
+        // // restore shadow to resting state for all cards in stack
+        // this.#updateDraggedCardShadow(gameObject, SHADOW_REST_X, SHADOW_REST_Y, SHADOW_REST_INTENSITY);
+        // this.#updateStackedCardsShadow(gameObject, SHADOW_REST_X, SHADOW_REST_Y, SHADOW_REST_INTENSITY);
 
         // reset the depth on the container or image game object
         const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
@@ -433,9 +448,10 @@ export class GameScene extends Phaser.Scene {
           gameObject.setDepth(0);
         }
 
-        // if game object was not destroyed, still active, we need to update that GO's data to match where card was placed
+        // if game object was not destroyed, still active, update GO data to where card was placed
         if (gameObject.active) {
           gameObject.setPosition(gameObject.getData('x') as number, gameObject.getData('y') as number);
+ 
           // reset card GO alpha since we are done moving it
           gameObject.setAlpha(1);
 
