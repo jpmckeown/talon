@@ -608,7 +608,7 @@ export class GameScene extends Phaser.Scene {
     if (!isCardFromDiscardPile) {
       gameObject.destroy();
       const emptyCount = countEmptyTableau(this.#solitaire.tableauPiles);
-      console.log(`Empty tableau piles: ${emptyCount}`);
+      // console.log(`Empty tableau piles: ${emptyCount}`);
     }
     // update Phaser game objects
     this.#updateFoundationPiles();
@@ -726,7 +726,7 @@ export class GameScene extends Phaser.Scene {
 
     // card is from other tableau because if talon-sourced was handled earlier
     const emptyCount = countEmptyTableau(this.#solitaire.tableauPiles);
-    console.log(`Empty tableau piles: ${emptyCount}`);
+    // console.log(`Empty tableau piles: ${emptyCount}`);
 
     if (!this.#fastCompleteOfferDismissed && this.#checkFastCompleteCondition()) {
       this.#showFastCompleteOverlay();

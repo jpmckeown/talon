@@ -51,7 +51,6 @@ export class TestUtils {
       return;
     }
     this.#solitaire.tableauPiles[pileIndex] = [];
-    console.log(`Emptied tableau column: ${pileIndex}`);
   }
 
   public clearTableauContainer(pileIndex: number, containers: Phaser.GameObjects.Container[]): void {
@@ -135,6 +134,7 @@ export class TestUtils {
     for (let i = 4; i < 7; i++) {
       this.testEmptyTableau(i, containers);
     }
+    console.log(`Emptied 3 tableau columns`);
 
     this.emptyDrawPile(drawPileCards);
     this.emptyDiscardPile(discardPileCards);
