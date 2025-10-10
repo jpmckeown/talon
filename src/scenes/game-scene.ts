@@ -171,15 +171,15 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(time: number, delta: number) {
-      const frameTime = time - this.#lastTime;
-      this.#lastTime = time;
+      // const frameTime = time - this.#lastTime;
+      // this.#lastTime = time;
       
-      // log every 500ms
-      this.#logTimer += frameTime;
-      if (this.#logTimer > 50000) {
-          console.log('FPS:', this.game.loop.actualFps.toFixed(1));
-          this.#logTimer = 0;
-      }
+      // // log every 500ms
+      // this.#logTimer += frameTime;
+      // if (this.#logTimer > 50000) {
+      //     console.log('FPS:', this.game.loop.actualFps.toFixed(1));
+      //     this.#logTimer = 0;
+      // }
   }
 
 
@@ -687,6 +687,10 @@ export class GameScene extends Phaser.Scene {
       
       // update the remaining cards in discard pile
       this.#updateCardGameObjectsInDiscardPile();
+
+      if (!this.#fastCompleteOfferDismissed && this.#checkFastCompleteCondition()) {
+        this.#showFastCompleteOverlay();
+      }
       return;
     }
 
