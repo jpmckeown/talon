@@ -139,6 +139,17 @@ export class GameScene extends Phaser.Scene {
       this.#revealAllCards();
     });
 
+    this.input.keyboard?.on('keydown-E', () => {
+      const input = window.prompt('Empty which tableau pile? (0-6)');
+      if (input !== null) {
+        const pileIndex = parseInt(input, 10);
+        if (!isNaN(pileIndex)) {
+          this.#testUtils.emptyTableau(pileIndex);
+          this.#testUtils.clearTableauContainer(pileIndex, this.#tableauContainers);
+        }
+      }
+    });
+
     // game is starting so play an intro sound
     // if this seems to play too late, it is because
     // phaser defers sounds until after the first user input
@@ -583,6 +594,8 @@ export class GameScene extends Phaser.Scene {
     // only destroy card from tableau, since talon/discard will be reused
     if (!isCardFromDiscardPile) {
       gameObject.destroy();
+      const emptyCount = countEmptyTableau(this.#solitaire.tableauPiles);
+      console.log(`Empty tableau piles: ${emptyCount}`);
     }
     // update Phaser game objects
     this.#updateFoundationPiles();
@@ -690,14 +703,17 @@ export class GameScene extends Phaser.Scene {
       let px = horizontalShift + cardGameObject.parentContainer.x;// + (CARD_WIDTH/2);
       let py = cardIndex * STACK_Y_GAP + cardGameObject.parentContainer.y;// + (CARD_HEIGHT/2);
       this.#fx.poof(px,py);
-
     }
 
     // update depth on container to be the original value
     this.#tableauContainers[tableauPileIndex as number].setDepth(0);
 
-    // get the cards tableau pile and check to see if the new card at the bottom of the stack should be flipped over
+    // get the card's tableau pile and check to see if new card at bottom of stack should be flipped over
     this.#handleRevealingNewTableauCards(tableauPileIndex as number);
+
+    // card is from other tableau because if talon-sourced was handled earlier
+    const emptyCount = countEmptyTableau(this.#solitaire.tableauPiles);
+    console.log(`Empty tableau piles: ${emptyCount}`);
 
     if (!this.#fastCompleteOfferDismissed && this.#checkFastCompleteCondition()) {
       this.#showFastCompleteOverlay();

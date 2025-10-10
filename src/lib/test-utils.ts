@@ -43,4 +43,21 @@ export class TestUtils {
       pile.addCard();
     }
   }
+
+
+  // empties a specific tableau pile (0-6 from left to right)
+  public emptyTableau(pileIndex: number): void {
+    if (pileIndex < 0 || pileIndex > 6) {
+      return;
+    }
+    this.#solitaire.tableauPiles[pileIndex] = [];
+    console.log(`Emptied tableau column: ${pileIndex}`);
+  }
+
+  public clearTableauContainer(pileIndex: number, containers: Phaser.GameObjects.Container[]): void {
+    if (pileIndex < 0 || pileIndex > 6) {
+      return;
+    }
+    containers[pileIndex].removeAll(true); // true = destroy children
+  }
 }
