@@ -810,9 +810,6 @@ export class GameScene extends Phaser.Scene {
       this.score = 52;
       this.saveCurrentScore();
       overlay.destroy();
-
-      // this.scene.pause();
-      // this.scene.launch(SCENE_KEYS.MENU);
       
       // duplicate of code when W key pressed 
       this.#clearTableauForInstantWin();

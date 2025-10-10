@@ -46,6 +46,11 @@ export class Deck {
   public reset(): void {
     this.#discardPile = [];
     this.#drawPile = [...this.#cards];
+    this.#drawPile.forEach((card) => {
+      if (card.isFaceUp) {
+        card.flip();
+      }
+    });
     this.shuffle();
   }
 
