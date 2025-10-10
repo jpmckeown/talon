@@ -60,4 +60,69 @@ export class TestUtils {
     }
     containers[pileIndex].removeAll(true); // true = destroy children
   }
+
+
+  // empties tableau pile in both game state and visual display
+  public testEmptyTableau(pileIndex: number, containers: Phaser.GameObjects.Container[]): void {
+    this.emptyTableau(pileIndex);
+    this.clearTableauContainer(pileIndex, containers);
+  }
+
+
+  // empties draw pile in game state and visual display
+  public emptyDrawPile(drawPileCards: Phaser.GameObjects.Image[]): void {
+    this.#solitaire.drawPile.length = 0;
+    drawPileCards.forEach(card => card.setVisible(false));
+    console.log('Emptied draw pile');
+  }
+
+
+  // empties Talon in game state and visual GO
+  public emptyDiscardPile(discardPileCards: Phaser.GameObjects.Image[]): void {
+    this.#solitaire.discardPile.length = 0;
+    discardPileCards.forEach(card => card.setVisible(false));
+    console.log('Emptied discard pile');
+  }
+
+
+  // King face-up inserted at head of each non-empty tableau pile
+  public putKingsOnTableau(containers: Phaser.GameObjects.Container[], getCardFrame: (suit: string, value: number) => number): void {
+    const suits = ['SPADE', 'CLUB', 'HEART', 'DIAMOND'];
+    let suitIndex = 0;
+
+    this.#solitaire.tableauPiles.forEach((pile, pileIndex) => {
+      if (pile.length > 0) {
+        const suit = suits[suitIndex % 4];
+        const king = new (pile[0].constructor as any)(suit, 13, true);
+        pile[0] = king;
+  
+        const cardGO = containers[pileIndex].getAt<Phaser.GameObjects.Image>(0);
+        if (cardGO) {
+          cardGO.setFrame(getCardFrame(suit, 13));
+        }
+        suitIndex++;
+      }
+    });
+    console.log('Kings added to head all non-empty tableau piles');
+  }
+
+
+  // scenario master for near-complete condition
+  public setupFastCompleteTest(
+    containers: Phaser.GameObjects.Container[],
+    drawPileCards: Phaser.GameObjects.Image[],
+    discardPileCards: Phaser.GameObjects.Image[],
+    getCardFrame: (suit: string, value: number) => number
+  ): void {
+    // empty right-hand 3 tableau piles (indices 4, 5, 6)
+    for (let i = 4; i < 7; i++) {
+      this.testEmptyTableau(i, containers);
+    }
+
+    this.emptyDrawPile(drawPileCards);
+    this.emptyDiscardPile(discardPileCards);
+    this.putKingsOnTableau(containers, getCardFrame);
+
+    console.log('All done except drag to foundation piles test setup');
+  }
 }

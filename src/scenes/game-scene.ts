@@ -150,6 +150,18 @@ export class GameScene extends Phaser.Scene {
       }
     });
 
+    this.input.keyboard?.on('keydown-A', () => {
+      this.#testUtils.setupFastCompleteTest(
+        this.#tableauContainers,
+        this.#drawPileCards,
+        this.#discardPileCards,
+        this.#getCardFrameFromSuit.bind(this)
+      );
+      if (this.#checkFastCompleteCondition()) {
+        this.#showFastCompleteOverlay();
+      }
+    });
+
     // game is starting so play an intro sound
     // if this seems to play too late, it is because
     // phaser defers sounds until after the first user input
@@ -882,8 +894,12 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
+
   #getCardFrame(data: Card | FoundationPile): number {
     return SUIT_FRAMES[data.suit] + data.value - 1;
+  }
+  #getCardFrameFromSuit(suit: string, value: number): number {
+    return SUIT_FRAMES[suit] + value - 1;
   }
 
 
