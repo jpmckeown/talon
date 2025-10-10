@@ -21,7 +21,6 @@ export class FoundationPile {
     if (this.#currentValue === 13) {
       return;
     }
-
     this.#currentValue += 1;
   }
 

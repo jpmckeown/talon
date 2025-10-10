@@ -113,7 +113,11 @@ export class GameScene extends Phaser.Scene {
 
     this.input.keyboard?.on('keydown-W', () => {
       console.log('W key pressed: advancing Foundation piles for instant win');
+      this.#clearTableauForInstantWin();
       this.#testUtils.advanceFoundations();
+      this.score = 52;
+      const scoring = "Score " + this.score;
+      this.scoreText.setText(scoring)
       this.#updateFoundationPiles();
     });
 
@@ -576,11 +580,11 @@ export class GameScene extends Phaser.Scene {
       this.#handleRevealingNewTableauCards(tableauPileIndex as number);
     }
 
-    // only destroy card from tableau, since we need to reuse the card from the discard pile
+    // only destroy card from tableau, since talon/discard will be reused
     if (!isCardFromDiscardPile) {
       gameObject.destroy();
     }
-    // update our phaser game objects
+    // update Phaser game objects
     this.#updateFoundationPiles();
 
     this.score += 1;
@@ -599,7 +603,7 @@ export class GameScene extends Phaser.Scene {
     // get original size of Tableau pile: enables check on length limit; and where to put card(s)
     const originalTargetPileSize = this.#tableauContainers[targetTableauPileIndex].length;
 
-    // check if card is from discard pile or tableau pile based on the pileIndex in the data manager
+    // check if card is from Talon or Tableau pile based on the pileIndex in data manager
     const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
     const tableauCardIndex = gameObject.getData('cardIndex') as number;
 
@@ -736,7 +740,6 @@ export class GameScene extends Phaser.Scene {
 
 
   #showFastCompleteOverlay(): void {
-
     const overlay = this.add.container(0, 0);
     const bg = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.7).setOrigin(0);
 
@@ -902,4 +905,20 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+
+  #clearTableauForInstantWin(): void {
+    // destroy all card game objects in all tableau
+    this.#tableauContainers.forEach(container => {
+      container.removeAll(true); // true = destroy children
+    });
+
+    this.#discardPileCards.forEach(card => {
+      card.setVisible(false);
+    });
+
+    this.#drawPileCards.forEach(card => {
+      card.setVisible(false);
+    });
+    console.log('Talon, draw, and Tableau all cleared for instant win');
+  }
 }

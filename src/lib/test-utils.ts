@@ -9,7 +9,7 @@ export class TestUtils {
   }
 
 
-  // instantly advance foundation piles to specified values
+  // instantly advance all 4 foundation piles to specified values
   // default is all Kings (13) for instant win
   public advanceFoundations(
     spades: number = 13,
@@ -25,7 +25,7 @@ export class TestUtils {
     const heartPile = piles.find(p => p.suit === CARD_SUIT.HEART);
     const diamondPile = piles.find(p => p.suit === CARD_SUIT.DIAMOND);
 
-    // directly set values (bypassing normal game rules)
+    // directly set values (bypass normal game rules)
     if (spadePile) this.#forceFoundationValue(spadePile, spades);
     if (clubPile) this.#forceFoundationValue(clubPile, clubs);
     if (heartPile) this.#forceFoundationValue(heartPile, hearts);
@@ -39,7 +39,6 @@ export class TestUtils {
   #forceFoundationValue(pile: any, targetValue: number): void {
     const currentValue = pile.value;
     const cardsToAdd = targetValue - currentValue;
-    
     for (let i = 0; i < cardsToAdd; i++) {
       pile.addCard();
     }
