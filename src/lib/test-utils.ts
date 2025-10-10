@@ -106,13 +106,30 @@ export class TestUtils {
     console.log('Kings added to head all non-empty tableau piles');
   }
 
+// flips all cards face-up in all tableau piles
+  public flipAllTableauCards(containers: Phaser.GameObjects.Container[], getCardFrame: (card: any) => number): void {
+    this.#solitaire.tableauPiles.forEach((pile, pileIndex) => {
+      pile.forEach((card, cardIndex) => {
+        if (!card.isFaceUp) {
+          card.flip();
+          const cardGO = containers[pileIndex].getAt<Phaser.GameObjects.Image>(cardIndex);
+          if (cardGO) {
+            cardGO.setFrame(getCardFrame(card));
+          }
+        }
+      });
+    });
+    console.log('Flipped face-up all cards in the 4 remaining Tableau stacks');
+  }
+
 
   // scenario master for near-complete condition
   public setupFastCompleteTest(
     containers: Phaser.GameObjects.Container[],
     drawPileCards: Phaser.GameObjects.Image[],
     discardPileCards: Phaser.GameObjects.Image[],
-    getCardFrame: (suit: string, value: number) => number
+    getCardFrame: (suit: string, value: number) => number,
+    getCardFrameFromCard: (card: any) => number
   ): void {
     // empty right-hand 3 tableau piles (indices 4, 5, 6)
     for (let i = 4; i < 7; i++) {
@@ -122,6 +139,7 @@ export class TestUtils {
     this.emptyDrawPile(drawPileCards);
     this.emptyDiscardPile(discardPileCards);
     this.putKingsOnTableau(containers, getCardFrame);
+    this.flipAllTableauCards(containers, getCardFrameFromCard);
 
     console.log('All done except drag to foundation piles test setup');
   }

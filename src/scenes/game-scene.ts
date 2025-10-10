@@ -155,7 +155,8 @@ export class GameScene extends Phaser.Scene {
         this.#tableauContainers,
         this.#drawPileCards,
         this.#discardPileCards,
-        this.#getCardFrameFromSuit.bind(this)
+        this.#getCardFrameFromSuit.bind(this),
+        this.#getCardFrame.bind(this)
       );
       if (this.#checkFastCompleteCondition()) {
         this.#showFastCompleteOverlay();
@@ -734,22 +735,22 @@ export class GameScene extends Phaser.Scene {
 
 
   #checkFastCompleteCondition(): boolean {
-    // console.log('Checking if game complete but not yet in Foundation piles (fast complete condition)...');
+    // console.log('Check if victory inevitable but cards not yet all dragged to Foundation piles (if so offer fast complete)...');
     if (this.#solitaire.drawPile.length > 0 || this.#solitaire.discardPile.length > 0) {
       return false;
     }
 
     const nEmptyTableau = countEmptyTableau(this.#solitaire.tableauPiles);
-    // console.log('Empty tableau ', nEmptyTableau)
+    console.log('Empty tableau count = ', nEmptyTableau)
     if (nEmptyTableau !== 3) {
       return false;
     }
 
     for (const pile of this.#solitaire.tableauPiles) {
       if (pile.length > 0) {
-        const topCard = pile[pile.length - 1];
-        // console.log('top card value = ', topCard.value)
-        if (topCard.value !== 13 || !topCard.isFaceUp) {
+        const headerCard = pile[0];
+        console.log('top card value = ', headerCard.value)
+        if (headerCard.value !== 13 || !headerCard.isFaceUp) {
           return false;
         }
 
@@ -761,7 +762,6 @@ export class GameScene extends Phaser.Scene {
         }
       }
     }
-
     console.log('Game completion is inevitable now and it only requires moving cards from tableau to Foundation piles');
     return true;
   }
@@ -774,9 +774,9 @@ export class GameScene extends Phaser.Scene {
     const messageText = this.add.text(
       GAME_WIDTH / 2,
       GAME_HEIGHT / 2 - 40 * UI_CONFIG.scale,
-      'Success - end game early with full score?',
+      'Victory now inevitable - end game early with full score?',
       {
-        fontSize: `${28 * UI_CONFIG.scale}px`,
+        fontSize: `${16 * UI_CONFIG.scale}px`,
         color: '#ffffff',
         stroke: '#000000',
         strokeThickness: 3,
@@ -810,8 +810,17 @@ export class GameScene extends Phaser.Scene {
       this.score = 52;
       this.saveCurrentScore();
       overlay.destroy();
-      this.scene.pause();
-      this.scene.launch(SCENE_KEYS.MENU);
+
+      // this.scene.pause();
+      // this.scene.launch(SCENE_KEYS.MENU);
+      
+      // duplicate of code when W key pressed 
+      this.#clearTableauForInstantWin();
+      this.#testUtils.advanceFoundations();
+      this.score = 52;
+      const scoring = "Score " + this.score;
+      this.scoreText.setText(scoring)
+      this.#updateFoundationPiles();
     });
 
     noText.on('pointerover', () => noText.setColor('#ffffff'));
