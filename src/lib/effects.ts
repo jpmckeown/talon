@@ -3,11 +3,8 @@ import * as Phaser from 'phaser';
 import { ASSET_KEYS, AUDIO_KEYS, CARD_WIDTH, CARD_HEIGHT } from '../scenes/common';
 import { FOUNDATION_PILE_X_POSITIONS, FOUNDATION_PILE_Y_POSITION } from '../scenes/game-scene';
 
-
-// a way to show some particle poof explosions
+// this class triggers particle and sound effects
 // when the player does certain things in the game
-// also use to play sounds effects, because
-// some classes don't hold a ref to current scene
 export class Effects {
 
     parentScene!: Phaser.Scene;
