@@ -163,6 +163,10 @@ export class GameScene extends Phaser.Scene {
       }
     });
 
+    this.input.keyboard?.on('keydown-ESC', () => {
+      this.scene.start(SCENE_KEYS.TITLE);
+    });
+
     // game is starting so play an intro sound
     // if this seems to play too late, it is because
     // phaser defers sounds until after the first user input
