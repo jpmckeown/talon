@@ -26,23 +26,16 @@ def generate_cards():
     suit_letters = ['c', 'd', 'h', 's']
 
     # load blank cards deck image
-    # old version had 1-pixel black border on each card
-    # input_path = "dev/art/cards_blank_56x78_corner-7_edge-0_scale-4.png"
     input_path = "dev/art/cards_blank_56x78_corner-7_edge-0-top-1_scale-2.png"
 
-    #output_path = "public/assets/images/cards_edge-0-top-1_alias-4.png"
     output_path = "public/assets/images/cards_edge-0-top-1_scale-2.png"
-
-    # version for 4x big image
-    # output_path = "public/assets/images/cards_edge-0_scale-4.png"
     
     try:
         img = Image.open(input_path)
         draw = ImageDraw.Draw(img)
-        # font for placeholder text
         phFont = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 36 * scale)     
         
-        # generate 52 cards (4 suits × 13 values)
+        # generate 52 cards (4 suits, each 13 values)
         card_position = 0
         
         for suit_index, colour in enumerate(suit_colours):
@@ -80,17 +73,28 @@ def generate_cards():
                 rect_x2 = x + card_width//2 - phMargin
                 rect_y2 = y + card_height//2 - phMargin
 
-                # draw.rectangle([rect_x1, rect_y1, rect_x2, rect_y2], fill=colour)
                 graphic_y = rect_y1 + 4 * scale  # start below top area
                 # graphic_height = (rect_y2 - rect_y1) - 15 * scale # most of the remaining card height
-                draw.rounded_rectangle([rect_x1, graphic_y, rect_x2, rect_y2], 
+
+                # if suit Spades paste the first-draft owl image on
+                if suitLetter == 's':
+                  owl_img = Image.open("public/assets/images/owl_1.png")
+                  if owl_img.mode != 'RGBA':
+                    owl_img = owl_img.convert('RGBA')
+                  # centre owl face image which is 96x84
+                  owl_x = x - 96 // 2
+                  owl_y = y - 84 // 2 + 12 * scale
+                  img.paste(owl_img, (owl_x, owl_y), owl_img.split()[3])
+                  # img.paste(owl_img, (owl_x, owl_y), owl_img)
+                else:
+                  draw.rounded_rectangle([rect_x1, graphic_y, rect_x2, rect_y2],
                                       radius=9 * scale, fill=colour, outline=colour, width=1)
 
-                # 2. White text super-imposed on colour rectangle
-                text_x = x - text_width // 2
-                text_y = y - text_height // 2 + 4 * scale
-
-                draw.text((text_x, text_y), suitLetter, fill=(255,255,255), font=phFont)
+                # 2. white text super-imposed on colour rectangle
+                if suitLetter != 's':
+                  text_x = x - text_width // 2
+                  text_y = y - text_height // 2 + 4 * scale
+                  draw.text((text_x, text_y), suitLetter, fill=(255,255,255), font=phFont)
 
                 # 3. Small identifiers visible when card stacked
                 # font for top-left identifier
