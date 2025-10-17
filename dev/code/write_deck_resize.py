@@ -28,7 +28,7 @@ def generate_cards():
     # load blank cards deck image
     input_path = "dev/art/cards_blank_56x78_corner-7_edge-0-top-1_scale-2.png"
 
-    output_path = "public/assets/images/cards_edge-0-top-1_scale-2.png"
+    output_path = "public/assets/images/cards_edge-0-top-1_scale-2_owl-1a.png"
     
     try:
         img = Image.open(input_path)
@@ -74,11 +74,10 @@ def generate_cards():
                 rect_y2 = y + card_height//2 - phMargin
 
                 graphic_y = rect_y1 + 4 * scale  # start below top area
-                # graphic_height = (rect_y2 - rect_y1) - 15 * scale # most of the remaining card height
 
-                # if suit Spades paste the first-draft owl image on
+                # if suit Spades paste coloured version of first owl image
                 if suitLetter == 's':
-                  owl_img = Image.open("public/assets/images/owl_1.png")
+                  owl_img = Image.open("public/assets/images/owl_1a.png")
                   if owl_img.mode != 'RGBA':
                     owl_img = owl_img.convert('RGBA')
                   # centre owl face image which is 96x84
