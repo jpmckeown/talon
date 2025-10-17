@@ -28,7 +28,7 @@ def generate_cards():
     # load blank cards deck image
     input_path = "dev/art/cards_blank_56x78_corner-7_edge-0-top-1_scale-2.png"
 
-    output_path = "public/assets/images/cards_edge-0-top-1_scale-2_owl-1a.png"
+    output_path = "public/assets/images/cards_edge-0-top-1_scale-2.png"
     
     try:
         img = Image.open(input_path)
@@ -84,13 +84,20 @@ def generate_cards():
                   owl_x = x - 96 // 2
                   owl_y = y - 84 // 2 + 12 * scale
                   img.paste(owl_img, (owl_x, owl_y), owl_img.split()[3])
-                  # img.paste(owl_img, (owl_x, owl_y), owl_img)
+                
+                elif suitLetter == 'h':
+                  eagle_img = Image.open("public/assets/images/eagle.png")
+                  if eagle_img.mode != 'RGBA':
+                    eagle_img = eagle_img.convert('RGBA')
+                  eagle_x = x - 96 // 2
+                  eagle_y = y - 84 // 2 + 12 * scale
+                  img.paste(eagle_img, (eagle_x, eagle_y), eagle_img.split()[3])
                 else:
                   draw.rounded_rectangle([rect_x1, graphic_y, rect_x2, rect_y2],
                                       radius=9 * scale, fill=colour, outline=colour, width=1)
 
                 # 2. white text super-imposed on colour rectangle
-                if suitLetter != 's':
+                if suitLetter == 'd' or suitLetter == 'c':
                   text_x = x - text_width // 2
                   text_y = y - text_height // 2 + 4 * scale
                   draw.text((text_x, text_y), suitLetter, fill=(255,255,255), font=phFont)
