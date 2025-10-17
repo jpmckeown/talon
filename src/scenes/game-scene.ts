@@ -125,6 +125,7 @@ export class GameScene extends Phaser.Scene {
     this.#logTimer = 0;
 
     this.makeScore();
+    this.makeMenuButton();
 
     this.input.keyboard!.on('keydown-M', () => {
       this.scene.pause();
@@ -190,7 +191,7 @@ export class GameScene extends Phaser.Scene {
   makeScore(){
     // position between talon/discard pile and leftmost foundation pile
     const x = (DISCARD_PILE_X_POSITION + CARD_WIDTH + FOUNDATION_PILE_X_POSITIONS[0]) / 2;
-    const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT / 2;
+    const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT * 0.40;
     
     this.scoreText = this.add.text(x, y, 'Score 0', {
       fontSize: `${24 * UI_CONFIG.scale}px`,
@@ -198,6 +199,32 @@ export class GameScene extends Phaser.Scene {
       stroke: '#000000',
       strokeThickness: 2
     }).setOrigin(0.5);
+  }
+
+  makeMenuButton() {
+    const x = (DISCARD_PILE_X_POSITION + FOUNDATION_PILE_X_POSITIONS[0]) / 2;
+    const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT * 0.60;
+
+    const buttonWidth = CARD_WIDTH;
+    const buttonHeight = CARD_HEIGHT * 0.30;
+
+    const buttonBase = this.add.graphics({ x, y });
+    buttonBase.fillStyle(0x03befc, 1);
+    buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+
+    this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Menu', {
+      fontSize: `${12 * UI_CONFIG.scale}px`,
+      color: '#ffffff',
+      stroke: '#000000',
+      strokeThickness: 2
+    }).setOrigin(0.5);
+
+    const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
+    buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains).on('pointerdown', () => {
+      this.scene.pause();
+      this.scene.launch(SCENE_KEYS.MENU);
+    });
+
   }
 
   quitAndSaveScore(): void {
