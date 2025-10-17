@@ -76,6 +76,8 @@ export class GameScene extends Phaser.Scene {
 
   // spawns particle effects during the game
   #fx!: Effects;
+
+  #isPeeking: boolean = false;
   #testUtils!: TestUtils;
 
   #lastTime: number = 0;
@@ -137,8 +139,19 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.input.keyboard?.on('keydown-U', () => {
-      this.#revealAllCards();
+      if (!this.#isPeeking) {
+        this.#startPeekMode();
+      }
     });
+
+    this.input.keyboard?.on('keyup-U', () => {
+      if (this.#isPeeking) {
+        this.#endPeekMode();
+      }
+    });
+    // this.input.keyboard?.on('keydown-U', () => {
+    //   this.#revealTableauCards();
+    // });
 
     this.input.keyboard?.on('keydown-E', () => {
       const input = window.prompt('Empty which tableau pile? (0-6)');
@@ -911,7 +924,7 @@ export class GameScene extends Phaser.Scene {
   }
 
 
-  #revealAllCards(): void {
+  #revealTableauCards(): void {
     this.#solitaire.revealAllTableauCards();
 
     this.#tableauContainers.forEach((container, pileIndex) => {
@@ -921,6 +934,34 @@ export class GameScene extends Phaser.Scene {
           const cardGameObject = container.getAt<Phaser.GameObjects.Image>(cardIndex);
           cardGameObject.setFrame(this.#getCardFrame(card));
           this.input.setDraggable(cardGameObject);
+        }
+      });
+    });
+  }
+
+  #startPeekMode(): void {
+    this.#isPeeking = true;
+    this.#tableauContainers.forEach((container, pileIndex) => {
+      const pile = this.#solitaire.tableauPiles[pileIndex];
+      pile.forEach((card, cardIndex) => {
+        if (!card.isFaceUp) {
+          const cardGameObject = container.getAt<Phaser.GameObjects.Image>(cardIndex);
+          cardGameObject.setFrame(this.#getCardFrame(card));
+          cardGameObject.setTint(0x8888ff);
+        }
+      });
+    });
+  }
+
+  #endPeekMode(): void {
+    this.#isPeeking = false;
+    this.#tableauContainers.forEach((container, pileIndex) => {
+      const pile = this.#solitaire.tableauPiles[pileIndex];
+      pile.forEach((card, cardIndex) => {
+        if (!card.isFaceUp) {
+          const cardGameObject = container.getAt<Phaser.GameObjects.Image>(cardIndex);
+          cardGameObject.setFrame(CARD_BACK_FRAME);
+          cardGameObject.clearTint();
         }
       });
     });
