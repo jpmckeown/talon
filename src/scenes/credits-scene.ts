@@ -22,7 +22,7 @@ export class CreditsScene extends Phaser.Scene {
     const backText = this.add.text(
       this.scale.width / 2,
       this.scale.height - 40 * UI_CONFIG.scale,
-      'Back',
+      'back to Menu (m)',
       {
         fontSize: `${24 * UI_CONFIG.scale}px`,
         color: '#ffffff'
@@ -31,10 +31,13 @@ export class CreditsScene extends Phaser.Scene {
 
     backText.on('pointerover', () => backText.setColor('#00ff00'));
     backText.on('pointerout', () => backText.setColor('#ffffff'));
-    backText.on('pointerdown', () => {
-      this.scene.stop(SCENE_KEYS.CREDITS);
-      this.scene.resume(SCENE_KEYS.GAME);
-      this.scene.launch(SCENE_KEYS.MENU);
-    });
+    backText.on('pointerdown', () => this.backToMenu());
+
+    this.input.keyboard!.on('keydown-M', () => this.backToMenu());
+  }
+
+  backToMenu(): void {
+    this.scene.stop(SCENE_KEYS.CREDITS);
+    this.scene.start(SCENE_KEYS.MENU);
   }
 }

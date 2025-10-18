@@ -24,10 +24,10 @@ export class MenuScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     const menuItems = [
-      { text: 'Resume Game (R)', key: 'R', action: () => this.resumeGame() },
-      { text: 'New Game (N)', key: 'N', action: () => this.startNewGame() },
-      { text: 'High Scores (S)', key: 'S', action: () => this.showHighScores() },
-      { text: 'Credits (C)', key: 'C', action: () => this.showCredits() }
+      { text: 'Resume Game (r)', key: 'R', action: () => this.resumeGame() },
+      { text: 'New Game (n)', key: 'N', action: () => this.startNewGame() },
+      { text: 'High Scores (s)', key: 'S', action: () => this.showHighScores() },
+      { text: 'Credits (c)', key: 'C', action: () => this.showCredits() }
     ];
 
     // draw the Menu

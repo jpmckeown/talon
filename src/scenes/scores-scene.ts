@@ -42,7 +42,7 @@ export class ScoreScene extends Phaser.Scene {
     const backText = this.add.text(
       this.scale.width / 2, 
       this.scale.height - 60 * UI_CONFIG.scale, 
-      'Back to Menu (M)', 
+      'back to Menu (m)',
       {
         fontSize: `${20 * UI_CONFIG.scale}px`,
         color: '#ffffff'
@@ -55,17 +55,6 @@ export class ScoreScene extends Phaser.Scene {
     backText.on('pointerdown', () => this.backToMenu());
     
     this.input.keyboard!.on('keydown-M', () => this.backToMenu());
-
-    // highScores.forEach((score, index) => {
-    //   this.add.text(this.scale.width / 2, 180 + index * 60, `${index + 1}. ${score}`, {
-    //     fontSize: `${16 * UI_CONFIG.scale}px`,
-    //     color: '#ffffff'
-    //   }).setOrigin(0.5);
-    // });
-    
-    // this.input.keyboard!.on('keydown-M', () => {
-    //   this.scene.start(SCENE_KEYS.MENU);
-    // });
   }
 
   backToMenu(): void {
