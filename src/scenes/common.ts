@@ -13,6 +13,7 @@ export const SCENE_KEYS = {
   GAME: 'GAME',
   MENU: 'MENU',
   SCORES: 'SCORE',
+  CREDITS: 'CREDITS',
 } as const;
 
 export const ASSET_KEYS = {

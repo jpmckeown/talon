@@ -27,7 +27,7 @@ export class MenuScene extends Phaser.Scene {
       { text: 'Resume Game (R)', key: 'R', action: () => this.resumeGame() },
       { text: 'New Game (N)', key: 'N', action: () => this.startNewGame() },
       { text: 'High Scores (S)', key: 'S', action: () => this.showHighScores() },
-      { text: 'Quit (Q)', key: 'Q', action: () => this.quitGame() }
+      { text: 'Credits (C)', key: 'C', action: () => this.showCredits() }
     ];
 
     // draw the Menu
@@ -51,20 +51,6 @@ export class MenuScene extends Phaser.Scene {
       stroke: '#000000',
       strokeThickness: 3
     }).setOrigin(0.5);
-
-    // [resumeText, newGameText, quitText].forEach(text => {
-    //   text.on('pointerover', () => text.setColor('#ffff00'));
-    //   text.on('pointerout', () => text.setColor('#ffffff'));
-    // });
-
-    // resumeText.on('pointerdown', () => this.resumeGame());
-    // this.input.keyboard!.on('keydown-R', () => this.resumeGame());
-
-    // newGameText.on('pointerdown', () => this.startNewGame());
-    // this.input.keyboard!.on('keydown-N', () => this.startNewGame());
-
-    // quitText.on('pointerdown', () => this.quitGame());
-    // this.input.keyboard!.on('keydown-Q', () => this.quitGame());
   }
 
 
@@ -72,7 +58,6 @@ export class MenuScene extends Phaser.Scene {
     this.scene.stop(SCENE_KEYS.MENU);
     this.scene.resume(SCENE_KEYS.GAME);
   }
-
 
   startNewGame(): void {
     const gameScene = this.scene.get(SCENE_KEYS.GAME) as any;
@@ -88,6 +73,12 @@ export class MenuScene extends Phaser.Scene {
     this.scene.stop(SCENE_KEYS.MENU);
     this.scene.pause(SCENE_KEYS.GAME);
     this.scene.start(SCENE_KEYS.SCORES);
+  }
+
+  showCredits(): void {
+    this.scene.stop(SCENE_KEYS.MENU);
+    this.scene.pause(SCENE_KEYS.GAME);
+    this.scene.start(SCENE_KEYS.CREDITS);
   }
 
   quitGame(): void {

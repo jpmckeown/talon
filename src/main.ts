@@ -4,6 +4,7 @@ import { TitleScene } from './scenes/title-scene';
 import { GameScene } from './scenes/game-scene';
 import { MenuScene } from './scenes/menu-scene';
 import { ScoreScene } from './scenes/scores-scene';
+import { CreditsScene } from './scenes/credits-scene';
 import { UI_CONFIG } from './scenes/common';
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -25,7 +26,7 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
     zoom: 1
   },
   backgroundColor: '#387F3C',
-  scene: [PreloadScene, TitleScene, GameScene, MenuScene, ScoreScene],
+  scene: [PreloadScene, TitleScene, GameScene, MenuScene, ScoreScene, CreditsScene],
 };
 
 window.onload = () => {
