@@ -657,6 +657,16 @@ export class GameScene extends Phaser.Scene {
   }
 
 
+  #getFoundationIndexForCard(gameObject: Phaser.GameObjects.Image): number {
+    // determine suit from the card's frame
+    const frame = parseInt(gameObject.frame.name, 10);
+    if (frame >= 0 && frame <= 12) return 1;  // clubs
+    if (frame >= 13 && frame <= 25) return 3;  // diamonds
+    if (frame >= 26 && frame <= 38) return 2;  // hearts
+    if (frame >= 39 && frame <= 51) return 0;  // spades
+    return -1;
+  }
+
   #handleMoveCardToFoundation(gameObject: Phaser.GameObjects.Image): void {
     let isValidMove = false;
     let isCardFromDiscardPile = false;
@@ -683,6 +693,14 @@ export class GameScene extends Phaser.Scene {
     // if this is not a valid move, we don't need to update anything on the card since the `dragend` event handler will move the card back to the original location
     if (!isValidMove) {
       return;
+    }
+
+    // particle fx at foundation pile location
+    const foundationIndex = this.#getFoundationIndexForCard(gameObject);
+    if (foundationIndex !== -1) {
+      const px = FOUNDATION_PILE_X_POSITIONS[foundationIndex];
+      const py = FOUNDATION_PILE_Y_POSITION;
+      this.#fx.poof(px, py);
     }
 
     this.sound.play(AUDIO_KEYS.FOUNDATION_ADD, { volume: 1 });
