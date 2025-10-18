@@ -128,6 +128,7 @@ export class GameScene extends Phaser.Scene {
 
     this.makeScore();
     this.makeMenuButton();
+    this.makePeekButton();
 
     this.input.keyboard!.on('keydown-M', () => {
       this.scene.pause();
@@ -149,9 +150,6 @@ export class GameScene extends Phaser.Scene {
         this.#endPeekMode();
       }
     });
-    // this.input.keyboard?.on('keydown-U', () => {
-    //   this.#revealTableauCards();
-    // });
 
     this.input.keyboard?.on('keydown-E', () => {
       const input = window.prompt('Empty which tableau pile? (0-6)');
@@ -239,6 +237,54 @@ export class GameScene extends Phaser.Scene {
     });
 
   }
+
+
+  makePeekButton() {
+    const x = (DISCARD_PILE_X_POSITION + FOUNDATION_PILE_X_POSITIONS[0]) / 2 + CARD_WIDTH * 1.1;
+    const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT * 0.60;
+
+    const buttonWidth = CARD_WIDTH;
+    const buttonHeight = CARD_HEIGHT * 0.30;
+
+    const buttonBase = this.add.graphics({ x, y });
+    buttonBase.fillStyle(0x03befc, 1);
+    buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+
+    this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Peek', {
+      fontSize: `${12 * UI_CONFIG.scale}px`,
+      color: '#ffffff',
+      stroke: '#000000',
+      strokeThickness: 2
+    }).setOrigin(0.5);
+
+    const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
+    buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
+      .on('pointerdown', () => {
+        buttonBase.clear();
+        buttonBase.fillStyle(0x0288c7, 1);  // darker colour when pressed; TODO match peek card tint?
+        buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+        if (!this.#isPeeking) {
+          this.#startPeekMode();
+        }
+      })
+      .on('pointerup', () => {
+        buttonBase.clear();
+        buttonBase.fillStyle(0x03befc, 1);  // restore original colour
+        buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+        if (this.#isPeeking) {
+          this.#endPeekMode();
+        }
+      })
+      .on('pointerout', () => {
+        buttonBase.clear();
+        buttonBase.fillStyle(0x03befc, 1);  // if pointer leaves button while held down, treat that as unpressing
+        buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+        if (this.#isPeeking) {
+          this.#endPeekMode();
+        }
+      });
+  }
+
 
   quitAndSaveScore(): void {
     this.saveCurrentScore();
