@@ -20,7 +20,7 @@ def generate_cards():
     ]
     
     # card values for each suit
-    card_values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K']
+    card_values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 
     suit_symbols = ['♣', '♦', '♥', '♠']  # clubs, diamonds, hearts, spades
     suit_letters = ['c', 'd', 'h', 's']
