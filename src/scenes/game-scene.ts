@@ -971,8 +971,29 @@ export class GameScene extends Phaser.Scene {
       const cardGameObject = this.#tableauContainers[tableauPileIndex].getAt<Phaser.GameObjects.Image>(
         tableauPile.length - 1,
       );
-      cardGameObject.setFrame(this.#getCardFrame(tableauCard));
-      this.input.setDraggable(cardGameObject);
+      // cardGameObject.setFrame(this.#getCardFrame(tableauCard));
+      // this.input.setDraggable(cardGameObject);
+
+      // animation to flip card on vertical axis
+      const flipDuration = 200; 
+      this.tweens.add({
+        targets: cardGameObject,
+        scaleX: 0,
+        duration: flipDuration,
+        ease: 'Linear',
+        onComplete: () => {
+          cardGameObject.setFrame(this.#getCardFrame(tableauCard));
+          this.tweens.add({
+            targets: cardGameObject,
+            scaleX: 1,
+            duration: flipDuration,
+            ease: 'Linear',
+            onComplete: () => {
+              this.input.setDraggable(cardGameObject);
+            }
+          });
+        }
+      });
     }
   }
 

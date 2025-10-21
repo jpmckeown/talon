@@ -2,3 +2,4 @@ node_modules
 dist/
 dev/art/archive/
 .DS_Store
+dev/code/credits.txt
