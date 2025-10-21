@@ -377,18 +377,19 @@ export class GameScene extends Phaser.Scene {
       // reaching here means cards exist in draw pile
       this.#solitaire.drawCard();
       this.sound.play(AUDIO_KEYS.DRAW_CARD, { volume: 1 });
+      this.#animateDrawCard();
 
       // update shown cards in draw pile, based on number of cards in pile
-      this.#showCardsInDrawPile();
+      //this.#showCardsInDrawPile();
 
-      // update card-below-top in discard pile to reflect the top card
-      const lowerCard = this.#discardPileCards[0]
-      lowerCard.setFrame(this.#discardPileCards[1].frame)
-      lowerCard.setVisible(this.#discardPileCards[1].visible);
+      // // update card-below-top in discard pile to reflect the top card
+      // const lowerCard = this.#discardPileCards[0]
+      // lowerCard.setFrame(this.#discardPileCards[1].frame)
+      // lowerCard.setVisible(this.#discardPileCards[1].visible);
 
-      // update top card in the discard pile to reflect card we drew
-      const card = this.#solitaire.discardPile[this.#solitaire.discardPile.length - 1];
-      this.#discardPileCards[1].setFrame(this.#getCardFrame(card)).setVisible(true);
+      // // update top card in the discard pile to reflect card we drew
+      // const card = this.#solitaire.discardPile[this.#solitaire.discardPile.length - 1];
+      // this.#discardPileCards[1].setFrame(this.#getCardFrame(card)).setVisible(true);
     });
 
     if (UI_CONFIG.showDropZones) {
@@ -958,8 +959,7 @@ export class GameScene extends Phaser.Scene {
   }
 
 
-  /* Checks tableau pile that played card came from to see if we now need to flip next card in the stack.
-  */
+  // checks tableau pile that played card came from to see if need to flip next card in stack.
   #handleRevealingNewTableauCards(tableauPileIndex: number): void {
     // update tableau container depth
     this.#tableauContainers[tableauPileIndex].setDepth(0);
@@ -1119,5 +1119,47 @@ export class GameScene extends Phaser.Scene {
       card.setVisible(false);
     });
     console.log('Talon, draw, and Tableau all cleared for instant win');
+  }
+
+
+  #animateDrawCard(): void {
+    this.input.enabled = false;
+    const liftedScale = 1.05;
+
+    const card = this.#solitaire.discardPile[this.#solitaire.discardPile.length - 1];
+    const tempCard = this.add
+      .image(DRAW_PILE_X_POSITION, DRAW_PILE_Y_POSITION, ASSET_KEYS.CARDS, CARD_BACK_FRAME)
+      .setOrigin(0)
+      .setScale(liftedScale)
+      .setDepth(10);
+
+    this.tweens.add({
+      targets: tempCard,
+      x: DISCARD_PILE_X_POSITION,
+      y: DISCARD_PILE_Y_POSITION,
+      scaleX: 0,
+      duration: 500,
+      ease: 'Sine.easeInOut',
+      onComplete: () => {
+        tempCard.setFrame(this.#getCardFrame(card));
+        this.tweens.add({
+          targets: tempCard,
+          scaleX: liftedScale,
+          duration: 500,
+          ease: 'Sine.easeInOut',
+          onComplete: () => {
+            tempCard.destroy();
+            this.#showCardsInDrawPile();
+
+            const lowerCard = this.#discardPileCards[0];
+            lowerCard.setFrame(this.#discardPileCards[1].frame);
+            lowerCard.setVisible(this.#discardPileCards[1].visible);
+
+            this.#discardPileCards[1].setFrame(this.#getCardFrame(card)).setVisible(true);
+            this.input.enabled = true;
+          }
+        });
+      }
+    });
   }
 }
