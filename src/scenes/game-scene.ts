@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { ASSET_KEYS, AUDIO_KEYS, CARD_HEIGHT, CARD_WIDTH, GAME_HEIGHT, GAME_WIDTH, SCENE_KEYS, UI_CONFIG } from './common';
+import { ASSET_KEYS, AUDIO_KEYS, CARD_HEIGHT, CARD_WIDTH, DEFAULT_CARD_BACK_FRAME, GAME_HEIGHT, GAME_WIDTH, SCENE_KEYS, UI_CONFIG } from './common';
 import { CONFIG } from '../lib/common';
 import { Solitaire } from '../lib/solitaire';
 import { Card } from '../lib/card';
@@ -20,8 +20,8 @@ const CARD_RADIUS = 7 * UI_CONFIG.scale;
 // horizontal random shift to make tableau less precise
 const maxShiftX = 0;
 
-// frame of card spritesheet for back of a card
-const CARD_BACK_FRAME = 56;
+// // frame of card spritesheet for back of a card
+// const CARD_BACK_FRAME = 56;
 
 // shadow settings for cards
 const SHADOW_REST_X = 0;
@@ -77,6 +77,8 @@ export class GameScene extends Phaser.Scene {
   // spawns particle effects during the game
   #fx!: Effects;
 
+  #cardBackFrame: number = DEFAULT_CARD_BACK_FRAME;
+
   #isPeeking: boolean = false;
   #testUtils!: TestUtils;
 
@@ -95,6 +97,7 @@ export class GameScene extends Phaser.Scene {
 
   public create(): void {
     // this.cameras.main.fadeIn(1000);
+    this.#loadCardBackPreference();
 
     this.#createTableBackground();
     this.#fx = new Effects(this); // particles
@@ -196,6 +199,11 @@ export class GameScene extends Phaser.Scene {
       //     console.log('FPS:', this.game.loop.actualFps.toFixed(1));
       //     this.#logTimer = 0;
       // }
+  }
+
+  #loadCardBackPreference(): void {
+    const saved = localStorage.getItem('solitaireCardBack');
+    this.#cardBackFrame = saved ? parseInt(saved, 10) : DEFAULT_CARD_BACK_FRAME;
   }
 
 
@@ -314,6 +322,7 @@ export class GameScene extends Phaser.Scene {
 
 
   resetGame(): void {
+    this.#loadCardBackPreference();
     this.saveCurrentScore();
     this.score = 0;
     this.scoreText.setText('Score 0');
@@ -461,7 +470,7 @@ export class GameScene extends Phaser.Scene {
     pileIndex?: number,
   ): Phaser.GameObjects.Image {
     const card = this.add
-      .image(x, y, ASSET_KEYS.CARDS, CARD_BACK_FRAME)
+      .image(x, y, ASSET_KEYS.CARDS, this.#cardBackFrame)
       .setOrigin(0)
       .setInteractive({ draggable: draggable })
       .setScale(OBJECT_SCALE)
@@ -1045,7 +1054,8 @@ export class GameScene extends Phaser.Scene {
       pile.forEach((card, cardIndex) => {
         if (!card.isFaceUp) {
           const cardGameObject = container.getAt<Phaser.GameObjects.Image>(cardIndex);
-          cardGameObject.setFrame(CARD_BACK_FRAME);
+          cardGameObject.setFrame(this.#cardBackFrame);
+          // cardGameObject.setFrame(CARD_BACK_FRAME);
           cardGameObject.clearTint();
         }
       });
@@ -1128,7 +1138,7 @@ export class GameScene extends Phaser.Scene {
 
     const card = this.#solitaire.discardPile[this.#solitaire.discardPile.length - 1];
     const tempCard = this.add
-      .image(DRAW_PILE_X_POSITION, DRAW_PILE_Y_POSITION, ASSET_KEYS.CARDS, CARD_BACK_FRAME)
+      .image(DRAW_PILE_X_POSITION, DRAW_PILE_Y_POSITION, ASSET_KEYS.CARDS, this.#cardBackFrame)
       .setOrigin(0)
       .setScale(liftedScale)
       .setDepth(10);

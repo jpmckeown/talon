@@ -14,6 +14,7 @@ export const SCENE_KEYS = {
   MENU: 'MENU',
   SCORES: 'SCORE',
   CREDITS: 'CREDITS',
+  CARD_BACK_SELECTOR: 'CARD_BACK_SELECTOR',
 } as const;
 
 export const ASSET_KEYS = {
@@ -39,3 +40,11 @@ export const CARD_HEIGHT = 78 * UI_CONFIG.scale;
 
 export const GAME_WIDTH = 640 * UI_CONFIG.scale;
 export const GAME_HEIGHT = 480 * UI_CONFIG.scale;
+
+export const CARD_BACK_OPTIONS = {
+  BLANK_1: { frame: 54, name: 'blank-1' },
+  BLANK_2: { frame: 55, name: 'blank-2' },
+  FEATHERS: { frame: 56, name: 'feathers' },
+} as const;
+
+export const DEFAULT_CARD_BACK_FRAME = 56;

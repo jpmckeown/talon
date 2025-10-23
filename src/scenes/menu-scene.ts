@@ -8,8 +8,8 @@ export class MenuScene extends Phaser.Scene {
 
   public create(): void {
     const menuFontSize = 24;
-    const menuStartY = 140;
-    const menuSpacing = 60;
+    const menuStartY = 120;
+    const menuSpacing = 50;
 
     this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.85).setOrigin(0);
 
@@ -26,6 +26,7 @@ export class MenuScene extends Phaser.Scene {
     const menuItems = [
       { text: 'Resume Game (r)', key: 'R', action: () => this.resumeGame() },
       { text: 'New Game (n)', key: 'N', action: () => this.startNewGame() },
+      { text: 'Card Back (b)', key: 'B', action: () => this.showCardBackSelector() },
       { text: 'High Scores (s)', key: 'S', action: () => this.showHighScores() },
       { text: 'Credits (c)', key: 'C', action: () => this.showCredits() }
     ];
@@ -73,6 +74,12 @@ export class MenuScene extends Phaser.Scene {
     this.scene.stop(SCENE_KEYS.MENU);
     this.scene.pause(SCENE_KEYS.GAME);
     this.scene.start(SCENE_KEYS.SCORES);
+  }
+
+  showCardBackSelector(): void {
+    this.scene.stop(SCENE_KEYS.MENU);
+    this.scene.pause(SCENE_KEYS.GAME);
+    this.scene.start(SCENE_KEYS.CARD_BACK_SELECTOR);
   }
 
   showCredits(): void {
