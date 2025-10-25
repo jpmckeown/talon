@@ -20,16 +20,7 @@ const CARD_RADIUS = 7 * UI_CONFIG.scale;
 // horizontal random shift to make tableau less precise
 const maxShiftX = 0;
 
-// // frame of card spritesheet for back of a card
-// const CARD_BACK_FRAME = 56;
-
-// shadow settings for cards
-const SHADOW_REST_X = 0;
-const SHADOW_REST_Y = 0;
-const SHADOW_REST_INTENSITY = 0;
-const SHADOW_DRAG_X = -4;
-const SHADOW_DRAG_Y = 0;
-const SHADOW_DRAG_INTENSITY = 0.9;
+const dragAlpha = 1;
 
 // x & y positions of the 4 foundation piles
 export const FOUNDATION_PILE_X_POSITIONS = [360* UI_CONFIG.scale, 425* UI_CONFIG.scale, 490* UI_CONFIG.scale, 555* UI_CONFIG.scale];
@@ -481,13 +472,6 @@ export class GameScene extends Phaser.Scene {
         pileIndex,
       });
 
-    if (card.preFX && UI_CONFIG.enableShadows) {
-      // shadow for cards in Tableau or talon (not for drawpile)
-      // if (draggable || pileIndex !== undefined) {
-      // Bugfix: easier to put shadow on all cards as drawpile cards never move anyway
-        card.preFX!.addShadow(SHADOW_REST_X, SHADOW_REST_Y, 0.05, 1, 0x000000, 8, SHADOW_REST_INTENSITY);
-      // }
-    }
     return card;
   }
 
@@ -521,11 +505,7 @@ export class GameScene extends Phaser.Scene {
           gameObject.setDepth(2);
         }
         // update card alpha to show which card is being dragged
-        gameObject.setAlpha(0.8);
-
-        // display shadow while dragging card
-        this.#updateDraggedCardShadow(gameObject, SHADOW_DRAG_X, SHADOW_DRAG_Y, SHADOW_DRAG_INTENSITY);
-        this.#updateStackedCardsShadow(gameObject, SHADOW_DRAG_X, SHADOW_DRAG_Y, SHADOW_DRAG_INTENSITY);
+        gameObject.setAlpha(dragAlpha);
 
         this.sound.play(AUDIO_KEYS.DRAW_CARD, { volume: 1 });
 
@@ -540,7 +520,6 @@ export class GameScene extends Phaser.Scene {
       Phaser.Input.Events.DRAG,
       (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image, dragX: number, dragY: number) => {
         gameObject.setPosition(dragX, dragY);
-        // gameObject.setDepth(0);
 
         // if card is part of tableau, need to move all cards that are stacked on top of this card
         const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
@@ -563,10 +542,6 @@ export class GameScene extends Phaser.Scene {
     this.input.on(
       Phaser.Input.Events.DRAG_END,
       (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image) => {
-
-        // // restore shadow to resting state for all cards in stack
-        // this.#updateDraggedCardShadow(gameObject, SHADOW_REST_X, SHADOW_REST_Y, SHADOW_REST_INTENSITY);
-        // this.#updateStackedCardsShadow(gameObject, SHADOW_REST_X, SHADOW_REST_Y, SHADOW_REST_INTENSITY);
 
         // reset the depth on the container or image game object
         const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
@@ -1080,51 +1055,14 @@ export class GameScene extends Phaser.Scene {
   }
 
 
-  #updateDraggedCardShadow(gameObject: Phaser.GameObjects.Image, shadowX: number, shadowY: number, intensity: number): void {
-    if (!UI_CONFIG.enableShadows) return;
-    if (gameObject.preFX) {
-      const shadowFx = gameObject.preFX.list.find(fx => fx.type === 5) as any;
-      if (shadowFx) {
-        shadowFx.x = shadowX;
-        shadowFx.y = shadowY;
-        shadowFx.intensity = intensity;
-      }
-    }
-  }
-
-  #updateStackedCardsShadow(gameObject: Phaser.GameObjects.Image, shadowX: number, shadowY: number, intensity: number): void {
-    if (!UI_CONFIG.enableShadows) return;
-
-    const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
-    const cardIndex = gameObject.getData('cardIndex') as number;
-    
-    if (tableauPileIndex !== undefined) {
-      const numberOfCardsToMove = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex, cardIndex);
-      for (let i = 1; i <= numberOfCardsToMove; i += 1) {
-        const stackedCard = this.#tableauContainers[tableauPileIndex].getAt<Phaser.GameObjects.Image>(cardIndex + i);
-        if (stackedCard.preFX) {
-          const stackedShadowFx = stackedCard.preFX.list.find(fx => fx.type === 5) as any;
-          if (stackedShadowFx) {
-            stackedShadowFx.x = shadowX;
-            stackedShadowFx.y = shadowY;
-            stackedShadowFx.intensity = intensity;
-          }
-        }
-      }
-    }
-  }
-
-
   #clearTableauForInstantWin(): void {
     // destroy all card game objects in all tableau
     this.#tableauContainers.forEach(container => {
       container.removeAll(true); // true = destroy children
     });
-
     this.#discardPileCards.forEach(card => {
       card.setVisible(false);
     });
-
     this.#drawPileCards.forEach(card => {
       card.setVisible(false);
     });
