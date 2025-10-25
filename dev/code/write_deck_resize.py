@@ -92,12 +92,21 @@ def generate_cards():
                   eagle_x = x - 96 // 2
                   eagle_y = y - 84 // 2 + 12 * scale
                   img.paste(eagle_img, (eagle_x, eagle_y), eagle_img.split()[3])
+
+                elif suitLetter == 'd':
+                  redkite_img = Image.open("public/assets/images/red-kite.png")
+                  if redkite_img.mode != 'RGBA':
+                    redkite_img = redkite_img.convert('RGBA')
+                  redkite_x = x - 96 // 2
+                  redkite_y = y - 84 // 2 + 12 * scale
+                  img.paste(redkite_img, (redkite_x, redkite_y), redkite_img.split()[3])
+
                 else:
                   draw.rounded_rectangle([rect_x1, graphic_y, rect_x2, rect_y2],
                                       radius=9 * scale, fill=colour, outline=colour, width=1)
 
                 # 2. white text super-imposed on colour rectangle
-                if suitLetter == 'd' or suitLetter == 'c':
+                if suitLetter == 'c':
                   text_x = x - text_width // 2
                   text_y = y - text_height // 2 + 4 * scale
                   draw.text((text_x, text_y), suitLetter, fill=(255,255,255), font=phFont)
