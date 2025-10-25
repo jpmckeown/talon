@@ -376,7 +376,7 @@ export class GameScene extends Phaser.Scene {
 
       // reaching here means cards exist in draw pile
       this.#solitaire.drawCard();
-      this.sound.play(AUDIO_KEYS.DRAW_CARD, { volume: 1 });
+      this.sound.play(AUDIO_KEYS.DRAW_CARD, { volume: 0.3 });
       this.#animateDrawCard();
 
       // update shown cards in draw pile, based on number of cards in pile
@@ -507,7 +507,7 @@ export class GameScene extends Phaser.Scene {
         // update card alpha to show which card is being dragged
         gameObject.setAlpha(dragAlpha);
 
-        this.sound.play(AUDIO_KEYS.DRAW_CARD, { volume: 1 });
+        this.sound.play(AUDIO_KEYS.DRAW_CARD, { volume: 0.3 });
 
       },
     );
@@ -688,7 +688,7 @@ export class GameScene extends Phaser.Scene {
       this.#fx.poof(px, py);
     }
 
-    this.sound.play(AUDIO_KEYS.FOUNDATION_ADD, { volume: 1 });
+    this.sound.play(AUDIO_KEYS.FOUNDATION_ADD, { volume: 0.5 });
 
     // update discard pile cards, or flip over tableau cards if needed
     if (isCardFromDiscardPile) {
@@ -753,7 +753,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    this.sound.play(AUDIO_KEYS.PLACE_CARD, { volume: 1 });
+    this.sound.play(AUDIO_KEYS.PLACE_CARD, { volume: 0.3 });
 
     this.#tableauContainers[targetTableauPileIndex].setDepth(0);
     // ensure source container depth is also reset
@@ -955,28 +955,31 @@ export class GameScene extends Phaser.Scene {
       const cardGameObject = this.#tableauContainers[tableauPileIndex].getAt<Phaser.GameObjects.Image>(
         tableauPile.length - 1,
       );
-      // cardGameObject.setFrame(this.#getCardFrame(tableauCard));
-      // this.input.setDraggable(cardGameObject);
 
+      this.input.enabled = false;
+
+      this.time.delayedCall(1000, () => {
       // animation to flip card on vertical axis
-      const flipDuration = 200; 
-      this.tweens.add({
-        targets: cardGameObject,
-        scaleX: 0,
-        duration: flipDuration,
-        ease: 'Linear',
-        onComplete: () => {
-          cardGameObject.setFrame(this.#getCardFrame(tableauCard));
-          this.tweens.add({
-            targets: cardGameObject,
-            scaleX: 1,
-            duration: flipDuration,
-            ease: 'Linear',
-            onComplete: () => {
-              this.input.setDraggable(cardGameObject);
-            }
-          });
-        }
+        const flipDuration = 300; 
+        this.tweens.add({
+          targets: cardGameObject,
+          scaleX: 0,
+          duration: flipDuration,
+          ease: 'Linear',
+          onComplete: () => {
+            cardGameObject.setFrame(this.#getCardFrame(tableauCard));
+            this.tweens.add({
+              targets: cardGameObject,
+              scaleX: 1,
+              duration: flipDuration,
+              ease: 'Linear',
+              onComplete: () => {
+                this.input.setDraggable(cardGameObject);
+                this.input.enabled = true;
+              }
+            });
+          }
+        });
       });
     }
   }
