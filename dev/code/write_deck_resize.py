@@ -20,7 +20,7 @@ def generate_cards():
     ]
     
     # card values for each suit
-    card_values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+    card_values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K']
 
     suit_symbols = ['♣', '♦', '♥', '♠']  # clubs, diamonds, hearts, spades
     suit_letters = ['c', 'd', 'h', 's']
@@ -85,6 +85,14 @@ def generate_cards():
                   owl_y = y - 84 // 2 + 12 * scale
                   img.paste(owl_img, (owl_x, owl_y), owl_img.split()[3])
                 
+                elif suitLetter == 'c':
+                  crow_img = Image.open("public/assets/images/crow.png")
+                  if crow_img.mode != 'RGBA':
+                    crow_img = crow_img.convert('RGBA')
+                  crow_x = x - 96 // 2
+                  crow_y = y - 84 // 2 + 12 * scale
+                  img.paste(crow_img, (crow_x, crow_y), crow_img.split()[3])
+
                 elif suitLetter == 'h':
                   eagle_img = Image.open("public/assets/images/eagle.png")
                   if eagle_img.mode != 'RGBA':
@@ -105,11 +113,11 @@ def generate_cards():
                   draw.rounded_rectangle([rect_x1, graphic_y, rect_x2, rect_y2],
                                       radius=9 * scale, fill=colour, outline=colour, width=1)
 
-                # 2. white text super-imposed on colour rectangle
-                if suitLetter == 'c':
-                  text_x = x - text_width // 2
-                  text_y = y - text_height // 2 + 4 * scale
-                  draw.text((text_x, text_y), suitLetter, fill=(255,255,255), font=phFont)
+                # # 2. white text super-imposed on colour rectangle
+                # if suitLetter == 'c':
+                #   text_x = x - text_width // 2
+                #   text_y = y - text_height // 2 + 4 * scale
+                #   draw.text((text_x, text_y), suitLetter, fill=(255,255,255), font=phFont)
 
                 # 3. Small identifiers visible when card stacked
                 # font for top-left identifier
