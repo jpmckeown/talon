@@ -30,21 +30,6 @@ export class TitleScene extends Phaser.Scene {
     this.input.keyboard!.on('keydown-H', () => {
       this.scene.start(SCENE_KEYS.HELP, { from: SCENE_KEYS.TITLE });
     });
-    // const clickToStartImage = this.add.image(this.scale.width / 2, 250, ASSET_KEYS.CLICK_TO_START, 0);
-
-    // this.tweens.add({
-    //   targets: clickToStartImage,
-    //   alpha: {
-    //     start: 1,
-    //     from: 1,
-    //     to: 0,
-    //   },
-    //   duration: 1000,
-    //   repeat: -1,
-    //   yoyo: true,
-    // });
-
-    // this.add.text(100, 400, tutorialContent, { fontFamily: 'Arial', fontSize: 28, color: '#ffffff', lineSpacing: 32, align: 'left' })
   }
 
 
@@ -66,17 +51,17 @@ export class TitleScene extends Phaser.Scene {
         .setRotation(rotation)
         .setOrigin(0.5);
       this.#cardFan.push(card);
-
-      const delay = i * 2000;
-      this.time.delayedCall(delay, () => {
-        this.#startCardShuffle(card, i);
-      });
     }
+    this.#startSequentialShuffle();
   }
 
 
-  #startCardShuffle(card: Phaser.GameObjects.Image, index: number): void {
-    const shuffleCard = () => {
+  #startSequentialShuffle(): void {
+    let currentCardIndex = 0;
+    const flipDelay = 2000;
+
+    const shuffleNextCard = () => {
+      const card = this.#cardFan[currentCardIndex];
       const newFrame = Phaser.Math.Between(0, 51);
       
       this.tweens.add({
@@ -94,11 +79,13 @@ export class TitleScene extends Phaser.Scene {
           });
         }
       });
+
+      currentCardIndex = (currentCardIndex + 1) % this.#cardFan.length;
     };
 
     this.time.addEvent({
-      delay: 1000,
-      callback: shuffleCard,
+      delay: flipDelay,
+      callback: shuffleNextCard,
       loop: true
     });
   }

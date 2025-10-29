@@ -1,7 +1,7 @@
 export const UI_CONFIG = {
   scale: 2,
   // scene control for developer convenience
-  skipTitleScene: true,
+  skipTitleScene: false,
   // partly transparent red areas show extent of dropzones
   showDropZones: false,
   enableShadows: false,
@@ -12,7 +12,7 @@ export const SCENE_KEYS = {
   TITLE: 'TITLE',
   GAME: 'GAME',
   MENU: 'MENU',
-  SCORES: 'SCORE',
+  SCORES: 'SCORES',
   CREDITS: 'CREDITS',
   HELP: 'HELP',
   CARD_BACK_SELECTOR: 'CARD_BACK_SELECTOR',
