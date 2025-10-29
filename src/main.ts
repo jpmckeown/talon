@@ -6,6 +6,7 @@ import { MenuScene } from './scenes/menu-scene';
 import { ScoreScene } from './scenes/scores-scene';
 import { CardBackSelectorScene } from './scenes/card-back-selector-scene';
 import { CreditsScene } from './scenes/credits-scene';
+import { HelpScene } from './scenes/help-scene';
 import { UI_CONFIG } from './scenes/common';
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -27,7 +28,7 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
     zoom: 1
   },
   backgroundColor: '#387F3C',
-  scene: [PreloadScene, TitleScene, GameScene, MenuScene, ScoreScene, CreditsScene, CardBackSelectorScene],
+  scene: [PreloadScene, TitleScene, GameScene, MenuScene, ScoreScene, CreditsScene, CardBackSelectorScene, HelpScene],
 };
 
 window.onload = () => {

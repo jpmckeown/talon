@@ -14,6 +14,7 @@ export const SCENE_KEYS = {
   MENU: 'MENU',
   SCORES: 'SCORE',
   CREDITS: 'CREDITS',
+  HELP: 'HELP',
   CARD_BACK_SELECTOR: 'CARD_BACK_SELECTOR',
 } as const;
 
