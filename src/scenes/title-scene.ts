@@ -30,6 +30,10 @@ export class TitleScene extends Phaser.Scene {
     this.input.keyboard!.on('keydown-H', () => {
       this.scene.start(SCENE_KEYS.HELP, { from: SCENE_KEYS.TITLE });
     });
+
+    this.input.keyboard!.on('keydown-M', () => {
+      this.scene.start(SCENE_KEYS.MENU);
+    });
   }
 
 
