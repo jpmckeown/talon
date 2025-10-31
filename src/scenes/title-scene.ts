@@ -140,15 +140,16 @@ export class TitleScene extends Phaser.Scene {
   }
 
   #makeTitle(): void {
+    const titleY: number = 150;
     const talonText = this.add.text(
       this.scale.width / 2,
-      200,
+      titleY,
       'Talon',
       {
-        fontSize: '120px',
+        fontSize: '140px',
         color: '#ffd700',  // gold colour
         stroke: '#000000',
-        strokeThickness: 8,
+        strokeThickness: 5,
         fontFamily: 'Arial Black, Arial',
         shadow: {
           offsetX: 5,
@@ -160,13 +161,14 @@ export class TitleScene extends Phaser.Scene {
       }
     ).setOrigin(0.5);
 
+    if (talonText.preFX) {
+      talonText.preFX.addGlow(0xffd700, 2, 0, false, 0.1, 32);
+    }
+
     this.tweens.add({
       targets: talonText,
-      scale: {
-        from: 1,
-        to: 1.2
-      },
-      duration: 2000,
+      y: titleY - 50,
+      duration: 3000,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.easeInOut'
