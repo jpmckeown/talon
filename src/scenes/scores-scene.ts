@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { ASSET_KEYS, SCENE_KEYS, UI_CONFIG } from './common';
+import { ScoreEntry } from '../lib/common';
 
 export class ScoreScene extends Phaser.Scene {
   constructor() {
@@ -15,11 +16,6 @@ export class ScoreScene extends Phaser.Scene {
       stroke: '#000000',
       strokeThickness: 4
     }).setOrigin(0.5);
-    
-    interface ScoreEntry {
-      score: number;
-      timestamp: string;
-    }
 
     const allScores = JSON.parse(localStorage.getItem('solitaireHighScores') || '[]') as ScoreEntry[];
     // const highScores = JSON.parse(localStorage.getItem('solitaireHighScores') || '[]') as number[];

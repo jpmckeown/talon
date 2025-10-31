@@ -81,6 +81,7 @@ export class GameScene extends Phaser.Scene {
 
   score: number = 0;
   scoreText!: Phaser.GameObjects.Text;
+  #lastSavedScore: number = 0;
 
   constructor() {
     super({ key: SCENE_KEYS.GAME });
@@ -125,6 +126,7 @@ export class GameScene extends Phaser.Scene {
     this.makePeekButton();
 
     this.input.keyboard!.on('keydown-M', () => {
+      // this.saveCurrentScore();
       this.scene.pause();
       this.scene.launch(SCENE_KEYS.MENU);
     });
@@ -171,6 +173,10 @@ export class GameScene extends Phaser.Scene {
 
     this.input.keyboard?.on('keydown-ESC', () => {
       this.scene.start(SCENE_KEYS.TITLE);
+    });
+
+    window.addEventListener('beforeunload', () => {
+      this.saveCurrentScore();
     });
 
     // game is starting so play an intro sound
@@ -299,10 +305,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   saveCurrentScore(): void {
-    if (this.score === 0) return;
+    if (this.score === 0 || this.score === this.#lastSavedScore) return;
 
     const highScores = JSON.parse(localStorage.getItem('solitaireHighScores') || '[]') as ScoreEntry[];
-    // const highScores = JSON.parse(localStorage.getItem('solitaireHighScores') || '[]') as number[];
 
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, '0');
@@ -318,6 +323,7 @@ export class GameScene extends Phaser.Scene {
     highScores.splice(99);
 
     localStorage.setItem('solitaireHighScores', JSON.stringify(highScores));
+    this.#lastSavedScore = this.score;
     console.log(`Saved score: ${this.score} at ${timestamp}`);
   }
 
@@ -326,6 +332,7 @@ export class GameScene extends Phaser.Scene {
     this.#loadCardBackPreference();
     this.saveCurrentScore();
     this.score = 0;
+    this.#lastSavedScore = 0;
     this.scoreText.setText('Score 0');
     this.#fastCompleteOfferDismissed = false;
 
@@ -721,6 +728,9 @@ export class GameScene extends Phaser.Scene {
 
     if (!this.#fastCompleteOfferDismissed && this.#checkFastCompleteCondition()) {
       this.#showFastCompleteOverlay();
+    }
+    if (this.#solitaire.wonGame) {
+      this.saveCurrentScore();
     }
   }
 

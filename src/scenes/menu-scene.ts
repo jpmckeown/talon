@@ -78,6 +78,8 @@ export class MenuScene extends Phaser.Scene {
   }
 
   showHighScores(): void {
+    // const gameScene = this.scene.get(SCENE_KEYS.GAME) as any;
+    // gameScene.saveCurrentScore();
     this.scene.stop(SCENE_KEYS.MENU);
     this.scene.pause(SCENE_KEYS.GAME);
     this.scene.start(SCENE_KEYS.SCORES);
