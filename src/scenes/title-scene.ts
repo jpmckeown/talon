@@ -10,7 +10,9 @@ export class TitleScene extends Phaser.Scene {
 
   public create(): void {
     this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 1).setOrigin(0);
-    this.add.image(this.scale.width / 2, 100, ASSET_KEYS.TITLE, 0).setOrigin(0.5);
+    // this.add.image(this.scale.width / 2, 100, ASSET_KEYS.TITLE, 0).setOrigin(0.5);
+
+    this.#makeTitle();
 
     this.#makeCardFan();
     this.#makeStartButton();
@@ -135,5 +137,39 @@ export class TitleScene extends Phaser.Scene {
         color: '#888888'
       }
     ).setOrigin(0.5);
+  }
+
+  #makeTitle(): void {
+    const talonText = this.add.text(
+      this.scale.width / 2,
+      200,
+      'Talon',
+      {
+        fontSize: '120px',
+        color: '#ffd700',  // gold colour
+        stroke: '#000000',
+        strokeThickness: 8,
+        fontFamily: 'Arial Black, Arial',
+        shadow: {
+          offsetX: 5,
+          offsetY: 5,
+          color: '#000000',
+          blur: 10,
+          fill: true
+        }
+      }
+    ).setOrigin(0.5);
+
+    this.tweens.add({
+      targets: talonText,
+      scale: {
+        from: 1,
+        to: 1.2
+      },
+      duration: 2000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
   }
 }
