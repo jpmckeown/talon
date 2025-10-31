@@ -34,6 +34,9 @@ Chrome: in inspector I saw a Console message "Automatic fallback to software Web
 | `pnpm start` | Build project and start local webserver running the game |
 | `pnpm build` | Builds code bundle for deployment |
 
+If you want to erase local storage of scores, in browser console run
+localStorage.removeItem('solitaireHighScores');
+
 ### Writing code
 
 Once pnpm starts a local webserver (see above), when any file in the `src` folder is edited Vite will automatically recompile and reload that local webserver. 

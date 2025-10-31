@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { ASSET_KEYS, AUDIO_KEYS, CARD_HEIGHT, CARD_WIDTH, DEFAULT_CARD_BACK_FRAME, GAME_HEIGHT, GAME_WIDTH, SCENE_KEYS, UI_CONFIG } from './common';
-import { CONFIG } from '../lib/common';
+import { CONFIG, ScoreEntry } from '../lib/common';
 import { Solitaire } from '../lib/solitaire';
 import { Card } from '../lib/card';
 import { exhaustiveGuard, countEmptyTableau } from '../lib/utils';
@@ -301,14 +301,24 @@ export class GameScene extends Phaser.Scene {
   saveCurrentScore(): void {
     if (this.score === 0) return;
 
-    const highScores = JSON.parse(localStorage.getItem('solitaireHighScores') || '[]') as number[];
+    const highScores = JSON.parse(localStorage.getItem('solitaireHighScores') || '[]') as ScoreEntry[];
+    // const highScores = JSON.parse(localStorage.getItem('solitaireHighScores') || '[]') as number[];
 
-    highScores.push(this.score);
-    highScores.sort((a, b) => b - a);
-    highScores.splice(7);
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const year = now.getFullYear();
+    const timestamp = `${hours}:${minutes} ${day}/${month}/${year}`;
+
+    // highScores.push(this.score);
+    highScores.push({ score: this.score, timestamp });
+    highScores.sort((a, b) => b.score - a.score);
+    highScores.splice(99);
 
     localStorage.setItem('solitaireHighScores', JSON.stringify(highScores));
-    console.log(`Saved score: ${this.score}`);
+    console.log(`Saved score: ${this.score} at ${timestamp}`);
   }
 
 

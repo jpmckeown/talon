@@ -16,10 +16,27 @@ export class ScoreScene extends Phaser.Scene {
       strokeThickness: 4
     }).setOrigin(0.5);
     
-    const highScores = JSON.parse(localStorage.getItem('solitaireHighScores') || '[]') as number[];
+    interface ScoreEntry {
+      score: number;
+      timestamp: string;
+    }
+
+    const allScores = JSON.parse(localStorage.getItem('solitaireHighScores') || '[]') as ScoreEntry[];
+    // const highScores = JSON.parse(localStorage.getItem('solitaireHighScores') || '[]') as number[];
+
+    const uniqueScores = new Map<number, ScoreEntry>();
+    for (const entry of allScores) {
+      if (!uniqueScores.has(entry.score)) {
+        uniqueScores.set(entry.score, entry);
+      }
+    }
+    
+    const displayScores = Array.from(uniqueScores.values())
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 7);
    
     // display scores or empty message
-    if (highScores.length === 0) {
+    if (displayScores.length === 0) {
       this.add.text(this.scale.width / 2, this.scale.height / 2, 'No scores yet!', {
         fontSize: `${20 * UI_CONFIG.scale}px`,
         color: '#888888'
@@ -28,11 +45,11 @@ export class ScoreScene extends Phaser.Scene {
       const startY = 100;
       const spacing = 35;
       
-      highScores.forEach((score, index) => {
+      displayScores.forEach((entry, index) => {
         const yPos = (startY + index * spacing) * UI_CONFIG.scale;
         const color = index === 0 ? '#ffd700' : index < 3 ? '#c0c0c0' : '#ffffff';
         
-        this.add.text(this.scale.width / 2, yPos, `${index + 1}. ${score}`, {
+        this.add.text(this.scale.width / 2, yPos, `${index + 1}. ${entry.score} - ${entry.timestamp}`, {
           fontSize: `${20 * UI_CONFIG.scale}px`,
           color: color
         }).setOrigin(0.5);
