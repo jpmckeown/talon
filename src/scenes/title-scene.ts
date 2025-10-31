@@ -18,13 +18,6 @@ export class TitleScene extends Phaser.Scene {
     this.#makeStartButton();
     this.#makeHelpHint();
 
-    this.input.once(Phaser.Input.Events.POINTER_DOWN, () => {
-      this.cameras.main.fadeOut(50, 0, 0, 0);
-      this.cameras.main.once('camerafadeoutcomplete', () => {
-        this.scene.start(SCENE_KEYS.GAME);
-      });
-    });
-
     this.input.keyboard!.on('keydown-S', () => {
       this.scene.start(SCENE_KEYS.SCORES);
     });
@@ -103,14 +96,25 @@ export class TitleScene extends Phaser.Scene {
 
     const feltBg = this.add.image(centreX, centreY, ASSET_KEYS.TABLE_BACKGROUND)
       .setDisplaySize(CARD_WIDTH * 3.5, CARD_HEIGHT * 0.6)
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setInteractive();;
 
-    const buttonText = this.add.text(centreX, centreY, 'Click to Start', {
+    const buttonText = this.add.text(centreX, centreY, 'Start', {
       fontSize: `${20 * UI_CONFIG.scale}px`,
       color: '#ffffff',
       stroke: '#000000',
       strokeThickness: 2
-    }).setOrigin(0.5);
+    }).setOrigin(0.5).setInteractive();
+
+    const startGame = () => {
+      this.cameras.main.fadeOut(50, 0, 0, 0);
+      this.cameras.main.once('camerafadeoutcomplete', () => {
+        this.scene.start(SCENE_KEYS.GAME);
+      });
+    };
+
+    feltBg.on('pointerdown', startGame);
+    buttonText.on('pointerdown', startGame);
 
     this.tweens.add({
       targets: [feltBg, buttonText],
@@ -128,15 +132,21 @@ export class TitleScene extends Phaser.Scene {
 
 
   #makeHelpHint(): void {
-    this.add.text(
+    const helpText = this.add.text(
       this.scale.width / 2,
       this.scale.height - 30 * UI_CONFIG.scale,
-      'Press H for Help',
+      'Help / how to play (H)',
       {
         fontSize: `${14 * UI_CONFIG.scale}px`,
         color: '#888888'
       }
-    ).setOrigin(0.5);
+    ).setOrigin(0.5).setInteractive();
+
+    helpText.on('pointerover', () => helpText.setColor('#00ff00'));
+    helpText.on('pointerout', () => helpText.setColor('#888888'));
+    helpText.on('pointerdown', () => {
+      this.scene.start(SCENE_KEYS.HELP, { from: SCENE_KEYS.TITLE });
+    });
   }
 
   #makeTitle(): void {

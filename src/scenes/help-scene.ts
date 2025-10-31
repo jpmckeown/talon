@@ -65,7 +65,6 @@ export class HelpScene extends Phaser.Scene {
   #goBack(): void {
     this.scene.stop(SCENE_KEYS.HELP);
     if (this.#returnToScene === SCENE_KEYS.MENU) {
-      this.scene.resume(SCENE_KEYS.GAME);
       this.scene.start(SCENE_KEYS.MENU);
     } else {
       this.scene.start(this.#returnToScene);
