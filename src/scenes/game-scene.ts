@@ -570,8 +570,14 @@ export class GameScene extends Phaser.Scene {
 
         // if game object was not destroyed, still active, update GO data to where card was placed
         if (gameObject.active) {
-          gameObject.setPosition(gameObject.getData('x') as number, gameObject.getData('y') as number);
- 
+          const moveBackDuration = 150;
+          this.tweens.add({
+            targets: gameObject,
+            duration: moveBackDuration,
+            x: gameObject.getData('x') as number,
+            y: gameObject.getData('y') as number,
+          });
+
           // reset card GO alpha since we are done moving it
           gameObject.setAlpha(1);
 
@@ -584,6 +590,12 @@ export class GameScene extends Phaser.Scene {
                 cardIndex + i,
               );
               cardToMove.setPosition(cardToMove.getData('x') as number, cardToMove.getData('y') as number);
+              this.tweens.add({
+                targets: cardToMove,
+                duration: moveBackDuration,
+                x: cardToMove.getData('x') as number,
+                y: cardToMove.getData('y') as number,
+              });
             }
           }
         }
