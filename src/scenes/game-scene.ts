@@ -589,7 +589,6 @@ export class GameScene extends Phaser.Scene {
               const cardToMove = this.#tableauContainers[tableauPileIndex].getAt<Phaser.GameObjects.Image>(
                 cardIndex + i,
               );
-              cardToMove.setPosition(cardToMove.getData('x') as number, cardToMove.getData('y') as number);
               this.tweens.add({
                 targets: cardToMove,
                 duration: moveBackDuration,
