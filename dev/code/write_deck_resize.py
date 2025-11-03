@@ -102,16 +102,16 @@ def generate_cards():
                   img.paste(eagle_img, (eagle_x, eagle_y), eagle_img.split()[3])
 
                 elif suitLetter == 'd':
-                  redkite_img = Image.open("public/assets/images/red-kite.png")
+                  redkite_img = Image.open("public/assets/images/red-kite-3.png")
                   if redkite_img.mode != 'RGBA':
                     redkite_img = redkite_img.convert('RGBA')
                   redkite_x = x - 96 // 2
                   redkite_y = y - 84 // 2 + 12 * scale
                   img.paste(redkite_img, (redkite_x, redkite_y), redkite_img.split()[3])
 
-                else:
-                  draw.rounded_rectangle([rect_x1, graphic_y, rect_x2, rect_y2],
-                                      radius=9 * scale, fill=colour, outline=colour, width=1)
+                # else:
+                #   draw.rounded_rectangle([rect_x1, graphic_y, rect_x2, rect_y2],
+                #                       radius=9 * scale, fill=colour, outline=colour, width=1)
 
                 # # 2. white text super-imposed on colour rectangle
                 # if suitLetter == 'c':
@@ -127,7 +127,6 @@ def generate_cards():
                 else:
                   fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 30 * scale)
                   leftMargin = 6
-
 
                 draw.text((xt + leftMargin * scale, yt - 2 * scale), value, fill=colour, font=fontsmall)
 
