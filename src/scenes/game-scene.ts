@@ -663,11 +663,12 @@ export class GameScene extends Phaser.Scene {
     }
 
     // drop zone for each tableau pile in the game (the 7 main piles)
+    const dropZoneY = 380;
     for (let i = 0; i < 7; i += 1) {
       zone = this.add
-        .zone(30* UI_CONFIG.scale + i * 85*UI_CONFIG.scale, 92*UI_CONFIG.scale, 75.5*UI_CONFIG.scale, 585*UI_CONFIG.scale)
+        .zone(30* UI_CONFIG.scale + i * 85*UI_CONFIG.scale, 92*UI_CONFIG.scale, 75.5*UI_CONFIG.scale, dropZoneY*UI_CONFIG.scale)
         .setOrigin(0)
-        .setRectangleDropZone(75.5*UI_CONFIG.scale, 585*UI_CONFIG.scale)
+        .setRectangleDropZone(75.5*UI_CONFIG.scale, dropZoneY*UI_CONFIG.scale)
         .setData({
           zoneType: ZONE_TYPE.TABLEAU,
           tableauIndex: i,
@@ -780,6 +781,25 @@ export class GameScene extends Phaser.Scene {
 
     // get original size of Tableau pile: enables check on length limit; and where to put card(s)
     const originalTargetPileSize = this.#tableauContainers[targetTableauPileIndex].length;
+
+    // // if card dropped below (Y aligns) but distant from bottom of tableau stack it should be treated as an abandoned move, so check distance and reject if too far away.
+    // const droppedY = gameObject.y;
+    // let targetPileBottomY: number;
+
+    // if (originalTargetPileSize === 0) {
+    //   targetPileBottomY = TABLEAU_PILE_Y_POSITION;
+    // } else {
+    //   const bottomCard = this.#tableauContainers[targetTableauPileIndex].getAt<Phaser.GameObjects.Image>(originalTargetPileSize - 1);
+    //   targetPileBottomY = bottomCard.y + CARD_HEIGHT + this.#tableauContainers[targetTableauPileIndex].y;
+    // }
+
+    // const verticalDistance = Math.abs(droppedY - targetPileBottomY);
+    // console.log(`Tableau ${targetTableauPileIndex}: dropped Y=${droppedY.toFixed(0)}, pile bottom Y=${targetPileBottomY.toFixed(0)}, distance=${verticalDistance.toFixed(0)}`);
+
+    // if (verticalDistance > 90) {
+    //   console.log(`Dropped too far from pile (${verticalDistance.toFixed(0)} pixels) - rejecting move`);
+    //   return;
+    // }
 
     // check if card is from Talon or Tableau pile based on the pileIndex in data manager
     const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
