@@ -513,6 +513,8 @@ export class GameScene extends Phaser.Scene {
 
         // store objects position
         gameObject.setData({ x: gameObject.x, y: gameObject.y });
+        // remember this card hasn't yet been successfully dropped
+        gameObject.setData('wasDropped', false);
 
         // update depth on container or image game object, so when we drag the card it is visible above all other game objects
         const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
@@ -554,7 +556,125 @@ export class GameScene extends Phaser.Scene {
   }
 
 
-  #createDragEndEventListener(): void {
+  // #createDragEndEventListener(): void {
+  //   // listen for drag-end event on a game object, this will be used to check where GO was placed in scene, and  if that is a valid move, otherwise reset GO position to original location.
+  //   this.input.on(
+  //     Phaser.Input.Events.DRAG_END,
+  //     (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image) => {
+
+  //       // reset the depth on the container or image game object
+  //       const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
+  //       if (tableauPileIndex !== undefined) {
+  //         this.#tableauContainers[tableauPileIndex].setDepth(0);
+  //       } else {
+  //         gameObject.setDepth(0);
+  //       }
+
+  //       // if game object was not destroyed, still active, update GO data to where card was placed
+  //       if (gameObject.active) {
+  //         // only animate return if card wasn't successfully dropped
+  //         const wasDropped = gameObject.getData('wasDropped') as boolean;
+  //         const cardIndex = gameObject.getData('cardIndex') as number;
+
+  //         if (!wasDropped) {
+  //           const moveBackDuration = 150;
+  //           gameObject.setData('returning', true);
+
+  //           this.tweens.add({
+  //             targets: gameObject,
+  //             duration: moveBackDuration,
+  //             x: gameObject.getData('x') as number,
+  //             y: gameObject.getData('y') as number,
+  //             onComplete: () => {
+  //               gameObject.setData('returning', false);
+  //             }
+  //           });
+
+  //           // if card is part of a tableau, also move all the cards that are stacked on top of this card back to original location
+  //           if (tableauPileIndex !== undefined) {
+  //             const numberOfCardsToMove = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex, cardIndex);
+  //             for (let i = 1; i <= numberOfCardsToMove; i += 1) {
+  //               const cardToMove = this.#tableauContainers[tableauPileIndex].getAt<Phaser.GameObjects.Image>(
+  //                 cardIndex + i,
+  //               );
+  //               this.tweens.add({
+  //                 targets: cardToMove,
+  //                 duration: moveBackDuration,
+  //                 x: cardToMove.getData('x') as number,
+  //                 y: cardToMove.getData('y') as number,
+  //               });
+  //             }
+  //           }
+  //         }
+
+  //         // reset card GO alpha since we are done moving it (for both valid and invalid moves)
+  //         gameObject.setAlpha(1);
+  //       }
+  //     },
+  //   );
+  // }
+
+
+  // #createDragEndEventListener(): void {
+  //   // listen for drag-end event on a game object, this will be used to check where GO was placed in scene, and  if that is a valid move, otherwise reset GO position to original location.
+  //   this.input.on(
+  //     Phaser.Input.Events.DRAG_END,
+  //     (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image) => {
+
+  //       // reset the depth on the container or image game object
+  //       const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
+  //       if (tableauPileIndex !== undefined) {
+  //         this.#tableauContainers[tableauPileIndex].setDepth(0);
+  //       } else {
+  //         gameObject.setDepth(0);
+  //       }
+
+  //       // if game object was not destroyed, still active, update GO data to where card was placed
+  //       if (gameObject.active) {
+  //         // only animate return if card wasn't successfully dropped
+  //         const wasDropped = gameObject.getData('wasDropped') as boolean;
+
+  //         if (!wasDropped) {
+  //         const moveBackDuration = 150;
+  //         gameObject.setData('returning', true);
+
+  //         this.tweens.add({
+  //           targets: gameObject,
+  //           duration: moveBackDuration,
+  //           x: gameObject.getData('x') as number,
+  //           y: gameObject.getData('y') as number,
+  //           onComplete: () => {
+  //             gameObject.setData('returning', false);
+  //           }
+  //         });
+
+  //         // reset card GO alpha since we are done moving it
+  //         gameObject.setAlpha(1);
+
+  //         // if card is part of a tableau, also move all the cards that are stacked on top of this card back to original location
+  //         const cardIndex = gameObject.getData('cardIndex') as number;
+  //         if (tableauPileIndex !== undefined) {
+  //           const numberOfCardsToMove = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex, cardIndex);
+  //           for (let i = 1; i <= numberOfCardsToMove; i += 1) {
+  //             const cardToMove = this.#tableauContainers[tableauPileIndex].getAt<Phaser.GameObjects.Image>(
+  //               cardIndex + i,
+  //             );
+  //             this.tweens.add({
+  //               targets: cardToMove,
+  //               duration: moveBackDuration,
+  //               x: cardToMove.getData('x') as number,
+  //               y: cardToMove.getData('y') as number,
+  //             });
+  //           }
+  //         }
+  //       }
+  //     },
+  //   );
+  // }
+
+  
+  // my efforts to stop weird visual when card placed correctly broke functionaility, have restored original code
+   #createDragEndEventListener(): void {
     // listen for drag-end event on a game object, this will be used to check where GO was placed in scene, and  if that is a valid move, otherwise reset GO position to original location.
     this.input.on(
       Phaser.Input.Events.DRAG_END,
@@ -570,13 +690,8 @@ export class GameScene extends Phaser.Scene {
 
         // if game object was not destroyed, still active, update GO data to where card was placed
         if (gameObject.active) {
-          const moveBackDuration = 150;
-          this.tweens.add({
-            targets: gameObject,
-            duration: moveBackDuration,
-            x: gameObject.getData('x') as number,
-            y: gameObject.getData('y') as number,
-          });
+
+          gameObject.setPosition(gameObject.getData('x') as number, gameObject.getData('y') as number);
 
           // reset card GO alpha since we are done moving it
           gameObject.setAlpha(1);
@@ -589,12 +704,7 @@ export class GameScene extends Phaser.Scene {
               const cardToMove = this.#tableauContainers[tableauPileIndex].getAt<Phaser.GameObjects.Image>(
                 cardIndex + i,
               );
-              this.tweens.add({
-                targets: cardToMove,
-                duration: moveBackDuration,
-                x: cardToMove.getData('x') as number,
-                y: cardToMove.getData('y') as number,
-              });
+              cardToMove.setPosition(cardToMove.getData('x') as number, cardToMove.getData('y') as number);
             }
           }
         }
@@ -680,6 +790,7 @@ export class GameScene extends Phaser.Scene {
     return -1;
   }
 
+
   #handleMoveCardToFoundation(gameObject: Phaser.GameObjects.Image): void {
     let isValidMove = false;
     let isCardFromDiscardPile = false;
@@ -707,6 +818,7 @@ export class GameScene extends Phaser.Scene {
     if (!isValidMove) {
       return;
     }
+    gameObject.setData('wasDropped', true);
 
     // particle fx at foundation pile location
     const foundationIndex = this.#getFoundationIndexForCard(gameObject);
@@ -783,6 +895,7 @@ export class GameScene extends Phaser.Scene {
     if (!isValidMove) {
       return;
     }
+    gameObject.setData('wasDropped', true);
 
     this.sound.play(AUDIO_KEYS.PLACE_CARD, { volume: 0.3 });
 
