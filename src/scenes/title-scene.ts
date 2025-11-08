@@ -35,7 +35,7 @@ export class TitleScene extends Phaser.Scene {
     // delete animation timer when leaving title scene
     this.time.removeAllEvents();
   }
-  
+
 
   #makeCardFan(): void {
     const centreX = this.scale.width / 2;
@@ -159,7 +159,7 @@ export class TitleScene extends Phaser.Scene {
     const talonText = this.add.text(
       this.scale.width / 2,
       titleY,
-      'Talon',
+      'Talon Solitaire',
       {
         fontSize: '140px',
         color: '#ffd700',  // gold colour
