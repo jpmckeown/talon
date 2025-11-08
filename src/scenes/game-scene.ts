@@ -776,7 +776,8 @@ export class GameScene extends Phaser.Scene {
 
 
   #handleMoveCardToTableau(gameObject: Phaser.GameObjects.Image, targetTableauPileIndex: number): void {
-    let isValidMove = false;
+    let isValidMove: boolean | 'cheat' = false;
+    // let isValidMove = false;
     let isCardFromDiscardPile = false;
 
     // get original size of Tableau pile: enables check on length limit; and where to put card(s)
@@ -833,6 +834,7 @@ export class GameScene extends Phaser.Scene {
     }
     gameObject.setData('wasDropped', true);
 
+    const isCheatMove = isValidMove === 'cheat';
     this.sound.play(AUDIO_KEYS.PLACE_CARD, { volume: 0.3 });
 
     this.#tableauContainers[targetTableauPileIndex].setDepth(0);
@@ -854,9 +856,11 @@ export class GameScene extends Phaser.Scene {
       card.setFrame(gameObject.frame);
       this.#tableauContainers[targetTableauPileIndex].add(card);
 
-      const px = horizontalShift + this.#tableauContainers[targetTableauPileIndex].x;
-      const py = originalTargetPileSize * STACK_Y_GAP + this.#tableauContainers[targetTableauPileIndex].y;
-      this.#fx.poof(px, py);
+      if (!isCheatMove) {
+        const px = horizontalShift + this.#tableauContainers[targetTableauPileIndex].x;
+        const py = originalTargetPileSize * STACK_Y_GAP + this.#tableauContainers[targetTableauPileIndex].y;
+        this.#fx.poof(px, py);
+      }
       
       // update the remaining cards in discard pile
       this.#updateCardGameObjectsInDiscardPile();
@@ -889,10 +893,11 @@ export class GameScene extends Phaser.Scene {
       // FIXME: only poof when you do something awesome
       // TODO: add different types of poofs especially on a WIN
       // spawn a particle effect
-      // where is the card on screen?
-      let px = horizontalShift + cardGameObject.parentContainer.x;// + (CARD_WIDTH/2);
-      let py = cardIndex * STACK_Y_GAP + cardGameObject.parentContainer.y;// + (CARD_HEIGHT/2);
-      this.#fx.poof(px,py);
+        if (!isCheatMove) {
+        let px = horizontalShift + cardGameObject.parentContainer.x;// + (CARD_WIDTH/2);
+        let py = cardIndex * STACK_Y_GAP + cardGameObject.parentContainer.y;// + (CARD_HEIGHT/2);
+        this.#fx.poof(px,py);
+      }
     }
 
     // update depth on container to be the original value

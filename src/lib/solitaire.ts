@@ -159,7 +159,7 @@ export class Solitaire {
     return true;
   }
 
-  public playDiscardPileCardToTableau(targetTableauIndex: number): boolean {
+  public playDiscardPileCardToTableau(targetTableauIndex: number): boolean | 'cheat' {
     // get the top card of the discard pile (last element in array)
     const card = this.#deck.discardPile[this.#deck.discardPile.length - 1];
     if (card === undefined) {
@@ -172,7 +172,9 @@ export class Solitaire {
     }
 
     // based on the card suit color and card number, check that this card is allowed as the next card in the target tableau
-    if (!this.#isValidMoveToAddCardToTableau(card, targetTableauPile)) {
+    //if (!this.#isValidMoveToAddCardToTableau(card, targetTableauPile)) {
+    const validationResult = this.#isValidMoveToAddCardToTableau(card, targetTableauPile);
+    if (!validationResult) {
       return false;
     }
 
@@ -180,7 +182,8 @@ export class Solitaire {
     this.#tableauPiles[targetTableauIndex].push(card);
     this.#deck.discardPile.pop();
 
-    return true;
+    return validationResult;
+    // return true;
   }
 
 
@@ -208,7 +211,7 @@ export class Solitaire {
     initialTableauIndex: number,
     cardIndex: number,
     targetTableauIndex: number,
-  ): boolean {
+  ): boolean | 'cheat' {
     const initialTableauPile = this.#tableauPiles[initialTableauIndex];
     const targetTableauPile = this.#tableauPiles[targetTableauIndex];
     if (initialTableauPile === undefined || targetTableauPile === undefined) {
@@ -227,7 +230,9 @@ export class Solitaire {
     }
 
     // based on the suit color and card number, check that this card is allowed as the next card in the target tableau
-    if (!this.#isValidMoveToAddCardToTableau(card, targetTableauPile)) {
+    // if (!this.#isValidMoveToAddCardToTableau(card, targetTableauPile)) {
+    const validationResult = this.#isValidMoveToAddCardToTableau(card, targetTableauPile);
+    if (!validationResult) {
       return false;
     }
 
@@ -235,7 +240,8 @@ export class Solitaire {
     const cardsToMove = initialTableauPile.splice(cardIndex);
     cardsToMove.forEach((card) => targetTableauPile.push(card));
 
-    return true;
+    return validationResult;
+    // return true;
   }
 
 
@@ -308,7 +314,7 @@ export class Solitaire {
   }
 
 
-  #isValidMoveToAddCardToTableau(card: Card, tableauPile: Card[]): boolean {
+  #isValidMoveToAddCardToTableau(card: Card, tableauPile: Card[]): boolean | 'cheat' {
     // if tableau is empty, only allow a King (13) to be placed
     if (tableauPile.length === 0) {
       // option rule allows a Queen to begin a Tableau stack
@@ -339,6 +345,7 @@ export class Solitaire {
       }
       this.#sameColourMoves--;
       console.log(`${this.sameColourMoves} same-colour cheat-moves remaining.`);
+      return 'cheat';
     }
 
     // if (!CONFIG.requireAlternatingColours) {
