@@ -837,7 +837,11 @@ export class GameScene extends Phaser.Scene {
     gameObject.setData('wasDropped', true);
 
     const isCheatMove = isValidMove === 'cheat';
-    this.sound.play(AUDIO_KEYS.PLACE_CARD, { volume: 0.3 });
+    if (isCheatMove) {
+      this.sound.play(AUDIO_KEYS.INVALID, { volume: 0.3 });
+    } else {
+      this.sound.play(AUDIO_KEYS.PLACE_CARD, { volume: 0.3 });
+    }
 
     this.#tableauContainers[targetTableauPileIndex].setDepth(0);
     // ensure source container depth is also reset
