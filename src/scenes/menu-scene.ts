@@ -15,6 +15,7 @@ export class MenuScene extends Phaser.Scene {
 
     const gameScene = this.scene.get(SCENE_KEYS.GAME) as any;
     const currentScore = gameScene.score || 0;
+    const gameIsActive = this.scene.isActive(SCENE_KEYS.GAME) || this.scene.isPaused(SCENE_KEYS.GAME);
 
     this.add.text(this.scale.width / 2, 50 * UI_CONFIG.scale, 'Paused', {
       fontSize: `${42 * UI_CONFIG.scale}px`,
@@ -23,14 +24,20 @@ export class MenuScene extends Phaser.Scene {
       strokeThickness: 4
     }).setOrigin(0.5);
 
-    const menuItems = [
-      { text: 'Resume Game (r)', key: 'R', action: () => this.resumeGame() },
+    const menuItems: Array<{ text: string; key: string; action: () => void }> = [];
+
+    // offer Resume game only if a game is Paused
+    if (gameIsActive) {
+      menuItems.push({ text: 'Resume Game (r)', key: 'R', action: () => this.resumeGame() });
+    }
+
+    menuItems.push(
       { text: 'New Game (n)', key: 'N', action: () => this.startNewGame() },
       { text: 'How to play (h)', key: 'H', action: () => this.showHelp() },
       { text: 'Card Back (b)', key: 'B', action: () => this.showCardBackSelector() },
       { text: 'High Scores (s)', key: 'S', action: () => this.showHighScores() },
       { text: 'Credits (c)', key: 'C', action: () => this.showCredits() }
-    ];
+    );
 
     // draw the Menu
     menuItems.forEach((item, index) => {

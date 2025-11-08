@@ -31,6 +31,11 @@ export class TitleScene extends Phaser.Scene {
     });
   }
 
+  public shutdown(): void {
+    // delete animation timer when leaving title scene
+    this.time.removeAllEvents();
+  }
+  
 
   #makeCardFan(): void {
     const centreX = this.scale.width / 2;

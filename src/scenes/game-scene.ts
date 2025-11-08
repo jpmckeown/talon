@@ -172,7 +172,9 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.input.keyboard?.on('keydown-ESC', () => {
-      this.scene.start(SCENE_KEYS.TITLE);
+      this.scene.pause();
+      this.scene.launch(SCENE_KEYS.MENU);
+      //this.scene.start(SCENE_KEYS.TITLE);
     });
 
     window.addEventListener('beforeunload', () => {
