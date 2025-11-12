@@ -62,8 +62,11 @@ export class GameScene extends Phaser.Scene {
   #discardPileCards!: Phaser.GameObjects.Image[];
   // card GO in each foundation pile (4, i.e. only the top card)
   #foundationPileCards!: Phaser.GameObjects.Image[];
+
   // tracks containers, one for each tableau pile (7 game objects)
   #tableauContainers!: Phaser.GameObjects.Container[];
+  #tableauDropZones!: Phaser.GameObjects.Zone[];
+  #tableauDebugRects!: Phaser.GameObjects.Rectangle[];
 
   // spawns particle effects during the game
   #fx!: Effects;
@@ -102,11 +105,11 @@ export class GameScene extends Phaser.Scene {
     this.#createDrawPile();
     this.#createDiscardPile();
     this.#createFoundationPiles();
+
+    this.#createDropZones();
     this.#createTableauPiles();
 
-    // setup drop zones for interactions and events for drag
     this.#createDragEvents();
-    this.#createDropZones();
 
     this.input.keyboard?.on('keydown-W', () => {
       console.log('W key pressed: advancing Foundation piles for instant win');
@@ -445,7 +448,6 @@ export class GameScene extends Phaser.Scene {
 
   #createTableauPiles(): void {
     this.#tableauContainers = [];
-
     this.#solitaire.tableauPiles.forEach((pile, pileIndex) => {
       const x = TABLEAU_PILE_X_POSITION + pileIndex * 85 * UI_CONFIG.scale;
       const tableauContainer = this.add.container(x, TABLEAU_PILE_Y_POSITION, []);
@@ -461,6 +463,7 @@ export class GameScene extends Phaser.Scene {
         }
       });
     });
+    this.#updateTableauDropZones();
   }
 
 
@@ -649,6 +652,7 @@ export class GameScene extends Phaser.Scene {
     return 0;
   }
 
+
   #createDropZones(): void {
     // Foundation (F) and  Tableau (T) are 2 types of dropzone: for each zone add custom data so when the `drag` event listener is invoked can run specific logic for that zone type.
 
@@ -657,7 +661,9 @@ export class GameScene extends Phaser.Scene {
     const F_zone_width = this.#scale(270);
     const F_zone_height = this.#scale(85);
 
-    let zone = this.add.zone(F_zone_topleft, 0, F_zone_width, F_zone_height).setOrigin(0).setRectangleDropZone(F_zone_width, F_zone_height).setData({
+    let zone = this.add.zone(F_zone_topleft, 0, F_zone_width, F_zone_height).setOrigin(0)
+    zone.setRectangleDropZone(F_zone_width, F_zone_height)
+    zone.setData({
       zoneType: ZONE_TYPE.FOUNDATION,
     });
     if (UI_CONFIG.showDropZones) {
@@ -665,22 +671,57 @@ export class GameScene extends Phaser.Scene {
     }
 
     // drop zone for each tableau pile in the game (the 7 main piles)
-    const dropZoneY = 380;
+    this.#tableauDropZones = [];
+    this.#tableauDebugRects = [];
+    // const dropZoneY = 380;
     for (let i = 0; i < 7; i += 1) {
+      const zoneX = 30 * UI_CONFIG.scale + i * 85 * UI_CONFIG.scale;
+      const zoneWidth = 75.5 * UI_CONFIG.scale;
+      const initialHeight = 120;
+
       zone = this.add
-        .zone(30* UI_CONFIG.scale + i * 85*UI_CONFIG.scale, 92*UI_CONFIG.scale, 75.5*UI_CONFIG.scale, dropZoneY*UI_CONFIG.scale)
+        .zone(zoneX, TABLEAU_PILE_Y_POSITION, zoneWidth, initialHeight)
+        // .zone(30* UI_CONFIG.scale + i * 85*UI_CONFIG.scale, 92*UI_CONFIG.scale, 75.5*UI_CONFIG.scale, dropZoneY*UI_CONFIG.scale)
         .setOrigin(0)
-        .setRectangleDropZone(75.5*UI_CONFIG.scale, dropZoneY*UI_CONFIG.scale)
+        .setRectangleDropZone(zoneWidth, initialHeight)
+        // .setRectangleDropZone(75.5*UI_CONFIG.scale, dropZoneY*UI_CONFIG.scale)
         .setData({
           zoneType: ZONE_TYPE.TABLEAU,
           tableauIndex: i,
         })
         .setDepth(-1);
+
+      this.#tableauDropZones.push(zone);
+
       if (UI_CONFIG.showDropZones) {
-        this.add.rectangle(30* UI_CONFIG.scale + i * 85*UI_CONFIG.scale, 92*UI_CONFIG.scale, zone.width, zone.height, 0xff0000, 0.5).setOrigin(0);
+        const debugRect = this.add.rectangle(zoneX, TABLEAU_PILE_Y_POSITION, zoneWidth, initialHeight, 0xff0000, 0.5).setOrigin(0);
+        this.#tableauDebugRects.push(debugRect);
+        // this.add.rectangle(30* UI_CONFIG.scale + i * 85*UI_CONFIG.scale, 92*UI_CONFIG.scale, zone.width, zone.height, 0xff0000, 0.5).setOrigin(0);
       }
     }
+    // this.#updateTableauDropZones();
   }
+
+
+  #updateTableauDropZones(): void {
+    this.#tableauDropZones.forEach((zone, i) => {
+      const pileLength = this.#solitaire.tableauPiles[i].length;
+      let zoneHeight: number;
+
+      if (pileLength === 0) {
+        zoneHeight = 120;
+      } else {
+        zoneHeight = pileLength * STACK_Y_GAP + CARD_HEIGHT + 40;
+      }
+      zone.setSize(zone.width, zoneHeight);
+      zone.input!.hitArea.height = zoneHeight;
+
+      if (UI_CONFIG.showDropZones && this.#tableauDebugRects[i]) {
+        this.#tableauDebugRects[i].setSize(zone.width, zoneHeight);
+      }
+    });
+  }
+
 
   #createDropEventListener(): void {
     // listen for drop events on a game object, this will be used for knowing which card pile a player is trying to add a card game object to which will then trigger validation logic to check if a valid move was maded
@@ -752,16 +793,16 @@ export class GameScene extends Phaser.Scene {
     // update discard pile cards, or flip over tableau cards if needed
     if (isCardFromDiscardPile) {
       this.#updateCardGameObjectsInDiscardPile();
-    } else {
-      this.#handleRevealingNewTableauCards(tableauPileIndex as number);
     }
-
-    // only destroy card from tableau, since talon/discard will be reused
-    if (!isCardFromDiscardPile) {
+    else {
+      // only destroy card if it came from a tableau
       gameObject.destroy();
       const emptyCount = countEmptyTableau(this.#solitaire.tableauPiles);
-      // console.log(`Empty tableau piles: ${emptyCount}`);
+      this.#handleRevealingNewTableauCards(tableauPileIndex as number);
+      this.#updateTableauDropZones();
     }
+    // console.log(`Empty tableau piles: ${emptyCount}`);
+
     // update Phaser game objects
     this.#updateFoundationPiles();
 
@@ -879,6 +920,7 @@ export class GameScene extends Phaser.Scene {
 
     // for each card in the current stack that is being moved, we need to remove the card from the existing container and add to the target tableau container
     const numberOfCardsToMove = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex as number, tableauCardIndex);
+
     for (let i = 0; i <= numberOfCardsToMove; i += 1) {
       const cardGameObject =
         this.#tableauContainers[tableauPileIndex as number].getAt<Phaser.GameObjects.Image>(tableauCardIndex);
@@ -911,6 +953,8 @@ export class GameScene extends Phaser.Scene {
 
     // get the card's tableau pile and check to see if new card at bottom of stack should be flipped over
     this.#handleRevealingNewTableauCards(tableauPileIndex as number);
+
+    this.#updateTableauDropZones();
 
     // card is from other tableau because if talon-sourced was handled earlier
     const emptyCount = countEmptyTableau(this.#solitaire.tableauPiles);

@@ -3,7 +3,7 @@ export const UI_CONFIG = {
   // scene control for developer convenience
   skipTitleScene: false,
   // partly transparent red areas show extent of dropzones
-  showDropZones: false,
+  showDropZones: true,
   enableShadows: false,
 } as const;
 
