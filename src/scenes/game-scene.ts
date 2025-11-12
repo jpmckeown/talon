@@ -20,6 +20,7 @@ const CARD_RADIUS = 7 * UI_CONFIG.scale;
 // horizontal random shift to make tableau less precise
 const maxShiftX = 0;
 
+const EMPTY_TABLEAU_DROPZONE_Y = 180;
 const dragAlpha = 1;
 
 // x & y positions of the 4 foundation piles
@@ -564,8 +565,8 @@ export class GameScene extends Phaser.Scene {
   #createDragEndEventListener(): void {
     this.input.on(
       Phaser.Input.Events.DRAG_END,
-      (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image) => {
-
+      (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image, dropped: boolean) => {
+        // console.log(`Drag_end: dropped=${dropped}, card Y=${gameObject.y}, card X=${gameObject.x}`);
         // reset the depth on the container or image game object
         const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
         if (tableauPileIndex !== undefined) {
@@ -677,7 +678,7 @@ export class GameScene extends Phaser.Scene {
     for (let i = 0; i < 7; i += 1) {
       const zoneX = 30 * UI_CONFIG.scale + i * 85 * UI_CONFIG.scale;
       const zoneWidth = 75.5 * UI_CONFIG.scale;
-      const initialHeight = 120;
+      const initialHeight = EMPTY_TABLEAU_DROPZONE_Y;
 
       zone = this.add
         .zone(zoneX, TABLEAU_PILE_Y_POSITION, zoneWidth, initialHeight)
@@ -706,7 +707,7 @@ export class GameScene extends Phaser.Scene {
       let zoneHeight: number;
 
       if (pileLength === 0) {
-        zoneHeight = 120;
+        zoneHeight = EMPTY_TABLEAU_DROPZONE_Y;
       } else {
         zoneHeight = pileLength * STACK_Y_GAP + CARD_HEIGHT + 40;
       }
@@ -725,6 +726,9 @@ export class GameScene extends Phaser.Scene {
     this.input.on(
       Phaser.Input.Events.DROP,
       (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image, dropZone: Phaser.GameObjects.Zone) => {
+
+        console.log(`Drop: card Y=${gameObject.y}, card X=${gameObject.x}, zone Y=${dropZone.y}, zone X=${dropZone.x}, zone height=${dropZone.height}, zone width=${dropZone.width}`);
+
         const zoneType = dropZone.getData('zoneType') as ZoneType;
         if (zoneType === ZONE_TYPE.FOUNDATION) {
           this.#handleMoveCardToFoundation(gameObject);
