@@ -681,10 +681,8 @@ export class GameScene extends Phaser.Scene {
 
       zone = this.add
         .zone(zoneX, TABLEAU_PILE_Y_POSITION, zoneWidth, initialHeight)
-        // .zone(30* UI_CONFIG.scale + i * 85*UI_CONFIG.scale, 92*UI_CONFIG.scale, 75.5*UI_CONFIG.scale, dropZoneY*UI_CONFIG.scale)
         .setOrigin(0)
         .setRectangleDropZone(zoneWidth, initialHeight)
-        // .setRectangleDropZone(75.5*UI_CONFIG.scale, dropZoneY*UI_CONFIG.scale)
         .setData({
           zoneType: ZONE_TYPE.TABLEAU,
           tableauIndex: i,
@@ -696,7 +694,6 @@ export class GameScene extends Phaser.Scene {
       if (UI_CONFIG.showDropZones) {
         const debugRect = this.add.rectangle(zoneX, TABLEAU_PILE_Y_POSITION, zoneWidth, initialHeight, 0xff0000, 0.5).setOrigin(0);
         this.#tableauDebugRects.push(debugRect);
-        // this.add.rectangle(30* UI_CONFIG.scale + i * 85*UI_CONFIG.scale, 92*UI_CONFIG.scale, zone.width, zone.height, 0xff0000, 0.5).setOrigin(0);
       }
     }
     // this.#updateTableauDropZones();
@@ -826,25 +823,6 @@ export class GameScene extends Phaser.Scene {
     // get original size of Tableau pile: enables check on length limit; and where to put card(s)
     const originalTargetPileSize = this.#tableauContainers[targetTableauPileIndex].length;
 
-    // // if card dropped below (Y aligns) but distant from bottom of tableau stack it should be treated as an abandoned move, so check distance and reject if too far away.
-    // const droppedY = gameObject.y;
-    // let targetPileBottomY: number;
-
-    // if (originalTargetPileSize === 0) {
-    //   targetPileBottomY = TABLEAU_PILE_Y_POSITION;
-    // } else {
-    //   const bottomCard = this.#tableauContainers[targetTableauPileIndex].getAt<Phaser.GameObjects.Image>(originalTargetPileSize - 1);
-    //   targetPileBottomY = bottomCard.y + CARD_HEIGHT + this.#tableauContainers[targetTableauPileIndex].y;
-    // }
-
-    // const verticalDistance = Math.abs(droppedY - targetPileBottomY);
-    // console.log(`Tableau ${targetTableauPileIndex}: dropped Y=${droppedY.toFixed(0)}, pile bottom Y=${targetPileBottomY.toFixed(0)}, distance=${verticalDistance.toFixed(0)}`);
-
-    // if (verticalDistance > 90) {
-    //   console.log(`Dropped too far from pile (${verticalDistance.toFixed(0)} pixels) - rejecting move`);
-    //   return;
-    // }
-
     // check if card is from Talon or Tableau pile based on the pileIndex in data manager
     const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
     const tableauCardIndex = gameObject.getData('cardIndex') as number;
@@ -911,6 +889,8 @@ export class GameScene extends Phaser.Scene {
       
       // update the remaining cards in discard pile
       this.#updateCardGameObjectsInDiscardPile();
+
+      this.#updateTableauDropZones();
 
       if (!this.#fastCompleteOfferDismissed && this.#checkFastCompleteCondition()) {
         this.#showFastCompleteOverlay();
