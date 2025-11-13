@@ -20,7 +20,7 @@ const CARD_RADIUS = 7 * UI_CONFIG.scale;
 // horizontal random shift to make tableau less precise
 const maxShiftX = 0;
 
-const EMPTY_TABLEAU_DROPZONE_Y = 180;
+const EMPTY_TABLEAU_DROPZONE_Y = 190;
 const dragAlpha = 1;
 
 // x & y positions of the 4 foundation piles
