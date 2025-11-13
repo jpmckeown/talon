@@ -39,11 +39,11 @@ export class CreditsScene extends Phaser.Scene {
       },
       {
         name: 'Scott Westover',
-        contributions: 'based on tutorial game logic, core UI mechanics, and more.'
+        contributions: 'built on logic and core mechanics from tutorial.'
       },
     ];
 
-    let yPos = 72 * UI_CONFIG.scale;
+    let yPos = 75 * UI_CONFIG.scale;
     const lineSpacing = 15 * UI_CONFIG.scale;
 
     credits.forEach(credit => {
@@ -57,20 +57,31 @@ export class CreditsScene extends Phaser.Scene {
     const leftMargin = 45 * UI_CONFIG.scale;
     const rightMargin = 30 * UI_CONFIG.scale;
     const availableWidth = this.scale.width - leftMargin - rightMargin;
-    
-    const nameText = this.add.text(leftMargin, yPos, name + ': ', {
-      fontSize: `${14 * UI_CONFIG.scale}px`,
-      color: '#ffff00'
-    }).setOrigin(0);
-    
-    const contribText = this.add.text(leftMargin, yPos + nameText.height, contributions, {
+
+    const fullText = name + ': ' + contributions;
+
+    const fullTextObj = this.add.text(leftMargin, yPos, fullText, {
       fontSize: `${14 * UI_CONFIG.scale}px`,
       color: '#ffffff',
       wordWrap: { width: availableWidth },
       align: 'left'
     }).setOrigin(0);
+
+    return fullTextObj.height;
     
-    return nameText.height + contribText.height;
+    // const nameText = this.add.text(leftMargin, yPos, name + ': ', {
+    //   fontSize: `${14 * UI_CONFIG.scale}px`,
+    //   color: '#ffff00'
+    // }).setOrigin(0);
+    
+    // const contribText = this.add.text(leftMargin, yPos + nameText.height, contributions, {
+    //   fontSize: `${14 * UI_CONFIG.scale}px`,
+    //   color: '#ffffff',
+    //   wordWrap: { width: availableWidth },
+    //   align: 'left'
+    // }).setOrigin(0);
+    
+    // return nameText.height + contribText.height;
   }
 
 
