@@ -24,20 +24,21 @@ export class HelpScene extends Phaser.Scene {
 
     const tutorialContent = [
       "Draw new card by clicking facedown stack top-left of screen.",
-      "Drag card to any tableau from another stack or from draw.",
-      "Tableau allows card with next number down and other colour.",
-      "Foundation piles top-right, one for each suit: begin with Ace.",
-      "Score by adding cards to foundation, win by completing suits.",
-      "Keys: M for menu, U to reveal, Esc for beginning."
-    ];
+      "Drag card to any tableau from another or from drawn pile.",
+      "Tableau allows card with next number down and other colour; Easy mode allows same-colour placement, up to 7 times.",
+      "Foundation piles top-right, one for each suit; begin with Ace; score by adding to foundation, win by completing suits.",
+      "Keys: M for menu, U to reveal."
+    ].join('\n\n');
 
     this.add.text(50 * UI_CONFIG.scale, 100 * UI_CONFIG.scale, tutorialContent, {
       fontFamily: 'Arial', 
       fontSize: `${20 * UI_CONFIG.scale}px`, 
       color: '#ffffff', 
-      lineSpacing: 28 * UI_CONFIG.scale,
-      align: 'left' 
+      lineSpacing: 6 * UI_CONFIG.scale,
+      wordWrap: { width: 590 * UI_CONFIG.scale, useAdvancedWrap: true },
+      align: 'left'
     });
+
     this.#addBackButton();
   }
 

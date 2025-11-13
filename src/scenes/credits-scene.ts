@@ -19,7 +19,7 @@ export class CreditsScene extends Phaser.Scene {
     const credits = [
       {
         name: 'Patrick McKeown',
-        contributions: 'Project lead; deck spritesheet; owl art; red-kite art; feather card-back; UI navigation; dynamic resize dropzones; scaling experiment; card shadow and border tests; sound system; allow same-colour moves & sound on use; scoring snd high-scores; reveal hidden cards while keydown, Peek button; test 4 Kings tableau & offer quick-win; flip on central axis to reveal card.'
+        contributions: 'Project lead; deck spritesheet; owl art; red-kite art; feather card-back; UI navigation; dynamic resize dropzones; scaling experiment; card shadow and border tests; sound system; allow same-colour moves & sound on use; scoring snd high-scores; reveal hidden cards while keydown, Peek button; test 4 Kings tableau offer quick-win; reveal flip on central axis.'
       },
       {
         name: 'McFunkypants (Christer Kaitila)',
@@ -31,7 +31,7 @@ export class CreditsScene extends Phaser.Scene {
       },
       {
         name: 'Chris Deleon',
-        contributions: 'Itch.io dimensions workaround advice.'
+        contributions: 'Itch.io dimensions workaround.'
       },
       {
         name: 'QA playtesters',
@@ -39,7 +39,7 @@ export class CreditsScene extends Phaser.Scene {
       },
       {
         name: 'Scott Westover',
-        contributions: 'Talon Solitaire is based on a tutorial with game logic, core UI mechanics, and more.'
+        contributions: 'based on tutorial game logic, core UI mechanics, and more.'
       },
     ];
 
@@ -73,19 +73,6 @@ export class CreditsScene extends Phaser.Scene {
     return nameText.height + contribText.height;
   }
 
-  // #addCreditEntry(name: string, contributions: string, yPos: number): number {
-  //   this.add.text(this.scale.width / 2, yPos, name, {
-  //     fontSize: `${18 * UI_CONFIG.scale}px`,
-  //     color: '#ffff00',
-  //     fontStyle: 'bold'
-  //   }).setOrigin(0.5);
-  //   this.add.text(this.scale.width / 2, yPos + 20 * UI_CONFIG.scale, contributions, {
-  //     fontSize: `${12 * UI_CONFIG.scale}px`,
-  //     color: '#ffffff',
-  //     wordWrap: { width: 500 * UI_CONFIG.scale },
-  //     align: 'center'
-  //   }).setOrigin(0.5, 0);
-  // }
 
   #addBackButton(): void {
     const backText = this.add.text(
