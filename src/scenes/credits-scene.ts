@@ -9,21 +9,21 @@ export class CreditsScene extends Phaser.Scene {
   public create(): void {
     this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x2a4d2a).setOrigin(0);
 
-    this.add.text(this.scale.width / 2, 50 * UI_CONFIG.scale, 'Credits', {
+    this.add.text(220 * UI_CONFIG.scale, 25 * UI_CONFIG.scale, 'Credits', {
       fontSize: `${30 * UI_CONFIG.scale}px`,
       color: '#ffffff',
-    }).setOrigin(0.5);
+    }).setOrigin(0);
 
     this.#addBackButton();
 
     const credits = [
       {
         name: 'Patrick McKeown',
-        contributions: 'Project lead; cards deck spritesheet; owl card art; red-kite card art; feather card-back art; UI for scenes; dynamic resize dropzones; scaling experiments; round-corners; card shadow and border tests; sound system; allowance of same-colour moves, and soundfx when used; scoring snd high-score scene; reveal hidden cards while keydown, and Peek button; test 4 Kings tableau and offer quick-win; flip on central axis to reveal card.'
+        contributions: 'Project lead; deck spritesheet; owl art; red-kite art; feather card-back; UI navigation; dynamic resize dropzones; scaling experiment; card shadow and border tests; sound system; allow same-colour moves & sound on use; scoring snd high-scores; reveal hidden cards while keydown, Peek button; test 4 Kings tableau & offer quick-win; flip on central axis to reveal card.'
       },
       {
         name: 'McFunkypants (Christer Kaitila)',
-        contributions: 'Animated particle fx for good card placement; victory animation card-splosion!! on win; eagle card art; crow card art; table cloth background; soundfx for shuffle, card-pickup, card-place, game win.'
+        contributions: 'Animated particle fx for good card placement; victory animation card-splosion!! on win; eagle art; crow art; cloth background art; soundfx for shuffle, card-pickup, card-place, game win.'
       },
       {
         name: 'Dan Dela Rosa',
@@ -43,32 +43,49 @@ export class CreditsScene extends Phaser.Scene {
       },
     ];
 
-    let yPos = 100 * UI_CONFIG.scale;
-    const lineSpacing = 70 * UI_CONFIG.scale;
+    let yPos = 72 * UI_CONFIG.scale;
+    const lineSpacing = 15 * UI_CONFIG.scale;
 
     credits.forEach(credit => {
-      this.#addCreditEntry(credit.name, credit.contributions, yPos);
-      yPos += lineSpacing;
+      const textHeight = this.#addCreditEntry(credit.name, credit.contributions, yPos);
+      yPos += textHeight + lineSpacing;
     });
-
   }
 
 
-  #addCreditEntry(name: string, contributions: string, yPos: number): void {
-      
-    this.add.text(this.scale.width / 2, yPos, name, {
-      fontSize: `${18 * UI_CONFIG.scale}px`,
-      color: '#ffff00',
-      fontStyle: 'bold'
-    }).setOrigin(0.5);
-
-    this.add.text(this.scale.width / 2, yPos + 20 * UI_CONFIG.scale, contributions, {
-      fontSize: `${12 * UI_CONFIG.scale}px`,
+  #addCreditEntry(name: string, contributions: string, yPos: number): number {
+    const leftMargin = 45 * UI_CONFIG.scale;
+    const rightMargin = 30 * UI_CONFIG.scale;
+    const availableWidth = this.scale.width - leftMargin - rightMargin;
+    
+    const nameText = this.add.text(leftMargin, yPos, name + ': ', {
+      fontSize: `${14 * UI_CONFIG.scale}px`,
+      color: '#ffff00'
+    }).setOrigin(0);
+    
+    const contribText = this.add.text(leftMargin, yPos + nameText.height, contributions, {
+      fontSize: `${14 * UI_CONFIG.scale}px`,
       color: '#ffffff',
-      wordWrap: { width: 500 * UI_CONFIG.scale },
-      align: 'center'
-    }).setOrigin(0.5, 0);
+      wordWrap: { width: availableWidth },
+      align: 'left'
+    }).setOrigin(0);
+    
+    return nameText.height + contribText.height;
   }
+
+  // #addCreditEntry(name: string, contributions: string, yPos: number): number {
+  //   this.add.text(this.scale.width / 2, yPos, name, {
+  //     fontSize: `${18 * UI_CONFIG.scale}px`,
+  //     color: '#ffff00',
+  //     fontStyle: 'bold'
+  //   }).setOrigin(0.5);
+  //   this.add.text(this.scale.width / 2, yPos + 20 * UI_CONFIG.scale, contributions, {
+  //     fontSize: `${12 * UI_CONFIG.scale}px`,
+  //     color: '#ffffff',
+  //     wordWrap: { width: 500 * UI_CONFIG.scale },
+  //     align: 'center'
+  //   }).setOrigin(0.5, 0);
+  // }
 
   #addBackButton(): void {
     const backText = this.add.text(
@@ -76,7 +93,7 @@ export class CreditsScene extends Phaser.Scene {
       this.scale.height - 40 * UI_CONFIG.scale,
       'back to Menu (m)',
       {
-        fontSize: `${24 * UI_CONFIG.scale}px`,
+        fontSize: `${18 * UI_CONFIG.scale}px`,
         color: '#ffffff'
       }
     ).setOrigin(0.5).setInteractive();
