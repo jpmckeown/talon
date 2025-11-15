@@ -305,8 +305,8 @@ export class GameScene extends Phaser.Scene {
 
 
   makeEasyCounter() {
-    const x = DRAW_PILE_X_POSITION + CARD_WIDTH / 2;
-    const y = GAME_HEIGHT - 30 * UI_CONFIG.scale;
+    const x = DRAW_PILE_X_POSITION + CARD_WIDTH / 3;
+    const y = GAME_HEIGHT - 15 * UI_CONFIG.scale;
     // const x = (DISCARD_PILE_X_POSITION + CARD_WIDTH + FOUNDATION_PILE_X_POSITIONS[0]) / 2;
     // const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT * 0.20;
 
@@ -315,7 +315,7 @@ export class GameScene extends Phaser.Scene {
       color: '#ffdd44',
       stroke: '#000000',
       strokeThickness: 2
-    }).setOrigin(0, 1);
+    }).setOrigin(0, 1).setDepth(9);
   }
 
   #flashEasyCounter() {
@@ -1261,7 +1261,7 @@ export class GameScene extends Phaser.Scene {
       x: DISCARD_PILE_X_POSITION,
       y: DISCARD_PILE_Y_POSITION,
       scaleX: 0,
-      duration: 500,
+      duration: 250,
       ease: 'Sine.easeInOut',
       onComplete: () => {
         tempCard.setFrame(this.#getCardFrame(card));
