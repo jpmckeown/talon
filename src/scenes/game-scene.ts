@@ -76,6 +76,7 @@ export class GameScene extends Phaser.Scene {
 
   #isPeeking: boolean = false;
   #testUtils!: TestUtils;
+  easyCounterText!: Phaser.GameObjects.Text;
 
   #lastTime: number = 0;
   #logTimer: number = 0;
@@ -126,6 +127,7 @@ export class GameScene extends Phaser.Scene {
     this.#logTimer = 0;
 
     this.makeScore();
+    this.makeEasyCounter();
     this.makeMenuButton();
     this.makePeekButton();
 
@@ -223,6 +225,7 @@ export class GameScene extends Phaser.Scene {
     }).setOrigin(0.5);
   }
 
+
   makeMenuButton() {
     const x = (DISCARD_PILE_X_POSITION + FOUNDATION_PILE_X_POSITIONS[0]) / 2;
     const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT * 0.60;
@@ -297,11 +300,27 @@ export class GameScene extends Phaser.Scene {
   }
 
 
+  makeEasyCounter() {
+    const x = DRAW_PILE_X_POSITION + CARD_WIDTH / 4;
+    const y = GAME_HEIGHT - 30 * UI_CONFIG.scale;
+    // const x = (DISCARD_PILE_X_POSITION + CARD_WIDTH + FOUNDATION_PILE_X_POSITIONS[0]) / 2;
+    // const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT * 0.20;
+
+    this.easyCounterText = this.add.text(x, y, 'Easy moves: 7', {
+      fontSize: `${18 * UI_CONFIG.scale}px`,
+      color: '#ffdd44',
+      stroke: '#000000',
+      strokeThickness: 2
+    }).setOrigin(0);
+  }
+
+
   quitAndSaveScore(): void {
     this.saveCurrentScore();
     this.score = 0;
     this.game.destroy(true);
   }
+
 
   resetScore(): void {
     this.score = 0;
@@ -342,6 +361,9 @@ export class GameScene extends Phaser.Scene {
     this.scoreText.setText('Score 0');
     this.#fastCompleteOfferDismissed = false;
 
+    this.easyCounterText.setText('Easy moves: 7');
+    this.easyCounterText.setColor('#ffdd44');
+
     this.#solitaire.newGame();
 
     // rebuild all card displays
@@ -364,6 +386,7 @@ export class GameScene extends Phaser.Scene {
     let bg = this.add.tileSprite(0, 0, GAME_WIDTH, GAME_HEIGHT, ASSET_KEYS.TABLE_BACKGROUND);
     bg.setOrigin(0, 0);
   }
+
 
   #createDrawPile(): void {
     // create outline for pile
@@ -858,6 +881,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
     gameObject.setData('wasDropped', true);
+    this.easyCounterText.setText(`Easy moves: ${this.#solitaire.sameColourMoves}`);
 
     const isCheatMove = isValidMove === 'cheat';
     if (isCheatMove) {
@@ -1239,4 +1263,5 @@ export class GameScene extends Phaser.Scene {
       }
     });
   }
+
 }

@@ -19,19 +19,19 @@ export class CreditsScene extends Phaser.Scene {
     const credits = [
       {
         name: 'Patrick McKeown',
-        contributions: 'Project lead; deck spritesheet; owl art; red-kite art; feather card-back; UI navigation; dynamic resize dropzones; scaling experiment; card shadow and border tests; sound system; allow same-colour moves & sound on use; scoring snd high-scores; reveal hidden cards while keydown, Peek button; test 4 Kings tableau offer quick-win; reveal flip on central axis.'
+        contributions: 'project lead; deck spritesheet; owl art; red-kite art; feather card-back; UI navigation; dynamic resize dropzones; scaling experiment; card shadow and border tests; sound system; allow same-colour moves & sound on use; scoring snd high-scores; reveal hidden cards while keydown, Peek button; test 4 Kings tableau offer quick-win; reveal flip on central axis.'
       },
       {
         name: 'McFunkypants (Christer Kaitila)',
-        contributions: 'Animated particle fx for good card placement; victory animation card-splosion!! on win; eagle art; crow art; cloth background art; soundfx for shuffle, card-pickup, card-place, game win.'
+        contributions: 'animated particle fx for good card placement; victory animation card-splosion!! on win; eagle art; crow art; cloth background art; soundfx for shuffle, card-pickup, card-place, game win.'
       },
       {
         name: 'Dan Dela Rosa',
-        contributions: 'Invalid dropped card(s) move back to where started, and bugfix; Menu button on game, with navigation; Escape key; nvmrc file.'
+        contributions: 'invalidly moved card(s) animate back to where they started, and bugfix; Menu button on game, with navigation; Escape key; nvmrc file.'
       },
       {
         name: 'Chris Deleon',
-        contributions: 'Itch.io dimensions workaround.'
+        contributions: 'itch.io dimensions workaround.'
       },
       {
         name: 'QA playtesters',
