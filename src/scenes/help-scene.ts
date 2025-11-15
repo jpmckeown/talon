@@ -27,7 +27,7 @@ export class HelpScene extends Phaser.Scene {
       "Drag card to any tableau from another or from drawn pile.",
       "Tableau allows card with next number down and other colour; Easy mode allows same-colour placement, up to 7 times.",
       "Foundation piles top-right, one for each suit; begin with Ace; score by adding to foundation, win by completing suits.",
-      "Keys: M for menu, U to reveal."
+      "Keys: M menu, U reveal, F restart deal."
     ].join('\n\n');
 
     this.add.text(50 * UI_CONFIG.scale, 100 * UI_CONFIG.scale, tutorialContent, {
@@ -47,9 +47,9 @@ export class HelpScene extends Phaser.Scene {
     const backText = this.add.text(
       this.scale.width / 2,
       this.scale.height - 40 * UI_CONFIG.scale,
-      'back (B)',
+      'back to Menu (m)',
       {
-        fontSize: `${24 * UI_CONFIG.scale}px`,
+        fontSize: `${18 * UI_CONFIG.scale}px`,
         color: '#ffffff'
       }
     ).setOrigin(0.5).setInteractive();

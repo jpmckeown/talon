@@ -57,7 +57,7 @@ export class ScoreScene extends Phaser.Scene {
       this.scale.height - 60 * UI_CONFIG.scale, 
       'back to Menu (m)',
       {
-        fontSize: `${20 * UI_CONFIG.scale}px`,
+        fontSize: `${18 * UI_CONFIG.scale}px`,
         color: '#ffffff'
       }
     ).setOrigin(0.5).setInteractive();

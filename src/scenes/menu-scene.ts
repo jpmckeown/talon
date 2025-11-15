@@ -70,19 +70,26 @@ export class MenuScene extends Phaser.Scene {
 
   startNewGame(): void {
     const gameScene = this.scene.get(SCENE_KEYS.GAME) as any;
-    
-    gameScene.saveCurrentScore();
-    gameScene.resetGame();
-    
-    this.scene.stop(SCENE_KEYS.MENU);
-    this.scene.resume(SCENE_KEYS.GAME);
+    // check if game scene initialized
+    if (gameScene.scoreText) {
+      gameScene.saveCurrentScore();
+      gameScene.resetGame();
+      this.scene.stop(SCENE_KEYS.MENU);
+      this.scene.resume(SCENE_KEYS.GAME);
+    } else {
+      // game scene never created, so start fresh
+      this.scene.stop(SCENE_KEYS.MENU);
+      this.scene.start(SCENE_KEYS.GAME);
+    }
   }
+
 
   showHelp(): void {
     this.scene.stop(SCENE_KEYS.MENU);
     this.scene.pause(SCENE_KEYS.GAME);
     this.scene.start(SCENE_KEYS.HELP, { from: SCENE_KEYS.MENU });
   }
+
 
   showHighScores(): void {
     // const gameScene = this.scene.get(SCENE_KEYS.GAME) as any;
