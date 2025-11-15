@@ -32,9 +32,9 @@ export class PreloadScene extends Phaser.Scene {
 
   public create(): void {
     if (UI_CONFIG.skipTitleScene) {
-      // this.scene.start(SCENE_KEYS.GAME);
+      this.scene.start(SCENE_KEYS.GAME);
       // this.scene.start(SCENE_KEYS.HELP);
-      this.scene.start(SCENE_KEYS.CREDITS);
+      // this.scene.start(SCENE_KEYS.CREDITS);
     } else {
       this.scene.start(SCENE_KEYS.TITLE);
     }

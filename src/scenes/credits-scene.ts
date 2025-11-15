@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { SCENE_KEYS, UI_CONFIG, GAME_WIDTH, GAME_HEIGHT  } from './common';
+import { SCENE_KEYS, ASSET_KEYS, UI_CONFIG, GAME_WIDTH, GAME_HEIGHT  } from './common';
 
 export class CreditsScene extends Phaser.Scene {
   constructor() {
@@ -10,19 +10,32 @@ export class CreditsScene extends Phaser.Scene {
   #isAutoScrolling: boolean = false;
   #autoScrollTween?: Phaser.Tweens.Tween;
   #maxScrollY: number = 0;
-  // #delayBeforeAutoScroll: number = 5000;
+  #delayBeforeAutoScroll: number = 5000;
 
   public create(): void {
-    const TITLE_AREA_HEIGHT = 75 * UI_CONFIG.scale;
+    const TITLE_AREA_HEIGHT = 64 * UI_CONFIG.scale;
     const BOTTOM_MARGIN = 80 * UI_CONFIG.scale;
-    const OVERSCROLL_AMOUNT = 30;
 
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x2a4d2a).setOrigin(0);
+    // this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x2a4d2a).setOrigin(0);
 
-    this.add.text(220 * UI_CONFIG.scale, 25 * UI_CONFIG.scale, 'Credits', {
+    // const maskShape = this.make.graphics();
+    // maskShape.fillStyle(0xffffff);
+    // maskShape.fillRect(0, TITLE_AREA_HEIGHT, GAME_WIDTH, this.scale.height - TITLE_AREA_HEIGHT);
+    // const mask = maskShape.createGeometryMask();
+    // this.cameras.main.setMask(mask);
+
+    this.add.tileSprite(0, 0, GAME_WIDTH, GAME_HEIGHT * 3, ASSET_KEYS.TABLE_BACKGROUND)
+      .setOrigin(0);
+
+    this.add.tileSprite(0, 0, GAME_WIDTH, TITLE_AREA_HEIGHT, ASSET_KEYS.TABLE_BACKGROUND)
+      .setOrigin(0)
+      .setScrollFactor(0)
+      .setDepth(98);
+
+    this.add.text(200 * UI_CONFIG.scale, 20 * UI_CONFIG.scale, 'Credits', {
       fontSize: `${30 * UI_CONFIG.scale}px`,
       color: '#ffffff',
-    }).setOrigin(0).setScrollFactor(0);
+    }).setOrigin(0).setScrollFactor(0).setDepth(99);
 
     this.#addBackButton();
     // this.#creditsContainer = this.add.container(0, 75 * UI_CONFIG.scale);
@@ -54,7 +67,7 @@ export class CreditsScene extends Phaser.Scene {
       },
     ];
 
-    let yPos = 75 * UI_CONFIG.scale;
+    let yPos = TITLE_AREA_HEIGHT + 20 * UI_CONFIG.scale;
     const lineSpacing = 15 * UI_CONFIG.scale;
 
     credits.forEach(credit => {
@@ -63,18 +76,18 @@ export class CreditsScene extends Phaser.Scene {
     });
 
     const contentHeight = yPos;
-    const viewHeight = this.scale.height - 75 * UI_CONFIG.scale - 80 * UI_CONFIG.scale;
+    const viewHeight = this.scale.height - TITLE_AREA_HEIGHT - 80 * UI_CONFIG.scale;
     this.#maxScrollY = Math.max(0, contentHeight - viewHeight);
 
-    // this.cameras.main.setBounds(0, 0, GAME_WIDTH, 75 * UI_CONFIG.scale + contentHeight + 30);
-    this.cameras.main.setBounds(0, 0, GAME_WIDTH, contentHeight + 80 * UI_CONFIG.scale);
+    // use 80 if Menu button is at bottom of screen
+    this.cameras.main.setBounds(0, 0, GAME_WIDTH, contentHeight + 20 * UI_CONFIG.scale);
     this.cameras.main.setScroll(0, 0);
 
     this.input.on('wheel', (pointer: any, gameObjects: any, deltaX: number, deltaY: number) => {
       this.#onScroll(deltaY);
     });
 
-    const scrollZone = this.add.zone(0, 75 * UI_CONFIG.scale, GAME_WIDTH, viewHeight)
+    const scrollZone = this.add.zone(0, TITLE_AREA_HEIGHT, GAME_WIDTH, viewHeight)
       .setOrigin(0)
       .setInteractive()
       .setScrollFactor(0);
@@ -150,7 +163,7 @@ export class CreditsScene extends Phaser.Scene {
   update(time: number, delta: number): void {
     if (!this.#isAutoScrolling) {
       this.#autoScrollTimer += delta;
-      if (this.#autoScrollTimer >= 3000) { // #delayBeforeAutoScroll) {
+      if (this.#autoScrollTimer >= this.#delayBeforeAutoScroll) {
         this.#startAutoScroll();
       }
     }
@@ -204,14 +217,16 @@ export class CreditsScene extends Phaser.Scene {
 
   #addBackButton(): void {
     const backText = this.add.text(
-      this.scale.width / 2,
-      this.scale.height - 40 * UI_CONFIG.scale,
+      this.scale.width - 100 * UI_CONFIG.scale,
+      37 * UI_CONFIG.scale,
+      // this.scale.width / 2,
+      // this.scale.height - 40 * UI_CONFIG.scale,
       'back to Menu (m)',
       {
         fontSize: `${18 * UI_CONFIG.scale}px`,
         color: '#ffffff'
       }
-    ).setOrigin(0.5).setInteractive().setScrollFactor(0);
+    ).setOrigin(0.5).setInteractive().setScrollFactor(0).setDepth(99);
 
     backText.on('pointerover', () => backText.setColor('#00ff00'));
     backText.on('pointerout', () => backText.setColor('#ffffff'));
