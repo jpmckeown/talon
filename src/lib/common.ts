@@ -1,7 +1,7 @@
 export const CONFIG = {
   // game-rule changes for easier progress
   requireAlternatingColours: true,
-  sameColourMovesPerGame: 7,
+  sameColourMovesPerGame: 3,
   letQueenBeginTableau: true,
 
   // player options

@@ -301,17 +301,27 @@ export class GameScene extends Phaser.Scene {
 
 
   makeEasyCounter() {
-    const x = DRAW_PILE_X_POSITION + CARD_WIDTH / 4;
+    const x = DRAW_PILE_X_POSITION + CARD_WIDTH / 2;
     const y = GAME_HEIGHT - 30 * UI_CONFIG.scale;
     // const x = (DISCARD_PILE_X_POSITION + CARD_WIDTH + FOUNDATION_PILE_X_POSITIONS[0]) / 2;
     // const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT * 0.20;
 
-    this.easyCounterText = this.add.text(x, y, 'Easy moves: 7', {
+    this.easyCounterText = this.add.text(x, y, `Easy moves: ${this.#solitaire.sameColourMoves}`, {
       fontSize: `${18 * UI_CONFIG.scale}px`,
       color: '#ffdd44',
       stroke: '#000000',
       strokeThickness: 2
-    }).setOrigin(0);
+    }).setOrigin(0, 1);
+  }
+
+  #flashEasyCounter() {
+    this.tweens.add({
+      targets: this.easyCounterText,
+      scale: 1.15,
+      duration: 150,
+      yoyo: true,
+      repeat: 1
+    });
   }
 
 
@@ -361,7 +371,7 @@ export class GameScene extends Phaser.Scene {
     this.scoreText.setText('Score 0');
     this.#fastCompleteOfferDismissed = false;
 
-    this.easyCounterText.setText('Easy moves: 7');
+    this.easyCounterText.setText(`Easy moves: ${this.#solitaire.sameColourMoves}`);
     this.easyCounterText.setColor('#ffdd44');
 
     this.#solitaire.newGame();
@@ -750,7 +760,7 @@ export class GameScene extends Phaser.Scene {
       Phaser.Input.Events.DROP,
       (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image, dropZone: Phaser.GameObjects.Zone) => {
 
-        console.log(`Drop: card Y=${gameObject.y}, card X=${gameObject.x}, zone Y=${dropZone.y}, zone X=${dropZone.x}, zone height=${dropZone.height}, zone width=${dropZone.width}`);
+        // console.log(`Drop: card Y=${gameObject.y}, card X=${gameObject.x}, zone Y=${dropZone.y}, zone X=${dropZone.x}, zone height=${dropZone.height}, zone width=${dropZone.width}`);
 
         const zoneType = dropZone.getData('zoneType') as ZoneType;
         if (zoneType === ZONE_TYPE.FOUNDATION) {
@@ -878,6 +888,10 @@ export class GameScene extends Phaser.Scene {
 
     // if this is not a valid move, we don't need to update anything on the card(s) since the `dragend` event handler will move the card(s) back to the original location.
     if (!isValidMove) {
+      // if (isCheatMove && this.#solitaire.sameColourMoves === 0) {
+      //   this.easyCounterText.setText('Easy-mode moves all used');
+      //   this.#flashEasyCounter();
+      // }
       return;
     }
     gameObject.setData('wasDropped', true);
@@ -886,7 +900,11 @@ export class GameScene extends Phaser.Scene {
     const isCheatMove = isValidMove === 'cheat';
     if (isCheatMove) {
       this.sound.play(AUDIO_KEYS.INVALID, { volume: 0.3 });
-    } else {
+      const remaining = this.#solitaire.sameColourMoves;
+      this.easyCounterText.setText(remaining > 0 ? `Easy moves: ${remaining}` : 'Easy moves: 0 (all used)');
+      this.#flashEasyCounter();
+    }
+    else {
       this.sound.play(AUDIO_KEYS.PLACE_CARD, { volume: 0.3 });
     }
 
