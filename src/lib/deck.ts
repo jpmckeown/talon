@@ -35,12 +35,17 @@ export class Deck {
     shuffleArray(this.#drawPile);
   }
 
-  public shuffleInDiscardPile(): void {
+  public returnDiscardToDrawPile(): void {
     this.#discardPile.forEach((card) => {
       card.flip();
       this.#drawPile.push(card);
     });
     this.#discardPile = [];
+  }
+
+  public shuffleInDiscardPile(): void {
+    this.returnDiscardToDrawPile();
+    this.shuffle();
   }
 
   public reset(): void {

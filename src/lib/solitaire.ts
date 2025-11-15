@@ -131,11 +131,52 @@ export class Solitaire {
     return true;
   }
 
+
   public shuffleDiscardPile(): boolean {
+    //if (this.#deck.discardPile.length < 2) {
     if (this.#deck.drawPile.length !== 0) {
       return false;
     }
+    this.#deck.shuffleInDiscardPile();
+    return true;
+  }
 
+
+  public restartDrawPile(): boolean {
+    if (this.#deck.discardPile.length < 2) {
+      return false;
+    }
+    // move remaining draw pile cards to discard pile
+    while (this.#deck.drawPile.length > 0) {
+      const card = this.#deck.draw();
+      if (card) {
+        if (!card.isFaceUp) {
+          card.flip();
+        }
+        this.#deck.discardPile.push(card);
+      }
+    }
+    // return discards to draw pile without shuffling
+    this.#deck.returnDiscardToDrawPile();
+    return true;
+  }
+
+
+  public instantShuffle(): boolean {
+    if (this.#deck.discardPile.length < 2) {
+      return false;
+    }
+    // move any remaining draw pile cards to discard pile
+    while (this.#deck.drawPile.length > 0) {
+      const card = this.#deck.draw();
+      if (card) {
+        if (!card.isFaceUp) {
+          card.flip();
+        }
+        this.#deck.discardPile.push(card);
+      }
+    }
+    // now shuffle discard pile back to draw pile
     this.#deck.shuffleInDiscardPile();
     return true;
   }

@@ -153,6 +153,10 @@ export class GameScene extends Phaser.Scene {
       }
     });
 
+    this.input.keyboard?.on('keydown-F', () => {
+      this.#doRestartDrawPile();
+    });
+
     this.input.keyboard?.on('keydown-E', () => {
       const input = window.prompt('Empty which tableau pile? (0-6)');
       if (input !== null) {
@@ -1280,6 +1284,17 @@ export class GameScene extends Phaser.Scene {
         });
       }
     });
+  }
+
+
+  #doRestartDrawPile(): void {
+    if (this.#solitaire.discardPile.length < 2) {
+      return;
+    }
+    this.#solitaire.restartDrawPile();
+    this.sound.play(AUDIO_KEYS.SHUFFLE_DECK, { volume: 1 });
+    this.#discardPileCards.forEach((card) => card.setVisible(false));
+    this.#showCardsInDrawPile();
   }
 
 }
