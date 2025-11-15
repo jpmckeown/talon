@@ -10,8 +10,13 @@ export class CreditsScene extends Phaser.Scene {
   #isAutoScrolling: boolean = false;
   #autoScrollTween?: Phaser.Tweens.Tween;
   #maxScrollY: number = 0;
+  // #delayBeforeAutoScroll: number = 5000;
 
   public create(): void {
+    const TITLE_AREA_HEIGHT = 75 * UI_CONFIG.scale;
+    const BOTTOM_MARGIN = 80 * UI_CONFIG.scale;
+    const OVERSCROLL_AMOUNT = 30;
+
     this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x2a4d2a).setOrigin(0);
 
     this.add.text(220 * UI_CONFIG.scale, 25 * UI_CONFIG.scale, 'Credits', {
@@ -25,7 +30,7 @@ export class CreditsScene extends Phaser.Scene {
     const credits = [
       {
         name: 'Patrick McKeown',
-        contributions: 'project lead; deck spritesheet; owl art; red-kite art; feather card-back; UI navigation; dynamic resize dropzones; scaling experiment; card shadow and border tests; sound system; allow same-colour moves & sound on use; scoring snd high-scores; reveal hidden cards while keydown, Peek button; test 4 Kings tableau offer quick-win; reveal flip on central axis.'
+        contributions: 'project lead; deck spritesheet; owl art; red-kite art; feather card-back; UI navigation; dynamic resize dropzones; scaling for sharper card font; experiments on card shadow and border; sound system; allow same-colour moves and show remaining; easy-move soundfx; scoring snd high-scores; reveal hidden cards while keydown, Peek button; test 4 Kings tableau offer quick-win; reveal flip on central axis; bugfixing.'
       },
       {
         name: 'McFunkypants (Christer Kaitila)',
@@ -33,7 +38,7 @@ export class CreditsScene extends Phaser.Scene {
       },
       {
         name: 'Dan Dela Rosa',
-        contributions: 'invalidly moved card(s) animate back to where they started, and bugfix; Menu button on game, with navigation; Escape key; nvmrc file.'
+        contributions: 'when card move invalid they animate back to where they started, and bugfix; Menu button on game, with navigation; Escape key; nvmrc file.'
       },
       {
         name: 'Chris Deleon',
@@ -99,34 +104,16 @@ export class CreditsScene extends Phaser.Scene {
         const dragDistance = dragStartY - pointer.y;
         const newScrollY = Phaser.Math.Clamp(
           cameraStartY + dragDistance,
-          -30,
-          this.#maxScrollY + 30
+          0,
+          this.#maxScrollY
         );
         this.cameras.main.setScroll(0, newScrollY);
       }
     });
 
     this.input.on('dragend', () => {
-      const currentScroll = this.cameras.main.scrollY;
-      if (currentScroll < 0) {
-        this.tweens.add({
-          targets: this.cameras.main,
-          scrollY: 0,
-          duration: 200,
-          ease: 'Quad.easeOut'
-        });
-      } else if (currentScroll > this.#maxScrollY) {
-        this.tweens.add({
-          targets: this.cameras.main,
-          scrollY: this.#maxScrollY,
-          duration: 200,
-          ease: 'Quad.easeOut'
-        });
-      }
       this.#resetAutoScrollTimer();
     });
-
-    this.#resetAutoScrollTimer();
   }
 
 
@@ -134,8 +121,21 @@ export class CreditsScene extends Phaser.Scene {
     const leftMargin = 45 * UI_CONFIG.scale;
     const rightMargin = 30 * UI_CONFIG.scale;
     const availableWidth = this.scale.width - leftMargin - rightMargin;
-    const fullText = name + ': ' + contributions;
 
+    const nameText = this.add.text(leftMargin, yPos, name + ': ', {
+      fontSize: `${14 * UI_CONFIG.scale}px`,
+      color: '#ffff00'
+    }).setOrigin(0);
+
+    const contribText = this.add.text(leftMargin, yPos + nameText.height, contributions, {
+      fontSize: `${14 * UI_CONFIG.scale}px`,
+      color: '#ffffff',
+      wordWrap: { width: availableWidth },
+      align: 'left'
+    }).setOrigin(0);
+
+    return nameText.height + contribText.height;
+    // const fullText = name + ': ' + contributions;
     // const fullTextObj = this.add.text(leftMargin, yPos, fullText, {
     //   fontSize: `${14 * UI_CONFIG.scale}px`,
     //   color: '#ffffff',
@@ -144,25 +144,13 @@ export class CreditsScene extends Phaser.Scene {
     // }).setOrigin(0);
     // this.#creditsContainer.add(fullTextObj);
     // return fullTextObj.height;
-    
-    const nameText = this.add.text(leftMargin, yPos, name + ': ', {
-      fontSize: `${14 * UI_CONFIG.scale}px`,
-      color: '#ffff00'
-    }).setOrigin(0);
-    const contribText = this.add.text(leftMargin, yPos + nameText.height, contributions, {
-      fontSize: `${14 * UI_CONFIG.scale}px`,
-      color: '#ffffff',
-      wordWrap: { width: availableWidth },
-      align: 'left'
-    }).setOrigin(0);
-    return nameText.height + contribText.height;
   }
 
 
   update(time: number, delta: number): void {
     if (!this.#isAutoScrolling) {
       this.#autoScrollTimer += delta;
-      if (this.#autoScrollTimer >= 5000) {
+      if (this.#autoScrollTimer >= 3000) { // #delayBeforeAutoScroll) {
         this.#startAutoScroll();
       }
     }
@@ -174,26 +162,10 @@ export class CreditsScene extends Phaser.Scene {
     const scrollAmount = deltaY * 0.5;
     const newScrollY = Phaser.Math.Clamp(
       this.cameras.main.scrollY + scrollAmount,
-      -30,
-      this.#maxScrollY + 30
+      0,
+      this.#maxScrollY
     );
     this.cameras.main.setScroll(0, newScrollY);
-    const currentScroll = this.cameras.main.scrollY;
-    if (currentScroll < 0) {
-      this.tweens.add({
-        targets: this.cameras.main,
-        scrollY: 0,
-        duration: 200,
-        ease: 'Quad.easeOut'
-      });
-    } else if (currentScroll > this.#maxScrollY) {
-      this.tweens.add({
-        targets: this.cameras.main,
-        scrollY: this.#maxScrollY,
-        duration: 200,
-        ease: 'Quad.easeOut'
-      });
-    }
     this.#resetAutoScrollTimer();
   }
 
@@ -228,6 +200,7 @@ export class CreditsScene extends Phaser.Scene {
     this.#autoScrollTimer = 0;
     this.#stopAutoScroll();
   }
+
 
   #addBackButton(): void {
     const backText = this.add.text(
