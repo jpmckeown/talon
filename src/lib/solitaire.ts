@@ -329,6 +329,15 @@ export class Solitaire {
         exhaustiveGuard(card.suit);
     }
     foundationPile.addCard();
+    
+    if (card.value == 13) {
+        // if we just placed a king, make a triumphant sound 
+        this.#fx.parentScene.sound.play(AUDIO_KEYS.FOUNDATION_PILE_COMPLETED, { volume: 1 });
+    } else {
+        // lesser cards get a more subtle sound of progress
+        this.#fx.parentScene.sound.play(AUDIO_KEYS.FOUNDATION_PILE_ADDED, { volume: 1 });
+    }
+
     this.checkForWin();
   }
 
