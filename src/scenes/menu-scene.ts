@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { SCENE_KEYS, UI_CONFIG } from './common';
+import { SCENE_KEYS, UI_CONFIG, AUDIO_KEYS } from './common';
 
 export class MenuScene extends Phaser.Scene {
   constructor() {
@@ -50,8 +50,14 @@ export class MenuScene extends Phaser.Scene {
 
       menuText.on('pointerover', () => menuText.setColor('#ffff00'));
       menuText.on('pointerout', () => menuText.setColor('#ffffff'));
-      menuText.on('pointerdown', item.action);
-      this.input.keyboard!.on(`keydown-${item.key}`, item.action);
+      menuText.on('pointerdown', () => {
+        this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
+        item.action();
+      });
+      this.input.keyboard!.on(`keydown-${item.key}`, () => {
+        this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
+        item.action();
+      });
     });
 
     this.add.text(this.scale.width / 2, 420 * UI_CONFIG.scale, `Score: ${currentScore}`, {
