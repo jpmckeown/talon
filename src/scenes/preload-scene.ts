@@ -31,6 +31,8 @@ export class PreloadScene extends Phaser.Scene {
     this.load.audio(AUDIO_KEYS.FOUNDATION_PILE_COMPLETED, 'assets/audio/foundation-pile-completed.ogg');
     this.load.audio(AUDIO_KEYS.FOUNDATION_PILE_ADDED, 'assets/audio/foundation-pile-added.ogg');
 
+    const sfxVolume = parseInt(localStorage.getItem('talonSoundVolume') || '80', 10);
+    this.sound.volume = sfxVolume / 100;
   }
 
   public create(): void {
@@ -38,6 +40,7 @@ export class PreloadScene extends Phaser.Scene {
       this.scene.start(SCENE_KEYS.GAME);
       // this.scene.start(SCENE_KEYS.HELP);
       // this.scene.start(SCENE_KEYS.CREDITS);
+      // this.scene.start(SCENE_KEYS.SETTINGS);
     } else {
       this.scene.start(SCENE_KEYS.TITLE);
     }

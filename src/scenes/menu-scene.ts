@@ -34,6 +34,7 @@ export class MenuScene extends Phaser.Scene {
     menuItems.push(
       { text: 'New Game (n)', key: 'N', action: () => this.startNewGame() },
       { text: 'How to play (h)', key: 'H', action: () => this.showHelp() },
+      { text: 'Settings (t)', key: 'T', action: () => this.showSettings() },
       { text: 'Card Back (b)', key: 'B', action: () => this.showCardBackSelector() },
       { text: 'High Scores (s)', key: 'S', action: () => this.showHighScores() },
       { text: 'Credits (c)', key: 'C', action: () => this.showCredits() }
@@ -96,6 +97,11 @@ export class MenuScene extends Phaser.Scene {
     this.scene.start(SCENE_KEYS.HELP, { from: SCENE_KEYS.MENU });
   }
 
+  showSettings(): void {
+    this.scene.stop(SCENE_KEYS.MENU);
+    this.scene.pause(SCENE_KEYS.GAME);
+    this.scene.start(SCENE_KEYS.SETTINGS);
+  }
 
   showHighScores(): void {
     // const gameScene = this.scene.get(SCENE_KEYS.GAME) as any;
