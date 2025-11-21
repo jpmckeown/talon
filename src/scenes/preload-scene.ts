@@ -10,7 +10,6 @@ export class PreloadScene extends Phaser.Scene {
   public preload(): void {
     this.load.image(ASSET_KEYS.PARTICLE, 'assets/images/particle.png');
     this.load.image(ASSET_KEYS.TABLE_BACKGROUND, 'assets/images/green-felt.png');
-    // this.load.image(ASSET_KEYS.TITLE, 'assets/images/Talon_title.png');
     this.load.image(ASSET_KEYS.CLICK_TO_START, 'assets/images/clickToStart.png');
 
     this.load.spritesheet(ASSET_KEYS.CARDS, 'assets/images/cards_edge-0-top-1_scale-2_back.png', {
@@ -38,6 +37,7 @@ export class PreloadScene extends Phaser.Scene {
   public create(): void {
     if (UI_CONFIG.skipTitleScene) {
       this.scene.start(SCENE_KEYS.GAME);
+      // this.scene.start(SCENE_KEYS.SCORES);
       // this.scene.start(SCENE_KEYS.HELP);
       // this.scene.start(SCENE_KEYS.CREDITS);
       // this.scene.start(SCENE_KEYS.SETTINGS);

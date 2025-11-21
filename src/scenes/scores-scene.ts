@@ -18,18 +18,34 @@ export class ScoreScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     const allScores = JSON.parse(localStorage.getItem('solitaireHighScores') || '[]') as ScoreEntry[];
-    // const highScores = JSON.parse(localStorage.getItem('solitaireHighScores') || '[]') as number[];
+    let displayScores: ScoreEntry[];
+    const maxScoresDisplay = 8;
 
-    const uniqueScores = new Map<number, ScoreEntry>();
-    for (const entry of allScores) {
-      if (!uniqueScores.has(entry.score)) {
-        uniqueScores.set(entry.score, entry);
+    if (allScores.length <= maxScoresDisplay) {
+      // show all scores including non-unique numbers when fewer scores than display max
+      displayScores = allScores.slice(0, maxScoresDisplay);
+    } else {
+      // if more than max show only unique values, up to highest 8
+      const uniqueScores = new Map<number, ScoreEntry>();
+      for (const entry of allScores) {
+        if (!uniqueScores.has(entry.score)) {
+          uniqueScores.set(entry.score, entry);
+        }
       }
+      displayScores = Array.from(uniqueScores.values())
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 8);
     }
-    
-    const displayScores = Array.from(uniqueScores.values())
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 7);
+
+    // const uniqueScores = new Map<number, ScoreEntry>();
+    // for (const entry of allScores) {
+    //   if (!uniqueScores.has(entry.score)) {
+    //     uniqueScores.set(entry.score, entry);
+    //   }
+    // }
+    // const displayScores = Array.from(uniqueScores.values())
+    //   .sort((a, b) => b.score - a.score)
+    //   .slice(0, 7);
    
     // display scores or empty message
     if (displayScores.length === 0) {
