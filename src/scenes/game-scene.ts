@@ -250,6 +250,7 @@ export class GameScene extends Phaser.Scene {
 
     const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
     buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains).on('pointerdown', () => {
+      this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
       this.scene.pause();
       this.scene.launch(SCENE_KEYS.MENU);
     });
@@ -278,6 +279,7 @@ export class GameScene extends Phaser.Scene {
     const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
     buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
       .on('pointerdown', () => {
+        this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
         buttonBase.clear();
         buttonBase.fillStyle(0x0288c7, 1);  // darker colour when pressed; TODO match peek card tint?
         buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
@@ -569,7 +571,7 @@ export class GameScene extends Phaser.Scene {
         // update card alpha to show which card is being dragged
         gameObject.setAlpha(dragAlpha);
 
-        this.sound.play(AUDIO_KEYS.DRAW_CARD, { volume: 0.3 });
+        this.sound.play(AUDIO_KEYS.DRAW_CARD, { volume: 0.2 });
 
       },
     );
@@ -826,7 +828,7 @@ export class GameScene extends Phaser.Scene {
       this.#fx.poof(px, py);
     }
 
-    this.sound.play(AUDIO_KEYS.FOUNDATION_ADD, { volume: 0.5 });
+    // this.sound.play(AUDIO_KEYS.FOUNDATION_ADD, { volume: 0.5 });
 
     // update discard pile cards, or flip over tableau cards if needed
     if (isCardFromDiscardPile) {
@@ -909,7 +911,7 @@ export class GameScene extends Phaser.Scene {
       this.#flashEasyCounter();
     }
     else {
-      this.sound.play(AUDIO_KEYS.PLACE_CARD, { volume: 0.3 });
+      this.sound.play(AUDIO_KEYS.PLACE_CARD, { volume: 0.2 });
     }
 
     this.#tableauContainers[targetTableauPileIndex].setDepth(0);
