@@ -63,6 +63,7 @@ export class GameScene extends Phaser.Scene {
   #discardPileCards!: Phaser.GameObjects.Image[];
   // card GO in each foundation pile (4, i.e. only the top card)
   #foundationPileCards!: Phaser.GameObjects.Image[];
+  #foundationTutorialTexts!: Phaser.GameObjects.Text[];
 
   // tracks containers, one for each tableau pile (7 game objects)
   #tableauContainers!: Phaser.GameObjects.Container[];
@@ -388,6 +389,10 @@ export class GameScene extends Phaser.Scene {
     this.#discardPileCards.forEach(card => card.destroy());
     this.#foundationPileCards.forEach(card => card.destroy());
 
+    if (this.#foundationTutorialTexts) {
+      this.#foundationTutorialTexts.forEach(text => text.destroy());
+    }
+
     this.#createDrawPile();
     this.#createDiscardPile();
     this.#createFoundationPiles();
@@ -483,6 +488,30 @@ export class GameScene extends Phaser.Scene {
       // but once we add the ace to the pile, we will make this card visible
       const card = this.#createCard(x, FOUNDATION_PILE_Y_POSITION, false).setVisible(false);
       this.#foundationPileCards.push(card);
+    });
+
+    // tutorial: show 'A' on each foundation pile
+    this.#foundationTutorialTexts = [];
+    const tutorialColours = ['#141414', '#4a4a4a', '#ff0f0f', '#ed4a7b']; // spade, club, heart, diamond
+    const tutorialAlphas = [0.6, 0.8, 0.4, 0.6];
+
+    FOUNDATION_PILE_X_POSITIONS.forEach((x, index) => {
+      const tutorialText = this.add.text(
+        x + CARD_WIDTH / 2,
+        FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT / 2,
+        'A',
+        {
+          fontSize: `${52 * UI_CONFIG.scale}px`,
+          color: tutorialColours[index],
+          fontFamily: 'Arial',
+          fontStyle: 'bold'
+        }
+      ).setOrigin(0.5).setAlpha(tutorialAlphas[index]);
+
+
+
+
+      this.#foundationTutorialTexts.push(tutorialText);
     });
   }
 
@@ -819,6 +848,11 @@ export class GameScene extends Phaser.Scene {
       return;
     }
     gameObject.setData('wasDropped', true);
+
+    // hide tutorial 'A' after first Ace added to a Foundation pile
+    if (this.#foundationTutorialTexts) {
+      this.#foundationTutorialTexts.forEach(text => text.setVisible(false));
+    }
 
     // particle fx at foundation pile location
     const foundationIndex = this.#getFoundationIndexForCard(gameObject);

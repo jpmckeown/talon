@@ -139,20 +139,6 @@ def generate_cards():
                 else:
                     fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 30 * scale)
                     draw.text((xt + 6 * scale, yt - 2 * scale), value, fill=colour, font=fontsmall)
-                # if (value == 'Q'):
-                #   fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 30 * scale)
-                #   leftMargin = 4
-                # elif value == '10':
-                #   # use narrower font so "10" fits in horizontal space
-                #   fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial Narrow.ttf", 30 * scale)
-                #   leftMargin = 5
-                # else:
-                #   fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 30 * scale)
-                #   leftMargin = 6
-
-                # y_offset = -2 * scale if value != '10' else 0 * scale
-                # draw.text((xt + leftMargin * scale, yt + y_offset), value, fill=colour, font=fontsmall)
-                # # draw.text((xt + leftMargin * scale, yt - 2 * scale), value, fill=colour, font=fontsmall)
 
                 #4. suit symbol
                 symbolFontSize = 36
