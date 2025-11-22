@@ -20,7 +20,7 @@ def generate_cards():
     ]
     
     # card values for each suit
-    card_values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K']
+    card_values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 
     suit_symbols = ['♣', '♦', '♥', '♠']  # clubs, diamonds, hearts, spades
     suit_letters = ['c', 'd', 'h', 's']
@@ -28,7 +28,7 @@ def generate_cards():
     # load blank cards deck image
     input_path = "dev/art/cards_blank_56x78_corner-7_edge-0-top-1_scale-2.png"
 
-    output_path = "public/assets/images/cards_edge-0-top-1_scale-2.png"
+    output_path = "public/assets/images/cards_edge-0-top-1_scale-2_ten_narrow.png"
     
     try:
         img = Image.open(input_path)
@@ -124,11 +124,17 @@ def generate_cards():
                 if (value == 'Q'):
                   fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 30 * scale)
                   leftMargin = 4
+                elif value == '10':
+                  # use narrower font so "10" fits in horizontal space
+                  fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial Narrow.ttf", 30 * scale)
+                  leftMargin = 5
                 else:
                   fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 30 * scale)
                   leftMargin = 6
 
-                draw.text((xt + leftMargin * scale, yt - 2 * scale), value, fill=colour, font=fontsmall)
+                y_offset = -2 * scale if value != '10' else 0 * scale
+                draw.text((xt + leftMargin * scale, yt + y_offset), value, fill=colour, font=fontsmall)
+                # draw.text((xt + leftMargin * scale, yt - 2 * scale), value, fill=colour, font=fontsmall)
 
                 #4. suit symbol
                 symbolFontSize = 36
