@@ -36,13 +36,18 @@ export class MenuScene extends Phaser.Scene {
       { text: 'How to play (h)', key: 'H', action: () => this.showHelp() },
       { text: 'Settings (t)', key: 'T', action: () => this.showSettings() },
       { text: 'Card Back (b)', key: 'B', action: () => this.showCardBackSelector() },
+      { text: 'Credits (c)', key: 'C', action: () => this.showCredits() },
       { text: 'High Scores (s)', key: 'S', action: () => this.showHighScores() },
-      { text: 'Credits (c)', key: 'C', action: () => this.showCredits() }
     );
 
     // draw the Menu
+    let yPos = menuStartY * UI_CONFIG.scale;
     menuItems.forEach((item, index) => {
-      const yPos = (menuStartY + index * menuSpacing) * UI_CONFIG.scale;
+      // let yPos = (menuStartY + index * menuSpacing) * UI_CONFIG.scale;
+      // // reduce vertical gap between Settings and Card Back
+      // if (item.text.startsWith('Card Back')) {
+      //   yPos -= (20 * UI_CONFIG.scale);
+      // }
 
       const menuText = this.add.text(this.scale.width / 2, yPos, item.text, {
         fontSize: `${menuFontSize * UI_CONFIG.scale}px`,
@@ -59,6 +64,10 @@ export class MenuScene extends Phaser.Scene {
         this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
         item.action();
       });
+
+      // smaller vertical gap between Settings and Card-back
+      const spacing = item.text.startsWith('Resume') || item.text.startsWith('Settings') ? 30 : menuSpacing;
+      yPos += spacing * UI_CONFIG.scale;
     });
 
     this.add.text(this.scale.width / 2, 420 * UI_CONFIG.scale, `Score: ${currentScore}`, {

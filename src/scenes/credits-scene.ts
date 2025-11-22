@@ -47,15 +47,11 @@ export class CreditsScene extends Phaser.Scene {
       },
       {
         name: 'McFunkypants (Christer Kaitila)',
-        contributions: 'animated particle fx for good card placement; victory animation card-splosion!! on win; eagle art; crow art; cloth background art; soundfx for shuffle, card-pickup, card-place, game win.'
+        contributions: 'animated particle fx for good card placement; victory animation card-splosion!! on win; eagle art; crow art; cloth background art; soundfx for shuffle, card-pickup, card-place, foundation-place, complete-foundation, game win, button-press.'
       },
       {
         name: 'Dan Dela Rosa',
         contributions: 'when card move invalid they animate back to where they started, and bugfix; Menu button on game, with navigation; Escape key; nvmrc file.'
-      },
-      {
-        name: 'Chris Deleon',
-        contributions: 'itch.io dimensions workaround.'
       },
       {
         name: 'QA playtesters',
@@ -63,7 +59,11 @@ export class CreditsScene extends Phaser.Scene {
       },
       {
         name: 'Scott Westover',
-        contributions: 'built on logic and core mechanics from tutorial.'
+        contributions: 'tutorial code, logic and core mechanics is the foundation for Talon Solitaire.'
+      },
+      {
+        name: 'Chris Deleon',
+        contributions: 'itch.io dimensions workaround, Dev Pods.'
       },
     ];
 
