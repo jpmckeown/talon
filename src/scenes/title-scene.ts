@@ -1,9 +1,14 @@
 import * as Phaser from 'phaser';
-import { ASSET_KEYS, SCENE_KEYS, AUDIO_KEYS, UI_CONFIG, CARD_WIDTH, CARD_HEIGHT } from './common';
+import { ASSET_KEYS, SCENE_KEYS, AUDIO_KEYS, UI_CONFIG, CARD_WIDTH, CARD_HEIGHT, STACK_Y_GAP } from './common';
 
 export class TitleScene extends Phaser.Scene {
-  #cardFan: Phaser.GameObjects.Image[] = [];
+  // #cardFan: Phaser.GameObjects.Image[] = [];
+  #tutorialCards!: Phaser.GameObjects.Image[][];
+  #movingCard!: Phaser.GameObjects.Image;
+  #easyCounter: number = 3;
+  #easyText!: Phaser.GameObjects.Text;
   #startButton?: Phaser.GameObjects.Image;
+
   constructor() {
     super({ key: SCENE_KEYS.TITLE });
   }
@@ -13,8 +18,11 @@ export class TitleScene extends Phaser.Scene {
     // this.add.image(this.scale.width / 2, 100, ASSET_KEYS.TITLE, 0).setOrigin(0.5);
 
     this.#makeTitle();
+    this.#makeTutorialTableau();
+    this.#makeEasyCounterText();
+    this.time.delayedCall(500, () => this.#startTutorialAnimation());
+    // this.#makeCardFan();
 
-    this.#makeCardFan();
     this.#makeStartButton();
     this.#makeHelpHint();
 
@@ -37,67 +45,9 @@ export class TitleScene extends Phaser.Scene {
   }
 
 
-  #makeCardFan(): void {
-    const centreX = this.scale.width / 2;
-    const centreY = 240 * UI_CONFIG.scale;
-    const cardCount = 7;
-    const spacing = CARD_WIDTH * 1.2;
-    const maxRotation = 0;
-
-    for (let i = 0; i < cardCount; i++) {
-      const offset = (i - (cardCount - 1) / 2);
-      const x = centreX + offset * spacing;
-      const y = centreY + Math.abs(offset) * 8 * UI_CONFIG.scale;
-      const rotation = (offset / (cardCount - 1)) * maxRotation * (Math.PI / 180);
-      
-      const randomFrame = Phaser.Math.Between(0, 51);
-      const card = this.add.image(x, y, ASSET_KEYS.CARDS, randomFrame)
-        .setRotation(rotation)
-        .setOrigin(0.5);
-      this.#cardFan.push(card);
-    }
-    this.#startSequentialShuffle();
-  }
-
-
-  #startSequentialShuffle(): void {
-    let currentCardIndex = 0;
-    const flipDelay = 2000;
-
-    const shuffleNextCard = () => {
-      const card = this.#cardFan[currentCardIndex];
-      const newFrame = Phaser.Math.Between(0, 51);
-      
-      this.tweens.add({
-        targets: card,
-        scaleX: 0,
-        duration: 150,
-        onComplete: () => {
-          card.setFrame(newFrame);
-          this.sound.play(AUDIO_KEYS.SHUFFLE_DECK, { volume: 0.3 });
-          
-          this.tweens.add({
-            targets: card,
-            scaleX: 1,
-            duration: 150
-          });
-        }
-      });
-
-      currentCardIndex = (currentCardIndex + 1) % this.#cardFan.length;
-    };
-
-    this.time.addEvent({
-      delay: flipDelay,
-      callback: shuffleNextCard,
-      loop: true
-    });
-  }
-
-
   #makeStartButton(): void {
     const centreX = this.scale.width / 2;
-    const centreY = 380 * UI_CONFIG.scale;
+    const centreY = 390 * UI_CONFIG.scale;
 
     const feltBg = this.add.image(centreX, centreY, ASSET_KEYS.TABLE_BACKGROUND)
       .setDisplaySize(CARD_WIDTH * 3.5, CARD_HEIGHT * 0.6)
@@ -139,7 +89,7 @@ export class TitleScene extends Phaser.Scene {
   #makeHelpHint(): void {
     const helpText = this.add.text(
       this.scale.width / 2,
-      this.scale.height - 30 * UI_CONFIG.scale,
+      this.scale.height - 40 * UI_CONFIG.scale,
       'Help / how to play (H)',
       {
         fontSize: `${14 * UI_CONFIG.scale}px`,
@@ -154,8 +104,9 @@ export class TitleScene extends Phaser.Scene {
     });
   }
 
+
   #makeTitle(): void {
-    const titleY: number = 150;
+    const titleY: number = 120;
     const talonText = this.add.text(
       this.scale.width / 2,
       titleY,
@@ -182,11 +133,138 @@ export class TitleScene extends Phaser.Scene {
 
     this.tweens.add({
       targets: talonText,
-      y: titleY - 50,
+      y: titleY - 40,
       duration: 3000,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.easeInOut'
+    });
+  }
+
+
+  #makeTutorialTableau(): void {
+    const startX = 90 * UI_CONFIG.scale;
+    const startY = 170 * UI_CONFIG.scale;
+    const stackSpacing = 70 * UI_CONFIG.scale;
+    const stackGap = STACK_Y_GAP;
+
+    const stackLayouts = [
+      [25],
+      [34],
+      [0, 1],
+      [13, 14, 15],
+      [39],
+      [40, 41],
+      [26]
+    ];
+    this.#tutorialCards = [];
+
+    stackLayouts.forEach((frames, stackIndex) => {
+      const stackCards: Phaser.GameObjects.Image[] = [];
+      const x = startX + stackIndex * stackSpacing;
+
+      frames.forEach((frame, cardIndex) => {
+        const y = startY + cardIndex * stackGap;
+        const card = this.add.image(x, y, ASSET_KEYS.CARDS, frame).setScale(1);
+        stackCards.push(card);
+      });
+
+      if (stackIndex === 3) {
+        const y = startY + frames.length * stackGap;
+        this.#movingCard = this.add.image(x, y, ASSET_KEYS.CARDS, 33).setScale(1);
+        this.#movingCard.setData({ originalX: x, originalY: y });
+        stackCards.push(this.#movingCard);
+      }
+      this.#tutorialCards.push(stackCards);
+    });
+  }
+
+
+  #makeEasyCounterText(): void {
+    this.#easyText = this.add.text(50 * UI_CONFIG.scale, 300 * UI_CONFIG.scale, `Easy moves (same-colour) allowance: ${this.#easyCounter}`, {
+      fontSize: `${20 * UI_CONFIG.scale}px`,
+      color: '#ffaa00',
+      stroke: '#000000',
+      strokeThickness: 3
+    }).setOrigin(0);
+  }
+
+
+  #startTutorialAnimation(): void {
+    const targetStack = this.#tutorialCards[1];
+    const targetCard = targetStack[0];
+
+    if (this.#easyCounter > 0) {
+      this.tweens.add({
+        targets: this.#movingCard,
+        x: targetCard.x,
+        y: targetCard.y + STACK_Y_GAP,
+        duration: 800,
+        ease: 'Power2',
+        onComplete: () => {
+          this.sound.play(AUDIO_KEYS.INVALID, { volume: 0.5 });
+          this.#easyCounter--;
+          this.#easyText.setText(`Easy moves (same-colour) allowance: ${this.#easyCounter}`);
+
+          this.time.delayedCall(2000, () => {
+            this.#resetTutorialAnimation();
+          });
+        }
+      });
+    } else {
+      const originalX = this.#movingCard.getData('originalX');
+      const originalY = this.#movingCard.getData('originalY');
+
+      this.tweens.add({
+        targets: this.#movingCard,
+        x: targetCard.x,
+        y: targetCard.y + STACK_Y_GAP,
+        duration: 800,
+        ease: 'Power2',
+        onComplete: () => {
+          // game-scene currently does not play any sound when no Easy moves remain and card gets moved back from inavlid placement (sound naming misleading, should use word Easy, and invalid move perhaps needs a different sound)
+          // this.sound.play(AUDIO_KEYS.INVALID, { volume: 0.5 });
+
+          this.tweens.add({
+            targets: this.#movingCard,
+            x: originalX,
+            y: originalY,
+            duration: 600,
+            ease: 'Power2',
+            onComplete: () => {
+              this.#easyCounter = 3;
+              this.#easyText.setText(`Easy moves (same-colour) allowance: ${this.#easyCounter}`);
+              this.time.delayedCall(3000, () => {
+                this.#resetTutorialAnimation();
+              });
+            }
+          });
+        }
+      });
+    }
+  }
+
+
+  #resetTutorialAnimation(): void {
+    const originalX = this.#movingCard.getData('originalX');
+    const originalY = this.#movingCard.getData('originalY');
+
+    this.tweens.add({
+      targets: this.#movingCard,
+      alpha: 0,
+      duration: 300,
+      onComplete: () => {
+        this.#movingCard.setPosition(originalX, originalY);
+        this.tweens.add({
+          targets: this.#movingCard,
+          alpha: 1,
+          duration: 300,
+          onComplete: () => {
+            // this.#isAnimating = false;
+            this.time.delayedCall(500, () => this.#startTutorialAnimation());
+          }
+        });
+      }
     });
   }
 }

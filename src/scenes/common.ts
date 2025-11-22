@@ -1,7 +1,7 @@
 export const UI_CONFIG = {
   scale: 2,
   // scene control for developer convenience
-  skipTitleScene: true,
+  skipTitleScene: false,
   // partly transparent red areas show extent of dropzones
   showDropZones: true,
   enableShadows: false,
@@ -45,6 +45,7 @@ export const CARD_HEIGHT = 78 * UI_CONFIG.scale;
 
 export const GAME_WIDTH = 640 * UI_CONFIG.scale;
 export const GAME_HEIGHT = 480 * UI_CONFIG.scale;
+export const STACK_Y_GAP = 28 * UI_CONFIG.scale;
 
 export const CARD_BACK_OPTIONS = {
   BLANK_1: { frame: 54, name: 'blank-1' },
