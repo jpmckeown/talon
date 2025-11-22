@@ -28,7 +28,7 @@ def generate_cards():
     # load blank cards deck image
     input_path = "dev/art/cards_blank_56x78_corner-7_edge-0-top-1_scale-2.png"
 
-    output_path = "public/assets/images/cards_edge-0-top-1_scale-2_ten_narrow.png"
+    output_path = "public/assets/images/cards_edge-0-top-1_scale-2_ten_as_rect_with_0.png"
     
     try:
         img = Image.open(input_path)
@@ -119,22 +119,40 @@ def generate_cards():
                 #   text_y = y - text_height // 2 + 4 * scale
                 #   draw.text((text_x, text_y), suitLetter, fill=(255,255,255), font=phFont)
 
-                # 3. Small identifiers visible when card stacked
-                # font for top-left identifier
-                if (value == 'Q'):
-                  fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 30 * scale)
-                  leftMargin = 4
-                elif value == '10':
-                  # use narrower font so "10" fits in horizontal space
-                  fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial Narrow.ttf", 30 * scale)
-                  leftMargin = 5
-                else:
-                  fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 30 * scale)
-                  leftMargin = 6
+                # 3. Small top-left identifiers visible when card stacked
+                if value == '10':
+                    # custom rendering for "10" with narrow "1"
+                    fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 30 * scale)
+                    # draw "1" as a simple vertical rectangle
+                    line_width = 2 * scale
+                    line_height = 19 * scale
+                    line_x = xt + 7 * scale
+                    line_y = yt + 5 * scale
+                    draw.rectangle([line_x, line_y, line_x + line_width, line_y + line_height],
+                                  fill=colour)
+                    # draw "0" next to it
+                    draw.text((xt + 11 * scale, yt - 2 * scale), '0', fill=colour, font=fontsmall)
 
-                y_offset = -2 * scale if value != '10' else 0 * scale
-                draw.text((xt + leftMargin * scale, yt + y_offset), value, fill=colour, font=fontsmall)
-                # draw.text((xt + leftMargin * scale, yt - 2 * scale), value, fill=colour, font=fontsmall)
+                elif value == 'Q':
+                    fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 30 * scale)
+                    draw.text((xt + 4 * scale, yt - 2 * scale), value, fill=colour, font=fontsmall)
+                else:
+                    fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 30 * scale)
+                    draw.text((xt + 6 * scale, yt - 2 * scale), value, fill=colour, font=fontsmall)
+                # if (value == 'Q'):
+                #   fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 30 * scale)
+                #   leftMargin = 4
+                # elif value == '10':
+                #   # use narrower font so "10" fits in horizontal space
+                #   fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial Narrow.ttf", 30 * scale)
+                #   leftMargin = 5
+                # else:
+                #   fontsmall = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", 30 * scale)
+                #   leftMargin = 6
+
+                # y_offset = -2 * scale if value != '10' else 0 * scale
+                # draw.text((xt + leftMargin * scale, yt + y_offset), value, fill=colour, font=fontsmall)
+                # # draw.text((xt + leftMargin * scale, yt - 2 * scale), value, fill=colour, font=fontsmall)
 
                 #4. suit symbol
                 symbolFontSize = 36
