@@ -828,6 +828,8 @@ export class GameScene extends Phaser.Scene {
       this.#fx.poof(px, py);
     }
 
+    // already playing via lib/solitaire.ts
+    // should move soundplay here, outside /lib Logic
     // this.sound.play(AUDIO_KEYS.FOUNDATION_ADD, { volume: 0.5 });
 
     // update discard pile cards, or flip over tableau cards if needed
