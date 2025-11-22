@@ -421,7 +421,7 @@ export class GameScene extends Phaser.Scene {
       .setInteractive();
 
     drawZone.on(Phaser.Input.Events.POINTER_DOWN, () => {
-      // if no cards in either pile, we don't need to do anything in the ui
+      // if no cards in either pile, we don't need to do anything in the UI
       if (this.#solitaire.drawPile.length === 0 && this.#solitaire.discardPile.length === 0) {
         return;
       }
@@ -429,6 +429,7 @@ export class GameScene extends Phaser.Scene {
       // if no cards in draw pile, need to shuffle in discard pile
       if (this.#solitaire.drawPile.length === 0) {
         this.#solitaire.shuffleDiscardPile();
+        this.sound.play(AUDIO_KEYS.SHUFFLE_DECK, { volume: 1 });
         // show no cards in discard pile
         this.#discardPileCards.forEach((card) => card.setVisible(false));
         // show cards in draw pile based on number of cards in pile
@@ -667,7 +668,6 @@ export class GameScene extends Phaser.Scene {
             }
           }
         }
-
         gameObject.setAlpha(1);
       },
     );
@@ -829,7 +829,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     // already playing via lib/solitaire.ts
-    // should move soundplay here, outside /lib Logic
+    // should move soundplay calls here, away from /lib/solitaire.ts Logic
     // this.sound.play(AUDIO_KEYS.FOUNDATION_ADD, { volume: 0.5 });
 
     // update discard pile cards, or flip over tableau cards if needed
