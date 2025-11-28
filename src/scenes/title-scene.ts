@@ -149,12 +149,12 @@ export class TitleScene extends Phaser.Scene {
     const stackGap = STACK_Y_GAP;
 
     const stackLayouts = [
-      [25],
-      [34],
-      [0, 1],
-      [13, 14, 15],
-      [39],
       [40, 41],
+      [34],
+      [0, 1, 25],
+      [13, 14, 15],
+      [39, 24],
+      [],
       [26]
     ];
     this.#tutorialCards = [];
