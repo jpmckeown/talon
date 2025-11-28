@@ -3,12 +3,14 @@ import { ASSET_KEYS, SCENE_KEYS, UI_CONFIG, GAME_WIDTH, GAME_HEIGHT } from './co
 
 export class HelpScene extends Phaser.Scene {
   #returnToScene: string = SCENE_KEYS.TITLE;
+  #isTouchDevice!: boolean;
 
   constructor() {
     super({ key: SCENE_KEYS.HELP });
   }
 
   public create(data?: { from?: string }): void {
+    this.#isTouchDevice = this.registry.get('isTouchDevice') as boolean;
     if (data?.from) {
       this.#returnToScene = data.from;
     }
@@ -47,7 +49,7 @@ export class HelpScene extends Phaser.Scene {
     const backText = this.add.text(
       this.scale.width / 2,
       this.scale.height - 40 * UI_CONFIG.scale,
-      'back to Menu (m)',
+      this.#isTouchDevice ? 'back to Menu' : 'back to Menu (m)',
       {
         fontSize: `${18 * UI_CONFIG.scale}px`,
         color: '#ffffff'

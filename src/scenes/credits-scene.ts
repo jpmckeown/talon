@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import { SCENE_KEYS, ASSET_KEYS, UI_CONFIG, GAME_WIDTH, GAME_HEIGHT  } from './common';
 
 export class CreditsScene extends Phaser.Scene {
+  #isTouchDevice!: boolean;
   constructor() {
     super({ key: SCENE_KEYS.CREDITS });
   }
@@ -13,6 +14,7 @@ export class CreditsScene extends Phaser.Scene {
   #delayBeforeAutoScroll: number = 5000;
 
   public create(): void {
+    this.#isTouchDevice = this.registry.get('isTouchDevice') as boolean;
     const TITLE_AREA_HEIGHT = 64 * UI_CONFIG.scale;
     const BOTTOM_MARGIN = 80 * UI_CONFIG.scale;
 
@@ -219,9 +221,7 @@ export class CreditsScene extends Phaser.Scene {
     const backText = this.add.text(
       this.scale.width - 100 * UI_CONFIG.scale,
       37 * UI_CONFIG.scale,
-      // this.scale.width / 2,
-      // this.scale.height - 40 * UI_CONFIG.scale,
-      'back to Menu (m)',
+      this.#isTouchDevice ? 'back to Menu' : 'back to Menu (m)',
       {
         fontSize: `${18 * UI_CONFIG.scale}px`,
         color: '#ffffff'

@@ -5,6 +5,7 @@ import { ASSET_KEYS, CARD_BACK_OPTIONS, CARD_HEIGHT, CARD_WIDTH, DEFAULT_CARD_BA
 export class CardBackSelectorScene extends Phaser.Scene {
   #selectedFrame: number = DEFAULT_CARD_BACK_FRAME;
   #confirmationOverlay?: Phaser.GameObjects.Container;
+  #isTouchDevice!: boolean;
 
   constructor() {
     super({ key: SCENE_KEYS.CARD_BACK_SELECTOR });
@@ -12,6 +13,7 @@ export class CardBackSelectorScene extends Phaser.Scene {
 
 
   public create(): void {
+    this.#isTouchDevice = this.registry.get('isTouchDevice') as boolean;
     this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x2a4d2a).setOrigin(0);
 
     this.add.text(this.scale.width / 2, 50 * UI_CONFIG.scale, 'Choose Card Back', {
@@ -142,7 +144,7 @@ export class CardBackSelectorScene extends Phaser.Scene {
     const backText = this.add.text(
       this.scale.width / 2,
       this.scale.height - 40 * UI_CONFIG.scale,
-      'back to Menu (m)',
+      this.#isTouchDevice ? 'back to Menu' : 'back to Menu (m)',
       {
         fontSize: `${20 * UI_CONFIG.scale}px`,
         color: '#ffffff'

@@ -6,6 +6,7 @@ export class SettingsScene extends Phaser.Scene {
   #musicVolume!: number;
   #sfxText!: Phaser.GameObjects.Text;
   #musicText!: Phaser.GameObjects.Text;
+  #isTouchDevice!: boolean;
 
   constructor() {
     super({ key: SCENE_KEYS.SETTINGS });
@@ -13,6 +14,7 @@ export class SettingsScene extends Phaser.Scene {
 
 
   public create(): void {
+    this.#isTouchDevice = this.registry.get('isTouchDevice') as boolean;
     this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.85).setOrigin(0);
 
     this.add.text(this.scale.width / 2, 50 * UI_CONFIG.scale, 'Settings', {
@@ -154,7 +156,7 @@ export class SettingsScene extends Phaser.Scene {
     const backText = this.add.text(
       this.scale.width / 2,
       this.scale.height - 60 * UI_CONFIG.scale,
-      'back to Menu (m)',
+      this.#isTouchDevice ? 'back to Menu' : 'back to Menu (m)',
       {
         fontSize: `${24 * UI_CONFIG.scale}px`,
         color: '#ffffff'

@@ -93,6 +93,7 @@ export class GameScene extends Phaser.Scene {
   score: number = 0;
   scoreText!: Phaser.GameObjects.Text;
   #lastSavedScore: number = 0;
+  #isTouchDevice!: boolean;
 
   constructor() {
     super({ key: SCENE_KEYS.GAME });

@@ -3,11 +3,14 @@ import { ASSET_KEYS, SCENE_KEYS, UI_CONFIG } from './common';
 import { ScoreEntry } from '../lib/common';
 
 export class ScoreScene extends Phaser.Scene {
+  #isTouchDevice!: boolean;
+
   constructor() {
     super({ key: SCENE_KEYS.SCORES });
   }
 
   public create(): void {
+    this.#isTouchDevice = this.registry.get('isTouchDevice') as boolean;
     this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.85).setOrigin(0);
     
     this.add.text(this.scale.width / 2, 45 * UI_CONFIG.scale, 'High Scores', {
@@ -71,7 +74,7 @@ export class ScoreScene extends Phaser.Scene {
     const backText = this.add.text(
       this.scale.width / 2, 
       this.scale.height - 60 * UI_CONFIG.scale, 
-      'back to Menu (m)',
+      this.#isTouchDevice ? 'back to Menu' : 'back to Menu (m)',
       {
         fontSize: `${18 * UI_CONFIG.scale}px`,
         color: '#ffffff'
