@@ -903,6 +903,7 @@ export class GameScene extends Phaser.Scene {
       
       // if dragging a stack reject the move
       if (cardIndex < pileLength - 1) {
+        this.sound.play(AUDIO_KEYS.INVALID, { volume: 0.4 });
         return; // dragend handler will return cards to original position
       }
       
@@ -984,6 +985,7 @@ export class GameScene extends Phaser.Scene {
     // check target tableau stack length limit before attempting move
     if (originalTargetPileSize + quantityCardsMoving > CONFIG.maxTableauStack) {
       console.log(`Sorry, moving ${quantityCardsMoving} card(s) to tableau pile ${targetTableauPileIndex}: would exceed stack length limit of ${CONFIG.maxTableauStack} cards`);
+      this.sound.play(AUDIO_KEYS.INVALID, { volume: 0.4 });
       return;
     }
 
@@ -1044,7 +1046,6 @@ export class GameScene extends Phaser.Scene {
       
       // update the remaining cards in discard pile
       this.#updateCardGameObjectsInDiscardPile();
-
       this.#updateTableauDropZones();
 
       if (!this.#fastCompleteOfferDismissed && this.#checkFastCompleteCondition()) {
