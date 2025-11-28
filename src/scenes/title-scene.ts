@@ -7,7 +7,7 @@ export class TitleScene extends Phaser.Scene {
   #easyCounter: number = 3;
   #easyText!: Phaser.GameObjects.Text;
   #startButton?: Phaser.GameObjects.Image;
-  #isTouchDevice: boolean = false;
+  #isTouchDevice!: boolean;
 
   constructor() {
     super({ key: SCENE_KEYS.TITLE });
@@ -88,7 +88,6 @@ export class TitleScene extends Phaser.Scene {
 
   #makeHelpHint(): void {
     let helpTextSuffix = "Help / how to play (h)";
-    console.log(helpTextSuffix);
     if (this.#isTouchDevice) helpTextSuffix = "Help / how to play";
 
     const helpText = this.add.text(

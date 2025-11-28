@@ -2,8 +2,13 @@ import * as Phaser from 'phaser';
 import { SCENE_KEYS, UI_CONFIG, AUDIO_KEYS } from './common';
 
 export class MenuScene extends Phaser.Scene {
+  #isTouchDevice!: boolean;
   constructor() {
     super({ key: SCENE_KEYS.MENU });
+  }
+
+  #menuText(label: string, key: string): string {
+    return this.#isTouchDevice ? label : `${label} (${key.toLowerCase()})`;
   }
 
   public create(): void {
@@ -29,17 +34,27 @@ export class MenuScene extends Phaser.Scene {
 
     // offer Resume game only if a game is Paused
     if (gameIsActive) {
-      menuItems.push({ text: 'Resume Game (r)', key: 'R', action: () => this.resumeGame() });
+      menuItems.push({ text: this.#menuText('Resume Game', 'r'), key: 'R', action: () => this.resumeGame() });
+      // menuItems.push({ text: 'Resume Game (r)', key: 'R', action: () => this.resumeGame() });
     }
 
     menuItems.push(
-      { text: 'New Game (n)', key: 'N', action: () => this.startNewGame() },
-      { text: 'How to play (h)', key: 'H', action: () => this.showHelp() },
-      { text: 'Settings (t)', key: 'T', action: () => this.showSettings() },
-      { text: 'Card Back (b)', key: 'B', action: () => this.showCardBackSelector() },
-      { text: 'Credits (c)', key: 'C', action: () => this.showCredits() },
-      { text: 'High Scores (s)', key: 'S', action: () => this.showHighScores() },
+      { text: this.#menuText('New Game', 'n'), key: 'N', action: () => this.startNewGame() },
+      { text: this.#menuText('How to play', 'h'), key: 'H', action: () => this.showHelp() },
+      { text: this.#menuText('Settings', 't'), key: 'T', action: () => this.showSettings() },
+      { text: this.#menuText('Card Back', 'b'), key: 'B', action: () => this.showCardBackSelector() },
+      { text: this.#menuText('Credits', 'c'), key: 'C', action: () => this.showCredits() },
+      { text: this.#menuText('High Scores', 's'), key: 'S', action: () => this.showHighScores() },
     );
+
+    // menuItems.push(
+    //   { text: 'New Game (n)', key: 'N', action: () => this.startNewGame() },
+    //   { text: 'How to play (h)', key: 'H', action: () => this.showHelp() },
+    //   { text: 'Settings (t)', key: 'T', action: () => this.showSettings() },
+    //   { text: 'Card Back (b)', key: 'B', action: () => this.showCardBackSelector() },
+    //   { text: 'Credits (c)', key: 'C', action: () => this.showCredits() },
+    //   { text: 'High Scores (s)', key: 'S', action: () => this.showHighScores() },
+    // );
 
     // draw the Menu
     let yPos = menuStartY * UI_CONFIG.scale;
@@ -77,6 +92,12 @@ export class MenuScene extends Phaser.Scene {
       stroke: '#000000',
       strokeThickness: 3
     }).setOrigin(0.5);
+
+    this.input.keyboard?.on('keydown-ESC', () => {
+      this.scene.stop(SCENE_KEYS.MENU);
+      this.scene.stop(SCENE_KEYS.GAME);
+      this.scene.start(SCENE_KEYS.TITLE);
+    });
   }
 
 

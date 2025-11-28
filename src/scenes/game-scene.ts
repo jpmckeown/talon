@@ -190,9 +190,10 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.input.keyboard?.on('keydown-ESC', () => {
-      this.scene.pause();
-      this.scene.launch(SCENE_KEYS.MENU);
-      //this.scene.start(SCENE_KEYS.TITLE);
+      this.saveCurrentScore();
+      this.scene.start(SCENE_KEYS.TITLE);
+      // this.scene.pause();
+      // this.scene.launch(SCENE_KEYS.MENU);
     });
 
     window.addEventListener('beforeunload', () => {
@@ -227,8 +228,7 @@ export class GameScene extends Phaser.Scene {
   makeScore(){
     // position between talon/discard pile and leftmost foundation pile
     const x = (DISCARD_PILE_X_POSITION + CARD_WIDTH + FOUNDATION_PILE_X_POSITIONS[0]) / 2;
-    const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT * 0.40;
-    
+    const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT * 0.35;
     this.scoreText = this.add.text(x, y, 'Score 0', {
       fontSize: `${24 * UI_CONFIG.scale}px`,
       color: '#ffffff',
@@ -316,7 +316,7 @@ export class GameScene extends Phaser.Scene {
 
   makeEasyCounter() {
     const x = DRAW_PILE_X_POSITION + CARD_WIDTH / 3;
-    const y = GAME_HEIGHT - 15 * UI_CONFIG.scale;
+    const y = GAME_HEIGHT - 20 * UI_CONFIG.scale;
     this.easyCounterText = this.add.text(x, y, `Easy moves: ${this.#solitaire.sameColourMoves}`, {
       fontSize: `${18 * UI_CONFIG.scale}px`,
       color: '#ffdd44',
