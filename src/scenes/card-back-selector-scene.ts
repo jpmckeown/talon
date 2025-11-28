@@ -43,7 +43,7 @@ export class CardBackSelectorScene extends Phaser.Scene {
   #displayCardBackOptions(): void {
     const options = [
       { ...CARD_BACK_OPTIONS.BLANK_1, key: 'blank1' },
-      { ...CARD_BACK_OPTIONS.BLANK_2, key: 'blank2' },
+      { ...CARD_BACK_OPTIONS.BIRDS, key: 'birds' },
       { ...CARD_BACK_OPTIONS.FEATHERS, key: 'feathers' }
     ];
 

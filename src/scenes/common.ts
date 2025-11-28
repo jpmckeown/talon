@@ -1,9 +1,9 @@
 export const UI_CONFIG = {
   scale: 2,
   // scene control for developer convenience
-  skipTitleScene: false,
+  skipTitleScene: true,
   // partly transparent red areas show extent of dropzones
-  showDropZones: true,
+  showDropZones: false,
   enableShadows: false,
 } as const;
 
@@ -49,8 +49,8 @@ export const STACK_Y_GAP = 28 * UI_CONFIG.scale;
 
 export const CARD_BACK_OPTIONS = {
   BLANK_1: { frame: 54, name: 'blank-1' },
-  BLANK_2: { frame: 55, name: 'blank-2' },
+  BIRDS: { frame: 55, name: 'birds' },
   FEATHERS: { frame: 56, name: 'feathers' },
 } as const;
 
-export const DEFAULT_CARD_BACK_FRAME = 56;
+export const DEFAULT_CARD_BACK_FRAME = 55;

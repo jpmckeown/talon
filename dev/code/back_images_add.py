@@ -43,7 +43,7 @@ def add_alternate_back():
     # backup before overwriting
     if os.path.exists(output_path):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M")
-        backup_path = f"dev/art/archive/cards_alternate_backs_{timestamp}.png"
+        backup_path = f"dev/art/archive/decks_alternate_backs_{timestamp}.png"
         os.makedirs("dev/art/archive", exist_ok=True)
         shutil.copy2(output_path, backup_path)
         print(f"Backed up existing file to: {backup_path}")
