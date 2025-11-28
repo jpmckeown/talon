@@ -80,6 +80,10 @@ export class GameScene extends Phaser.Scene {
   easyCounterText!: Phaser.GameObjects.Text;
   #easyMedallions!: Phaser.GameObjects.Image[];
 
+  #drawPileTutorialText?: Phaser.GameObjects.Text;
+  #drawPileTutorialTimer?: Phaser.Time.TimerEvent;
+  #hasUsedDrawPile: boolean = false;
+
   #lastTime: number = 0;
   #logTimer: number = 0;
 
@@ -107,6 +111,8 @@ export class GameScene extends Phaser.Scene {
     (window as any).testUtils = this.#testUtils;
 
     this.#createDrawPile();
+    this.#startDrawPileTutorialTimer();
+
     this.#createDiscardPile();
     this.#createFoundationPiles();
 
@@ -396,6 +402,13 @@ export class GameScene extends Phaser.Scene {
     this.scoreText.setText('Score 0');
     this.#fastCompleteOfferDismissed = false;
 
+    // reset draw pile tutorial
+    this.#hasUsedDrawPile = false;
+    this.#hideDrawPileTutorial();
+    if (this.#drawPileTutorialTimer) {
+      this.#drawPileTutorialTimer.remove();
+    }
+
     this.easyCounterText.setText(`Easy moves: ${this.#solitaire.sameColourMoves}`);
     this.easyCounterText.setColor('#ffdd44');
     this.#easyMedallions.forEach(medallion => medallion.clearTint());
@@ -413,6 +426,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.#createDrawPile();
+    this.#startDrawPileTutorialTimer();
     this.#createDiscardPile();
     this.#createFoundationPiles();
     this.#createTableauPiles();
@@ -445,6 +459,14 @@ export class GameScene extends Phaser.Scene {
       .setInteractive();
 
     drawZone.on(Phaser.Input.Events.POINTER_DOWN, () => {
+      // hide tutorial because Draw pile has been clicked already
+      if (!this.#hasUsedDrawPile) {
+        this.#hasUsedDrawPile = true;
+        this.#hideDrawPileTutorial();
+        if (this.#drawPileTutorialTimer) {
+          this.#drawPileTutorialTimer.remove();
+        }
+      }
       // if no cards in either pile, we don't need to do anything in the UI
       if (this.#solitaire.drawPile.length === 0 && this.#solitaire.discardPile.length === 0) {
         return;
@@ -481,6 +503,33 @@ export class GameScene extends Phaser.Scene {
 
     if (UI_CONFIG.showDropZones) {
       this.add.rectangle(drawZone.x, drawZone.y, drawZone.width, drawZone.height, 0xff0000, 0.5).setOrigin(0);
+    }
+  }
+
+  #startDrawPileTutorialTimer(): void {
+    this.#drawPileTutorialTimer = this.time.delayedCall(15000, () => {
+      if (!this.#hasUsedDrawPile) {
+        this.#showDrawPileTutorial();
+      }
+    });
+  }
+
+  #showDrawPileTutorial(): void {
+    const x = DRAW_PILE_X_POSITION + CARD_WIDTH * 1.2;
+    const y = DRAW_PILE_Y_POSITION + CARD_HEIGHT / 2 + 10 * UI_CONFIG.scale;
+    this.#drawPileTutorialText = this.add.text(x, y, '< click to\ndraw card', {
+      fontSize: `${14 * UI_CONFIG.scale}px`,
+      color: '#ffff00',
+      stroke: '#000000',
+      align: 'left',
+      strokeThickness: 2
+    }).setOrigin(0, 1).setDepth(99);
+  }
+
+  #hideDrawPileTutorial(): void {
+    if (this.#drawPileTutorialText) {
+      this.#drawPileTutorialText.destroy();
+      this.#drawPileTutorialText = undefined;
     }
   }
 
