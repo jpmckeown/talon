@@ -78,6 +78,7 @@ export class GameScene extends Phaser.Scene {
   #isPeeking: boolean = false;
   #testUtils!: TestUtils;
   easyCounterText!: Phaser.GameObjects.Text;
+  #easyMedallions!: Phaser.GameObjects.Image[];
 
   #lastTime: number = 0;
   #logTimer: number = 0;
@@ -310,16 +311,28 @@ export class GameScene extends Phaser.Scene {
   makeEasyCounter() {
     const x = DRAW_PILE_X_POSITION + CARD_WIDTH / 3;
     const y = GAME_HEIGHT - 15 * UI_CONFIG.scale;
-    // const x = (DISCARD_PILE_X_POSITION + CARD_WIDTH + FOUNDATION_PILE_X_POSITIONS[0]) / 2;
-    // const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT * 0.20;
-
     this.easyCounterText = this.add.text(x, y, `Easy moves: ${this.#solitaire.sameColourMoves}`, {
       fontSize: `${18 * UI_CONFIG.scale}px`,
       color: '#ffdd44',
       stroke: '#000000',
       strokeThickness: 2
     }).setOrigin(0, 1).setDepth(9);
+
+    this.#easyMedallions = [];
+    const medallionStartX = x + this.easyCounterText.width + 36 * UI_CONFIG.scale;
+    const medallionSpacing = 38 * UI_CONFIG.scale;
+    const medallionY = y - 17 * UI_CONFIG.scale;
+
+    for (let i = 0; i < CONFIG.sameColourMovesPerGame; i++) {
+      const medallion = this.add.image(
+        medallionStartX + i * medallionSpacing,
+        medallionY,
+        ASSET_KEYS.PLAY_MEDALLION
+      ).setScale(UI_CONFIG.scale).setDepth(9);
+      this.#easyMedallions.push(medallion);
+    }
   }
+
 
   #flashEasyCounter() {
     this.tweens.add({
@@ -329,6 +342,11 @@ export class GameScene extends Phaser.Scene {
       yoyo: true,
       repeat: 1
     });
+    // grey out the next available medallion
+    const usedCount = CONFIG.sameColourMovesPerGame - this.#solitaire.sameColourMoves;
+    if (usedCount > 0 && usedCount <= this.#easyMedallions.length) {
+      this.#easyMedallions[usedCount - 1].setTint(0x666666);
+    }
   }
 
 
@@ -380,6 +398,7 @@ export class GameScene extends Phaser.Scene {
 
     this.easyCounterText.setText(`Easy moves: ${this.#solitaire.sameColourMoves}`);
     this.easyCounterText.setColor('#ffdd44');
+    this.#easyMedallions.forEach(medallion => medallion.clearTint());
 
     this.#solitaire.newGame();
 
@@ -930,10 +949,6 @@ export class GameScene extends Phaser.Scene {
 
     // if this is not a valid move, we don't need to update anything on the card(s) since the `dragend` event handler will move the card(s) back to the original location.
     if (!isValidMove) {
-      // if (isCheatMove && this.#solitaire.sameColourMoves === 0) {
-      //   this.easyCounterText.setText('Easy-mode moves all used');
-      //   this.#flashEasyCounter();
-      // }
       return;
     }
     gameObject.setData('wasDropped', true);

@@ -25,6 +25,7 @@ export const ASSET_KEYS = {
   CARDS: 'CARDS',
   TABLE_BACKGROUND: 'TABLE_BACKGROUND',
   PARTICLE: 'PARTICLE',
+  PLAY_MEDALLION: 'PLAY_MEDALLION',
 } as const;
 
 export const AUDIO_KEYS = {
