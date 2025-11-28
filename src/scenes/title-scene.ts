@@ -2,26 +2,26 @@ import * as Phaser from 'phaser';
 import { ASSET_KEYS, SCENE_KEYS, AUDIO_KEYS, UI_CONFIG, CARD_WIDTH, CARD_HEIGHT, STACK_Y_GAP } from './common';
 
 export class TitleScene extends Phaser.Scene {
-  // #cardFan: Phaser.GameObjects.Image[] = [];
   #tutorialCards!: Phaser.GameObjects.Image[][];
   #movingCard!: Phaser.GameObjects.Image;
   #easyCounter: number = 3;
   #easyText!: Phaser.GameObjects.Text;
   #startButton?: Phaser.GameObjects.Image;
+  #isTouchDevice: boolean = false;
 
   constructor() {
     super({ key: SCENE_KEYS.TITLE });
   }
 
   public create(): void {
+    this.#isTouchDevice = this.registry.get('isTouchDevice') as boolean;
+
     this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 1).setOrigin(0);
-    // this.add.image(this.scale.width / 2, 100, ASSET_KEYS.TITLE, 0).setOrigin(0.5);
 
     this.#makeTitle();
     this.#makeTutorialTableau();
     this.#makeEasyCounterText();
     this.time.delayedCall(500, () => this.#startTutorialAnimation());
-    // this.#makeCardFan();
 
     this.#makeStartButton();
     this.#makeHelpHint();
@@ -87,10 +87,14 @@ export class TitleScene extends Phaser.Scene {
 
 
   #makeHelpHint(): void {
+    let helpTextSuffix = "Help / how to play (h)";
+    console.log(helpTextSuffix);
+    if (this.#isTouchDevice) helpTextSuffix = "Help / how to play";
+
     const helpText = this.add.text(
       this.scale.width / 2,
       this.scale.height - 40 * UI_CONFIG.scale,
-      'Help / how to play (H)',
+      helpTextSuffix,
       {
         fontSize: `${14 * UI_CONFIG.scale}px`,
         color: '#888888'
@@ -202,7 +206,7 @@ export class TitleScene extends Phaser.Scene {
         duration: 800,
         ease: 'Power2',
         onComplete: () => {
-          this.sound.play(AUDIO_KEYS.INVALID, { volume: 0.5 });
+          this.sound.play(AUDIO_KEYS.EASY_MOVE, { volume: 0.5 });
           this.#easyCounter--;
           this.#easyText.setText(`Easy moves (same-colour) allowance: ${this.#easyCounter}`);
 

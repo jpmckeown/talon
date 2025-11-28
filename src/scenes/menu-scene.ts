@@ -7,6 +7,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   public create(): void {
+    const isTouchDevice = this.registry.get('isTouchDevice') as boolean;
     const menuFontSize = 24;
     const menuStartY = 110;
     const menuSpacing = 50;

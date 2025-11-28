@@ -37,6 +37,12 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   public create(): void {
+    const isTouchDevice = this.sys.game.device.os.android ||
+                        this.sys.game.device.os.iOS ||
+                        this.sys.game.device.os.iPad ||
+                        this.sys.game.device.os.iPhone;
+    this.registry.set('isTouchDevice', isTouchDevice);
+
     if (UI_CONFIG.skipTitleScene) {
       this.scene.start(SCENE_KEYS.GAME);
       // this.scene.start(SCENE_KEYS.SCORES);
