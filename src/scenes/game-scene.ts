@@ -511,7 +511,7 @@ export class GameScene extends Phaser.Scene {
 
     // tutorial: show 'A' on each foundation pile
     this.#foundationTutorialTexts = [];
-    const tutorialColours = ['#141414', '#4a4a4a', '#ff0f0f', '#ed4a7b']; // spade, club, heart, diamond
+    const tutorialColours = ['#101010', '#3a3a3a', '#ff0f0f', '#ed4a7b']; // spade, club, heart, diamond
     const tutorialAlphas = [0.6, 0.8, 0.4, 0.5];
 
     FOUNDATION_PILE_X_POSITIONS.forEach((x, index) => {
