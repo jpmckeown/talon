@@ -864,6 +864,7 @@ export class GameScene extends Phaser.Scene {
 
     // if this is not a valid move, we don't need to update anything on the card since the `dragend` event handler will move the card back to the original location
     if (!isValidMove) {
+      this.sound.play(AUDIO_KEYS.INVALID, { volume: 0.4 });
       return;
     }
     gameObject.setData('wasDropped', true);
@@ -949,6 +950,7 @@ export class GameScene extends Phaser.Scene {
 
     // if this is not a valid move, we don't need to update anything on the card(s) since the `dragend` event handler will move the card(s) back to the original location.
     if (!isValidMove) {
+      this.sound.play(AUDIO_KEYS.INVALID, { volume: 0.4 });
       return;
     }
     gameObject.setData('wasDropped', true);
@@ -956,7 +958,7 @@ export class GameScene extends Phaser.Scene {
 
     const isCheatMove = isValidMove === 'cheat';
     if (isCheatMove) {
-      this.sound.play(AUDIO_KEYS.INVALID, { volume: 0.3 });
+      this.sound.play(AUDIO_KEYS.EASY_MOVE, { volume: 0.3 });
       const remaining = this.#solitaire.sameColourMoves;
       this.easyCounterText.setText(remaining > 0 ? `Easy moves: ${remaining}` : 'Easy moves: 0 (all used)');
       this.#flashEasyCounter();
