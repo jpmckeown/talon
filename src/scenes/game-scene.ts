@@ -317,7 +317,7 @@ export class GameScene extends Phaser.Scene {
 
   makeEasyCounter() {
     const x = DRAW_PILE_X_POSITION + CARD_WIDTH / 3;
-    const y = GAME_HEIGHT - 20 * UI_CONFIG.scale;
+    const y = GAME_HEIGHT - 21 * UI_CONFIG.scale;
     this.easyCounterText = this.add.text(x, y, `Easy moves: ${this.#solitaire.sameColourMoves}`, {
       fontSize: `${18 * UI_CONFIG.scale}px`,
       color: '#ffdd44',
@@ -1012,7 +1012,7 @@ export class GameScene extends Phaser.Scene {
     if (isCheatMove) {
       this.sound.play(AUDIO_KEYS.EASY_MOVE, { volume: 0.3 });
       const remaining = this.#solitaire.sameColourMoves;
-      this.easyCounterText.setText(remaining > 0 ? `Easy moves: ${remaining}` : 'Easy moves: 0 (all used)');
+      this.easyCounterText.setText(remaining > 0 ? `Easy moves: ${remaining}` : 'Easy moves: 0');
       this.#flashEasyCounter();
     }
     else {
