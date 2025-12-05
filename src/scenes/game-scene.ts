@@ -18,7 +18,7 @@ const STACK_Y_GAP = 28 * UI_CONFIG.scale;
 const CARD_RADIUS = 7 * UI_CONFIG.scale;
 
 // horizontal random shift to make tableau less precise
-const maxShiftX = 0;
+const maxShiftX = 4;
 
 const EMPTY_TABLEAU_DROPZONE_Y = 190;
 const dragAlpha = 1;
@@ -678,7 +678,8 @@ export class GameScene extends Phaser.Scene {
       this.#tableauContainers.push(tableauContainer);
 
       pile.forEach((card, cardIndex) => {
-        const horizontalShift = Math.floor(Math.random() * (2*maxShiftX+1)) - maxShiftX;
+        const horizontalShift = this.#getRandomHorizontalShift();
+        // const horizontalShift = Math.floor(Math.random() * (2*maxShiftX+1)) - maxShiftX;
         const cardGameObject = this.#createCard(horizontalShift, cardIndex * STACK_Y_GAP, false, cardIndex, pileIndex);
         tableauContainer.add(cardGameObject);
         if (card.isFaceUp) {
@@ -1113,7 +1114,8 @@ export class GameScene extends Phaser.Scene {
 
     // add single discard pile card to tableau as a new game object
     if (isCardFromDiscardPile) {
-      const horizontalShift = Math.floor(Math.random() * (2*maxShiftX+1)) - maxShiftX;
+      const horizontalShift = this.#getRandomHorizontalShift();
+      // const horizontalShift = Math.floor(Math.random() * (2*maxShiftX+1)) - maxShiftX;
       const card = this.#createCard(
         horizontalShift,
         originalTargetPileSize * STACK_Y_GAP,
@@ -1152,7 +1154,8 @@ export class GameScene extends Phaser.Scene {
 
       // update phaser game object data to match the new values for tableau and card index
       const cardIndex = originalTargetPileSize + i;
-      const horizontalShift = Math.floor(Math.random() * (2*maxShiftX+1)) - maxShiftX;
+      const horizontalShift = this.#getRandomHorizontalShift();
+      // const horizontalShift = Math.floor(Math.random() * (2*maxShiftX+1)) - maxShiftX;
       cardGameObject.setData({
         x: horizontalShift,
         y: cardIndex * STACK_Y_GAP,
@@ -1420,6 +1423,10 @@ export class GameScene extends Phaser.Scene {
   }
   #getCardFrameFromSuit(suit: string, value: number): number {
     return SUIT_FRAMES[suit] + value - 1;
+  }
+
+  #getRandomHorizontalShift(): number {
+    return [-5, 0, 5][Math.floor(Math.random() * 3)];
   }
 
 
