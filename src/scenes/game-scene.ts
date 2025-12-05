@@ -139,6 +139,7 @@ export class GameScene extends Phaser.Scene {
     this.makeEasyCounter();
     this.makeMenuButton();
     this.makePeekButton();
+    this.makeRewindButton();
 
     this.input.keyboard!.on('keydown-M', () => {
       // this.saveCurrentScore();
@@ -311,6 +312,36 @@ export class GameScene extends Phaser.Scene {
         if (this.#isPeeking) {
           this.#endPeekMode();
         }
+      });
+  }
+
+
+  makeRewindButton() {
+    const x = GAME_WIDTH - 165 * UI_CONFIG.scale;
+    const y = GAME_HEIGHT - CARD_HEIGHT * 0.6;
+
+    const buttonWidth = CARD_WIDTH * 2.5;
+    const buttonHeight = CARD_HEIGHT * 0.30;
+
+    const buttonBase = this.add.graphics({ x, y });
+    buttonBase.fillStyle(0x03befc, 1);
+    buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+
+    this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Rewind deal pile', {
+      fontSize: `${12 * UI_CONFIG.scale}px`,
+      color: '#ffffff',
+      stroke: '#000000',
+      strokeThickness: 2
+    }).setOrigin(0.5);
+
+    const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
+    buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
+      .on('pointerdown', () => {
+        this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
+        buttonBase.clear();
+        buttonBase.fillStyle(0x0288c7, 1);  // darker colour when pressed;
+        buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+        this.#doRestartDrawPile();
       });
   }
 
