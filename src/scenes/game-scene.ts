@@ -95,6 +95,9 @@ export class GameScene extends Phaser.Scene {
   #lastSavedScore: number = 0;
   #isTouchDevice!: boolean;
 
+  #drawPileButton!: Phaser.GameObjects.Graphics;
+  #drawPileButtonText!: Phaser.GameObjects.Text;
+
   constructor() {
     super({ key: SCENE_KEYS.GAME });
   }
@@ -323,26 +326,80 @@ export class GameScene extends Phaser.Scene {
     const buttonWidth = CARD_WIDTH * 2.5;
     const buttonHeight = CARD_HEIGHT * 0.30;
 
-    const buttonBase = this.add.graphics({ x, y });
-    buttonBase.fillStyle(0x03befc, 1);
-    buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+    this.#drawPileButton = this.add.graphics({ x, y });
+    this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0x03befc);
 
-    this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Rewind deal pile', {
-      fontSize: `${12 * UI_CONFIG.scale}px`,
-      color: '#ffffff',
-      stroke: '#000000',
-      strokeThickness: 2
-    }).setOrigin(0.5);
+      this.#drawPileButtonText = this.add.text(
+      x + buttonWidth / 2,
+      y + buttonHeight / 2,
+      'Rewind draw-pile',
+      {
+        fontSize: `${12 * UI_CONFIG.scale}px`,
+        color: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 2
+      }
+    ).setOrigin(0.5);
+
+    // const buttonBase = this.add.graphics({ x, y });
+    // buttonBase.fillStyle(0x03befc, 1);
+    // buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+
+    // this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Rewind deal pile', {
+    //   fontSize: `${12 * UI_CONFIG.scale}px`,
+    //   color: '#ffffff',
+    //   stroke: '#000000',
+    //   strokeThickness: 2
+    // }).setOrigin(0.5);
 
     const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
-    buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
+    this.#drawPileButton.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
       .on('pointerdown', () => {
         this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
-        buttonBase.clear();
-        buttonBase.fillStyle(0x0288c7, 1);  // darker colour when pressed;
-        buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
-        this.#doRestartDrawPile();
+        this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0x0288c7);
+        this.#handleDrawPileButtonClick();
+      })
+      .on('pointerup', () => {
+        this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0x03befc);
+      })
+      .on('pointerout', () => {
+        this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0x03befc);
       });
+
+    // buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
+    //   .on('pointerdown', () => {
+    //     this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
+    //     buttonBase.clear();
+    //     buttonBase.fillStyle(0x0288c7, 1);  // darker colour when pressed;
+    //     buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+    //     this.#doRestartDrawPile();
+    //   });
+  }
+
+  #handleDrawPileButtonClick(): void {
+    if (this.#solitaire.drawPile.length === 0) {
+      this.#solitaire.shuffleDiscardPile();
+      this.sound.play(AUDIO_KEYS.SHUFFLE_DECK, { volume: 1 });
+      this.#discardPileCards.forEach((card) => card.setVisible(false));
+      this.#showCardsInDrawPile();
+    } else {
+      this.#doRestartDrawPile();
+    }
+    this.#updateDrawPileButton();
+  }
+
+  #updateDrawPileButton(): void {
+    if (this.#solitaire.drawPile.length === 0) {
+      this.#drawPileButtonText.setText('Shuffle draw-pile');
+    } else {
+      this.#drawPileButtonText.setText('Rewind draw-pile');
+    }
+  }
+
+  #redrawDrawPileButton(width: number, height: number, colour: number): void {
+    this.#drawPileButton.clear();
+    this.#drawPileButton.fillStyle(colour, 1);
+    this.#drawPileButton.fillRoundedRect(0, 0, width, height, 24);
   }
 
 
@@ -512,6 +569,7 @@ export class GameScene extends Phaser.Scene {
         this.#discardPileCards.forEach((card) => card.setVisible(false));
         // show cards in draw pile based on number of cards in pile
         this.#showCardsInDrawPile();
+        this.#updateDrawPileButton();
         return;
       }
 
@@ -519,6 +577,7 @@ export class GameScene extends Phaser.Scene {
       this.#solitaire.drawCard();
       this.sound.play(AUDIO_KEYS.DRAW_CARD, { volume: 0.3 });
       this.#animateDrawCard();
+      this.#updateDrawPileButton();
 
       // update shown cards in draw pile, based on number of cards in pile
       //this.#showCardsInDrawPile();
@@ -1432,6 +1491,7 @@ export class GameScene extends Phaser.Scene {
     this.sound.play(AUDIO_KEYS.SHUFFLE_DECK, { volume: 1 });
     this.#discardPileCards.forEach((card) => card.setVisible(false));
     this.#showCardsInDrawPile();
+    this.#updateDrawPileButton();
   }
 
 }
