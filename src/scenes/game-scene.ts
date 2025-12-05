@@ -1025,6 +1025,7 @@ export class GameScene extends Phaser.Scene {
     // update discard pile cards, or flip over tableau cards if needed
     if (isCardFromDiscardPile) {
       this.#updateCardGameObjectsInDiscardPile();
+      this.#updateDrawPileButton();
     }
     else {
       // only destroy card if it came from a tableau
@@ -1129,8 +1130,9 @@ export class GameScene extends Phaser.Scene {
         this.#fx.poof(px, py);
       }
       
-      // update the remaining cards in discard pile
+      // update the remaining cards in discard pile, and the Rewind button visibility
       this.#updateCardGameObjectsInDiscardPile();
+      this.#updateDrawPileButton();
       this.#updateTableauDropZones();
 
       if (!this.#fastCompleteOfferDismissed && this.#checkFastCompleteCondition()) {
