@@ -341,16 +341,9 @@ export class GameScene extends Phaser.Scene {
       }
     ).setOrigin(0.5);
 
-    // const buttonBase = this.add.graphics({ x, y });
-    // buttonBase.fillStyle(0x03befc, 1);
-    // buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
-
-    // this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Rewind deal pile', {
-    //   fontSize: `${12 * UI_CONFIG.scale}px`,
-    //   color: '#ffffff',
-    //   stroke: '#000000',
-    //   strokeThickness: 2
-    // }).setOrigin(0.5);
+    // hidden at start because not eligible for shuffle or rewind
+    this.#drawPileButton.setVisible(false);
+    this.#drawPileButtonText.setVisible(false);
 
     const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
     this.#drawPileButton.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
@@ -365,16 +358,8 @@ export class GameScene extends Phaser.Scene {
       .on('pointerout', () => {
         this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0x03befc);
       });
-
-    // buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
-    //   .on('pointerdown', () => {
-    //     this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
-    //     buttonBase.clear();
-    //     buttonBase.fillStyle(0x0288c7, 1);  // darker colour when pressed;
-    //     buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
-    //     this.#doRestartDrawPile();
-    //   });
   }
+
 
   #handleDrawPileButtonClick(): void {
     if (this.#solitaire.drawPile.length === 0) {
@@ -388,7 +373,17 @@ export class GameScene extends Phaser.Scene {
     this.#updateDrawPileButton();
   }
 
+
   #updateDrawPileButton(): void {
+    const hasEnoughCards = this.#solitaire.discardPile.length >= 2;
+    if (!hasEnoughCards) {
+      this.#drawPileButton.setVisible(false);
+      this.#drawPileButtonText.setVisible(false);
+      return;
+    }
+    this.#drawPileButton.setVisible(true);
+    this.#drawPileButtonText.setVisible(true);
+
     if (this.#solitaire.drawPile.length === 0) {
       this.#drawPileButtonText.setText('Shuffle draw-pile');
     } else {
