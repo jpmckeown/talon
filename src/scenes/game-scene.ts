@@ -229,6 +229,15 @@ export class GameScene extends Phaser.Scene {
     this.#cardBackFrame = saved ? parseInt(saved, 10) : DEFAULT_CARD_BACK_FRAME;
   }
 
+  #getValidShift(previousShift: number): number {
+    if (previousShift === -5) {
+      return [-5, 0][Math.floor(Math.random() * 2)];
+    } else if (previousShift === 0) {
+      return [-5, 0, 5][Math.floor(Math.random() * 3)];
+    } else { // previousShift === 5
+      return [0, 5][Math.floor(Math.random() * 2)];
+    }
+  }
 
   makeScore(){
     // position between talon/discard pile and leftmost foundation pile
@@ -678,9 +687,18 @@ export class GameScene extends Phaser.Scene {
       this.#tableauContainers.push(tableauContainer);
 
       pile.forEach((card, cardIndex) => {
-        const horizontalShift = this.#getRandomHorizontalShift();
+        let horizontalShift = 0;
+        if (cardIndex > 0) {
+          const previousCard = tableauContainer.getAt<Phaser.GameObjects.Image>(cardIndex - 1);
+          const previousShift = previousCard.getData('horizontalShift') as number;
+          horizontalShift = this.#getValidShift(previousShift);
+        }
+        // const horizontalShift = this.#getRandomHorizontalShift();
         // const horizontalShift = Math.floor(Math.random() * (2*maxShiftX+1)) - maxShiftX;
+
         const cardGameObject = this.#createCard(horizontalShift, cardIndex * STACK_Y_GAP, false, cardIndex, pileIndex);
+        cardGameObject.setData('horizontalShift', horizontalShift);
+
         tableauContainer.add(cardGameObject);
         if (card.isFaceUp) {
           cardGameObject.setFrame(this.#getCardFrame(card));
@@ -1114,8 +1132,15 @@ export class GameScene extends Phaser.Scene {
 
     // add single discard pile card to tableau as a new game object
     if (isCardFromDiscardPile) {
-      const horizontalShift = this.#getRandomHorizontalShift();
+      let horizontalShift = 0;
+      if (originalTargetPileSize > 0) {
+        const bottomCard = this.#tableauContainers[targetTableauPileIndex].getAt<Phaser.GameObjects.Image>(originalTargetPileSize - 1);
+        const previousShift = bottomCard.getData('horizontalShift') as number;
+        horizontalShift = this.#getValidShift(previousShift);
+  }
+      // const horizontalShift = this.#getRandomHorizontalShift();
       // const horizontalShift = Math.floor(Math.random() * (2*maxShiftX+1)) - maxShiftX;
+
       const card = this.#createCard(
         horizontalShift,
         originalTargetPileSize * STACK_Y_GAP,
@@ -1124,6 +1149,7 @@ export class GameScene extends Phaser.Scene {
         targetTableauPileIndex,
       );
       card.setFrame(gameObject.frame);
+      card.setData('horizontalShift', horizontalShift);
       this.#tableauContainers[targetTableauPileIndex].add(card);
 
       if (!isCheatMove) {
@@ -1154,13 +1180,22 @@ export class GameScene extends Phaser.Scene {
 
       // update phaser game object data to match the new values for tableau and card index
       const cardIndex = originalTargetPileSize + i;
-      const horizontalShift = this.#getRandomHorizontalShift();
+
+      let horizontalShift = 0;
+      if (cardIndex > 0) {
+        const previousCard = this.#tableauContainers[targetTableauPileIndex].getAt<Phaser.GameObjects.Image>(cardIndex - 1);
+        const previousShift = previousCard.getData('horizontalShift') as number;
+        horizontalShift = this.#getValidShift(previousShift);
+      }
+      // const horizontalShift = this.#getRandomHorizontalShift();
       // const horizontalShift = Math.floor(Math.random() * (2*maxShiftX+1)) - maxShiftX;
+
       cardGameObject.setData({
         x: horizontalShift,
         y: cardIndex * STACK_Y_GAP,
         cardIndex,
         pileIndex: targetTableauPileIndex,
+        horizontalShift: horizontalShift,
       });
 
       // WORK IN PROGRESS!
