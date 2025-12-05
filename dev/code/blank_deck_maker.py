@@ -83,10 +83,26 @@ def create_blank_cards_template():
                 fill=border_colour,
                 width=border_size
             )
+
+            # left side border line
+            draw.line(
+                [(x, y + corner_radius), (x, y + card_height - corner_radius - 1)],
+                fill=border_colour,
+                width=border_size
+            )
+
+            # right side border line
+            draw.line(
+                [(x + card_width - 1, y + corner_radius),
+                 (x + card_width - 1, y + card_height - corner_radius - 1)],
+                fill=border_colour,
+                width=border_size
+            )
     
     # save the blank template
     #output_path = "dev/art/cards_blank_56x78_corner-7_edge-0_scale-4.png"
-    output_path = "dev/art/cards_blank_56x78_corner-7_edge-0-top-1_scale-2.png"
+    # output_path = "dev/art/cards_blank_56x78_corner-7_edge-0-top-1_scale-2.png"
+    output_path = "dev/art/cards_blank_56x78_corner-7_edge-1-top-1_scale-2.png"
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     img.save(output_path)
     print(f"Saved blank cards template at: {output_path}")
