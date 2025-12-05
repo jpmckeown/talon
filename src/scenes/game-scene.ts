@@ -357,7 +357,7 @@ export class GameScene extends Phaser.Scene {
     const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
     this.#drawPileButton.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
       .on('pointerdown', () => {
-        this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
+        // this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
         this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0x0288c7);
         this.#handleDrawPileButtonClick();
       })
@@ -377,6 +377,7 @@ export class GameScene extends Phaser.Scene {
       this.#discardPileCards.forEach((card) => card.setVisible(false));
       this.#showCardsInDrawPile();
     } else {
+      this.sound.play(AUDIO_KEYS.REWIND, { volume: 1 });
       this.#doRestartDrawPile();
     }
     this.#updateDrawPileButton();
@@ -1527,7 +1528,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
     this.#solitaire.restartDrawPile();
-    this.sound.play(AUDIO_KEYS.SHUFFLE_DECK, { volume: 1 });
+    // this.sound.play(AUDIO_KEYS.SHUFFLE_DECK, { volume: 1 });
     this.#discardPileCards.forEach((card) => card.setVisible(false));
     this.#showCardsInDrawPile();
     this.#updateDrawPileButton();

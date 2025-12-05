@@ -37,6 +37,7 @@ export const AUDIO_KEYS = {
   GAME_WIN: 'gameWin',
   PLACE_CARD: 'placeCard',
   SHUFFLE_DECK: 'shuffleDeck',
+  REWIND: 'rewind',
   BUTTON_PRESS: 'buttonPress',
   FOUNDATION_PILE_COMPLETED: 'foundationPileCompleted',
   FOUNDATION_PILE_ADDED: 'foundationPileAdded'
