@@ -86,6 +86,7 @@ export class GameScene extends Phaser.Scene {
 
   #lastTime: number = 0;
   #logTimer: number = 0;
+  #winAnimDuration: integer = 4000;
 
   #fastCompleteOfferDismissed: boolean = false;
   #fastCompleteOverlay?: Phaser.GameObjects.Container;
@@ -138,18 +139,9 @@ export class GameScene extends Phaser.Scene {
       this.scoreText.setText(scoring)
       this.#updateFoundationPiles();
 
-      this.add.text(this.scale.width / 2, 200 * UI_CONFIG.scale, 'You won Talon Solitaire!', {
-        fontSize: `${36 * UI_CONFIG.scale}px`,
-        color: '#ffffff',
-        stroke: '#000000',
-        strokeThickness: 4
-      }).setOrigin(0.5);
-      this.add.text(this.scale.width / 2, 270 * UI_CONFIG.scale, 'Play again?', {
-        fontSize: `${42 * UI_CONFIG.scale}px`,
-        color: '#ffffff',
-        stroke: '#000000',
-        strokeThickness: 4
-      }).setOrigin(0.5);
+      this.time.delayedCall(this.#winAnimDuration, () => {
+        this.#showWinOverlay();
+      });
     });
 
     this.#lastTime = 0;
@@ -1084,6 +1076,9 @@ export class GameScene extends Phaser.Scene {
     }
     if (this.#solitaire.wonGame) {
       this.saveCurrentScore();
+      this.time.delayedCall(this.#winAnimDuration, () => {
+        this.#showWinOverlay();
+      });
     }
   }
 
@@ -1340,6 +1335,63 @@ export class GameScene extends Phaser.Scene {
 
     overlay.add([bg, messageText, yesText, noText]);
     this.#fastCompleteOverlay = overlay;
+  }
+
+
+  #showWinOverlay(): void {
+    const overlay = this.add.container(0, 0).setDepth(100);
+
+    const titleText = this.add.text(
+      this.scale.width / 2,
+      150 * UI_CONFIG.scale,
+      'You won Talon Solitaire!',
+      {
+        fontSize: `${36 * UI_CONFIG.scale}px`,
+        color: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 4
+      }
+    ).setOrigin(0.5);
+
+    const buttonY = 200 * UI_CONFIG.scale;
+    const buttonWidth = CARD_WIDTH * 3.5;
+    const buttonHeight = CARD_HEIGHT * 0.7;
+    const buttonX = this.scale.width / 2 - buttonWidth / 2;
+
+    const buttonGraphics = this.add.graphics({ x: buttonX, y: buttonY });
+    buttonGraphics.fillStyle(0xffd700, 1);
+    buttonGraphics.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+
+    const buttonText = this.add.text(
+      this.scale.width / 2,
+      buttonY + buttonHeight / 2,
+      'Play again?',
+      {
+        fontSize: `${24 * UI_CONFIG.scale}px`,
+        color: '#000000',
+        fontStyle: 'bold'
+      }
+    ).setOrigin(0.5);
+
+    const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
+    buttonGraphics.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
+      .on('pointerover', () => {
+        buttonGraphics.clear();
+        buttonGraphics.fillStyle(0xffed4e, 1);
+        buttonGraphics.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+      })
+      .on('pointerout', () => {
+        buttonGraphics.clear();
+        buttonGraphics.fillStyle(0xffd700, 1);
+        buttonGraphics.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+      })
+      .on('pointerdown', () => {
+        this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
+        overlay.destroy();
+        this.resetGame();
+      });
+
+    overlay.add([titleText, buttonGraphics, buttonText]);
   }
 
 
