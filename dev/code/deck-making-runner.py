@@ -19,8 +19,9 @@ def run_script(script_name):
     print(f"\n✓ {script_name} completed successfully")
 
 
-def main():    
-    run_script("cards_maker_56x78.py")
+def main():
+    run_script("write_deck_resize.py")
+    # run_script("cards_maker_56x78.py")
     run_script("add_back_design.py")
     run_script("add_alternate_back.py")    
 
