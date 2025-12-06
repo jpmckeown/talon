@@ -127,12 +127,29 @@ export class GameScene extends Phaser.Scene {
 
     this.input.keyboard?.on('keydown-W', () => {
       console.log('W key pressed: advancing Foundation piles for instant win');
+      this.#hideDrawPileTutorial();
+      if (this.#foundationTutorialTexts) {
+        this.#foundationTutorialTexts.forEach(text => text.setVisible(false));
+      }
       this.#clearTableauForInstantWin();
       this.#testUtils.advanceFoundations();
       this.score = 52;
       const scoring = "Score " + this.score;
       this.scoreText.setText(scoring)
       this.#updateFoundationPiles();
+
+      this.add.text(this.scale.width / 2, 200 * UI_CONFIG.scale, 'You won Talon Solitaire!', {
+        fontSize: `${36 * UI_CONFIG.scale}px`,
+        color: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 4
+      }).setOrigin(0.5);
+      this.add.text(this.scale.width / 2, 270 * UI_CONFIG.scale, 'Play again?', {
+        fontSize: `${42 * UI_CONFIG.scale}px`,
+        color: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 4
+      }).setOrigin(0.5);
     });
 
     this.#lastTime = 0;
