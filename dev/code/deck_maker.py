@@ -8,16 +8,16 @@ from datetime import datetime
 
 def get_parameters():
     parser = argparse.ArgumentParser(description='Generate playing card deck with custom borders')
-    parser.add_argument('--edge', type=int, help='edge border style (0-3)')
+    parser.add_argument('--side', type=int, help='side border style (0-3)')
     parser.add_argument('--top', type=int, help='top border style (0-3)')
     parser.add_argument('--base', type=int, help='base/bottom border style (0-3)')
     parser.add_argument('--scale', type=int, help='scale factor (1-2)')
     args = parser.parse_args()
 
     # prompt for missing parameters with defaults
-    if args.edge is None:
-        edge_input = input('Enter edge value (0-3) [default: 1]: ').strip()
-        args.edge = int(edge_input) if edge_input else 1
+    if args.side is None:
+        side_input = input('Enter side value (0-3) [default: 1]: ').strip()
+        args.side = int(side_input) if side_input else 1
 
     if args.top is None:
         top_input = input('Enter top value (0-3) [default: 1]: ').strip()
@@ -32,8 +32,8 @@ def get_parameters():
         args.scale = int(scale_input) if scale_input else 2
 
     # validate ranges
-    if not 0 <= args.edge <= 3:
-        print(f'Error: edge must be 0-3, got {args.edge}')
+    if not 0 <= args.side <= 3:
+        print(f'Error: side must be 0-3, got {args.side}')
         sys.exit(1)
     if not 0 <= args.top <= 3:
         print(f'Error: top must be 0-3, got {args.top}')
@@ -45,7 +45,7 @@ def get_parameters():
         print(f'Error: scale must be 1-2, got {args.scale}')
         sys.exit(1)
 
-    return args.edge, args.top, args.base, args.scale
+    return args.side, args.top, args.base, args.scale
 
 
 def draw_card_faces(img, draw, scale, card_width, card_height, card_spacing):
@@ -246,16 +246,16 @@ def add_alternate_back(img, scale, card_width, card_height, card_spacing):
 
 
 def generate_deck():
-    edge, top, base, scale = get_parameters()
+    side, top, base, scale = get_parameters()
     
     card_width = 56 * scale
     card_height = 78 * scale
     card_spacing = 1 * scale
     
-    input_filename = f"cards_blank_56x78_corner-7_edge-{edge}-top-{top}-base-{base}_scale-{scale}.png"
+    input_filename = f"cards_blank_56x78_corner-7_side-{side}-top-{top}-base-{base}_scale-{scale}.png"
     input_path = f"dev/art/{input_filename}"
     
-    output_filename = f"cards_edge-{edge}-top-{top}-base-{base}_scale-{scale}.png"
+    output_filename = f"cards_side-{side}-top-{top}-base-{base}_scale-{scale}.png"
     output_path = f"public/assets/images/{output_filename}"
     
     if not os.path.exists(input_path):
@@ -263,7 +263,7 @@ def generate_deck():
         sys.exit(1)
     
     print(f'Loading blank template: {input_filename}')
-    print(f'Parameters: edge={edge}, top={top}, base={base}, scale={scale}')
+    print(f'Parameters: side={side}, top={top}, base={base}, scale={scale}')
     
     try:
         img = Image.open(input_path)
