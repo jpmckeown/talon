@@ -338,24 +338,22 @@ export class GameScene extends Phaser.Scene {
 
 
   makeRewindButton() {
-    const x = GAME_WIDTH - 165 * UI_CONFIG.scale;
+    const x = GAME_WIDTH - 175 * UI_CONFIG.scale;
     const y = GAME_HEIGHT - CARD_HEIGHT * 0.6;
 
-    const buttonWidth = CARD_WIDTH * 2.5;
-    const buttonHeight = CARD_HEIGHT * 0.30;
+    const buttonWidth = CARD_WIDTH * 3;
+    const buttonHeight = CARD_HEIGHT * 0.4;
 
     this.#drawPileButton = this.add.graphics({ x, y });
-    this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0x03befc);
+    this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0xffd700);
 
       this.#drawPileButtonText = this.add.text(
       x + buttonWidth / 2,
       y + buttonHeight / 2,
       'Rewind draw-pile',
       {
-        fontSize: `${12 * UI_CONFIG.scale}px`,
-        color: '#ffffff',
-        stroke: '#000000',
-        strokeThickness: 2
+        fontSize: `${15 * UI_CONFIG.scale}px`,
+        color: '#000000'
       }
     ).setOrigin(0.5);
 
@@ -366,15 +364,14 @@ export class GameScene extends Phaser.Scene {
     const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
     this.#drawPileButton.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
       .on('pointerdown', () => {
-        // this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
-        this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0x0288c7);
+        this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0xdaa520);
         this.#handleDrawPileButtonClick();
       })
       .on('pointerup', () => {
-        this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0x03befc);
+        this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0xffd700);
       })
       .on('pointerout', () => {
-        this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0x03befc);
+        this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0xffd700);
       });
   }
 
