@@ -229,20 +229,28 @@ def add_alternate_back(img, scale, card_width, card_height, card_spacing):
     if alternate_img.mode != 'RGBA':
         alternate_img = alternate_img.convert('RGBA')
 
+    # trim pixels from all sides of in-memory back image
+    # to avoid obscuring the blank's edge lines/curves
+    trimPx = 3
+    width, height = alternate_img.size
+    alternate_img = alternate_img.crop((trimPx, trimPx, width - trimPx, height - trimPx))
+
     card_position = 55
     row = card_position // cards_across
     col = card_position % cards_across
     
     xt = card_spacing + col * (card_width + card_spacing)
     yt = card_spacing + row * (card_height + card_spacing)
+
+    paste_x = xt + trimPx
+    paste_y = yt + trimPx    
+    # if alternate_img.size != (card_width, card_height):
+    #     alternate_img = alternate_img.resize((card_width, card_height), Image.Resampling.LANCZOS)
     
-    if alternate_img.size != (card_width, card_height):
-        alternate_img = alternate_img.resize((card_width, card_height), Image.Resampling.LANCZOS)
-    
-    if alternate_img.mode == 'RGBA':
-        img.paste(alternate_img, (xt, yt), alternate_img.split()[3])
-    else:
-        img.paste(alternate_img, (xt, yt))
+    # if alternate_img.mode == 'RGBA':
+    img.paste(alternate_img, (xt + trimPx, yt + trimPx), alternate_img.split()[3])
+    # else:
+    #     img.paste(alternate_img, (xt, yt))
 
 
 def generate_deck():
@@ -255,7 +263,7 @@ def generate_deck():
     input_filename = f"cards_blank_56x78_corner-7_side-{side}-top-{top}-base-{base}_scale-{scale}.png"
     input_path = f"dev/art/{input_filename}"
     
-    output_filename = f"cards_side-{side}-top-{top}-base-{base}_scale-{scale}.png"
+    output_filename = f"cards_corner-7_side-{side}-top-{top}-base-{base}_scale-{scale}.png"
     output_path = f"public/assets/images/{output_filename}"
     
     if not os.path.exists(input_path):
