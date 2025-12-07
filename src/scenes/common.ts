@@ -29,6 +29,7 @@ export const ASSET_KEYS = {
 } as const;
 
 export const AUDIO_KEYS = {
+  MUSIC_GAME: 'musicGame',
   DRAW_CARD: 'cardDraw',
   INVALID: 'invalid',
   EASY_MOVE: 'easyMove',

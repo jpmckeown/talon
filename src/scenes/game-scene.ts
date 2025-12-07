@@ -72,7 +72,7 @@ export class GameScene extends Phaser.Scene {
 
   // spawns particle effects during the game
   #fx!: Effects;
-
+  #music?: Phaser.Sound.BaseSound;
   #cardBackFrame: number = DEFAULT_CARD_BACK_FRAME;
 
   #isPeeking: boolean = false;
@@ -219,6 +219,12 @@ export class GameScene extends Phaser.Scene {
     // phaser defers sounds until after the first user input
     // due to browser restrictions against autoplay
     this.sound.play(AUDIO_KEYS.SHUFFLE_DECK, { volume: 1 });
+
+    this.#music = this.sound.add(AUDIO_KEYS.MUSIC_GAME, {
+      volume: 0.3,
+      loop: true
+    });
+    this.#music.play();
   }
 
   update(time: number, delta: number) {
