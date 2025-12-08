@@ -10,7 +10,7 @@ Based on a tutorial by Scott Westover, a version of the one-player card game "Pa
 
 ## To run the project on your computer.
 
-1. Clone the github repository
+1. Clone the github repository https://github.com/jpmckeown/talon.git or git@github.com:jpmckeown/talon.git
 
 2. Check terminal window is at project directory e.g. talon/
 
