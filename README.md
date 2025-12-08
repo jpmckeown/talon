@@ -24,7 +24,7 @@ Based on a tutorial by Scott Westover, a version of the one-player card game "Pa
 
 In the webpage inspector console you should see: [vite] connected.
 
-Chrome: in inspector I saw a Console message "Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content." I stopped that showing by in a new bowser tab going to chrome://flags/#enable-unsafe-swiftshader and clicking the checkbox. When I restarted Chrome the console was clear.
+Chrome: in inspector I saw a Console message "Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content." I stopped that showing by in a new browser tab going to chrome://flags/#enable-unsafe-swiftshader and clicking the checkbox. When I restarted Chrome the console was clear.
 
 ### Commands
 
