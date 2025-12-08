@@ -64,7 +64,7 @@ export class CreditsScene extends Phaser.Scene {
         contributions: 'tutorial code, logic and core mechanics is the foundation for Talon Solitaire.'
       },
       {
-        name: 'Chris Deleon',
+        name: 'Chris DeLeon',
         contributions: 'itch.io dimensions workaround, Dev Pods.'
       },
     ];

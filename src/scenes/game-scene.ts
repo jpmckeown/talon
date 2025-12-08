@@ -98,6 +98,8 @@ export class GameScene extends Phaser.Scene {
 
   #drawPileButton!: Phaser.GameObjects.Graphics;
   #drawPileButtonText!: Phaser.GameObjects.Text;
+  #peekButton!: Phaser.GameObjects.Graphics;
+  #peekButtonText!: Phaser.GameObjects.Text;
 
   constructor() {
     super({ key: SCENE_KEYS.GAME });
@@ -164,7 +166,7 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.input.keyboard?.on('keydown-U', () => {
-      if (!this.#isPeeking) {
+      if (!this.#isPeeking && !this.#checkAllTableauFaceUp()) {
         this.#startPeekMode();
       }
     });
@@ -214,6 +216,7 @@ export class GameScene extends Phaser.Scene {
     window.addEventListener('beforeunload', () => {
       this.saveCurrentScore();
     });
+    // this.#updatePeekButtonVisibility();
 
     // game is starting so play an intro sound
     // if this seems to play too late, it is because
@@ -292,7 +295,6 @@ export class GameScene extends Phaser.Scene {
       this.scene.pause();
       this.scene.launch(SCENE_KEYS.MENU);
     });
-
   }
 
 
@@ -303,11 +305,11 @@ export class GameScene extends Phaser.Scene {
     const buttonWidth = CARD_WIDTH;
     const buttonHeight = CARD_HEIGHT * 0.30;
 
-    const buttonBase = this.add.graphics({ x, y });
-    buttonBase.fillStyle(0x03befc, 1);
-    buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+    this.#peekButton = this.add.graphics({ x, y });
+    this.#peekButton.fillStyle(0x03befc, 1);
+    this.#peekButton.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
 
-    this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Peek', {
+    this.#peekButtonText = this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Peek', {
       fontSize: `${12 * UI_CONFIG.scale}px`,
       color: '#ffffff',
       stroke: '#000000',
@@ -315,28 +317,28 @@ export class GameScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
-    buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
+    this.#peekButton.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
       .on('pointerdown', () => {
         this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
-        buttonBase.clear();
-        buttonBase.fillStyle(0x0288c7, 1);  // darker colour when pressed; TODO match peek card tint?
-        buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+        this.#peekButton.clear();
+        this.#peekButton.fillStyle(0x0288c7, 1);  // darker colour when pressed; TODO match peek card tint?
+        this.#peekButton.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
         if (!this.#isPeeking) {
           this.#startPeekMode();
         }
       })
       .on('pointerup', () => {
-        buttonBase.clear();
-        buttonBase.fillStyle(0x03befc, 1);  // restore original colour
-        buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+        this.#peekButton.clear();
+        this.#peekButton.fillStyle(0x03befc, 1);  // restore original colour
+        this.#peekButton.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
         if (this.#isPeeking) {
           this.#endPeekMode();
         }
       })
       .on('pointerout', () => {
-        buttonBase.clear();
-        buttonBase.fillStyle(0x03befc, 1);  // if pointer leaves button while held down, treat that as unpressing
-        buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+        this.#peekButton.clear();
+        this.#peekButton.fillStyle(0x03befc, 1);  // if pointer leaves button while held down, treat that as unpressing
+        this.#peekButton.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
         if (this.#isPeeking) {
           this.#endPeekMode();
         }
@@ -544,6 +546,7 @@ export class GameScene extends Phaser.Scene {
     this.#createDiscardPile();
     this.#createFoundationPiles();
     this.#createTableauPiles();
+    // this.#updatePeekButtonVisibility();
   }
 
   #scale(value: number): number {
@@ -1460,6 +1463,7 @@ export class GameScene extends Phaser.Scene {
                 cardGameObject.setPosition(originalX, originalY);
                 this.input.setDraggable(cardGameObject);
                 this.input.enabled = true;
+                this.#updatePeekButtonVisibility();
               }
             });
           }
@@ -1522,6 +1526,23 @@ export class GameScene extends Phaser.Scene {
         }
       });
     });
+  }
+
+  #checkAllTableauFaceUp(): boolean {
+    for (const pile of this.#solitaire.tableauPiles) {
+      for (const card of pile) {
+        if (!card.isFaceUp) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  #updatePeekButtonVisibility(): void {
+    const allFaceUp = this.#checkAllTableauFaceUp();
+    this.#peekButton.setVisible(!allFaceUp);
+    this.#peekButtonText.setVisible(!allFaceUp);
   }
 
 
