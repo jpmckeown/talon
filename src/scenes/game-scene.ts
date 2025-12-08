@@ -176,7 +176,8 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.input.keyboard?.on('keydown-F', () => {
-      this.#doRestartDrawPile();
+      this.#doRewindCard();
+      // this.#doRestartDrawPile();
     });
 
     this.input.keyboard?.on('keydown-E', () => {
@@ -389,10 +390,17 @@ export class GameScene extends Phaser.Scene {
       this.#discardPileCards.forEach((card) => card.setVisible(false));
       this.#showCardsInDrawPile();
     } else {
-      this.sound.play(AUDIO_KEYS.REWIND, { volume: 1 });
-      this.#doRestartDrawPile();
+      this.#doRewindCard();
     }
     this.#updateDrawPileButton();
+  }
+
+  #doRewindCard(): void {
+    if (this.#solitaire.discardPile.length < 2) {
+      return;
+    }
+    this.sound.play(AUDIO_KEYS.REWIND, { volume: 1 });
+    this.#animateRewindCard();
   }
 
 
@@ -1587,6 +1595,43 @@ export class GameScene extends Phaser.Scene {
             lowerCard.setVisible(this.#discardPileCards[1].visible);
 
             this.#discardPileCards[1].setFrame(this.#getCardFrame(card)).setVisible(true);
+            this.input.enabled = true;
+          }
+        });
+      }
+    });
+  }
+
+  #animateRewindCard(): void {
+    this.input.enabled = false;
+    const liftedScale = 1.05;
+    const card = this.#solitaire.discardPile[this.#solitaire.discardPile.length - 1];
+    const tempCard = this.add
+      .image(DISCARD_PILE_X_POSITION, DISCARD_PILE_Y_POSITION, ASSET_KEYS.CARDS, this.#getCardFrame(card))
+      .setOrigin(0)
+      .setScale(liftedScale)
+      .setDepth(10);
+
+    this.tweens.add({
+      targets: tempCard,
+      x: DRAW_PILE_X_POSITION,
+      y: DRAW_PILE_Y_POSITION,
+      scaleX: 0,
+      duration: 150,
+      ease: 'Sine.easeInOut',
+      onComplete: () => {
+        tempCard.setFrame(this.#cardBackFrame);
+        this.tweens.add({
+          targets: tempCard,
+          scaleX: liftedScale,
+          duration: 300,
+          ease: 'Sine.easeInOut',
+          onComplete: () => {
+            tempCard.destroy();
+            this.#solitaire.rewindOneCard();
+            this.#showCardsInDrawPile();
+            this.#updateCardGameObjectsInDiscardPile();
+            this.#updateDrawPileButton();
             this.input.enabled = true;
           }
         });

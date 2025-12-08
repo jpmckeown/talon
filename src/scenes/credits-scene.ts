@@ -57,7 +57,7 @@ export class CreditsScene extends Phaser.Scene {
       },
       {
         name: 'QA playtesters',
-        contributions: 'Michael Avrie, Tim Sargent, Noah Wizard, Simone | ZilpioGaming, Calum McKeown, Kirsten McKeown.'
+        contributions: 'Michael Avrie, Tim Sargent, Noah Wizard, Simone | ZilpioGaming, Jason Timms, Mike DiGiovanni, Calum McKeown, Kirsten McKeown.'
       },
       {
         name: 'Scott Westover',
