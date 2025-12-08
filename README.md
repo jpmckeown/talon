@@ -16,7 +16,7 @@ Based on a tutorial by Scott Westover, a version of the one-player card game "Pa
 
 3. Install dependencies with command `pnpm install` or `npm install`. These will appear in a subfolder named /node_modules and that automatically includes [Phaser](https://phaser.io) 3.90, as well as [Vite](https://vitejs.dev/) which bundles the webapp.
 
-4. We don't use the vscode webserver, instead start a local webserver with command `pnpm start` or `npm install`. Before doing that I like to get a new Terminal prompt, at the project directory, ready for this because once the webserver starts it will be running in its Terminal windows until you close the webserver.
+4. We don't use the vscode webserver, instead start a local webserver with command `pnpm start` or `npm start`. Before doing that I like to get a new Terminal prompt, at the project directory, ready for this because once the webserver starts it will be running in its Terminal windows until you close the webserver.
 
 5. It will say at what URL the local webserver is accessible. Likely it is `http://localhost:5173`
 
