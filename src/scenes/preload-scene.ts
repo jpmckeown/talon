@@ -29,7 +29,7 @@ export class PreloadScene extends Phaser.Scene {
     this.load.audio(AUDIO_KEYS.INVALID, 'assets/audio/invalid-move.ogg');
     this.load.audio(AUDIO_KEYS.EASY_MOVE, 'assets/audio/cheat-quack.ogg');
     this.load.audio(AUDIO_KEYS.BUTTON_PRESS, 'assets/audio/button-press.ogg');
-    this.load.audio(AUDIO_KEYS.REWIND, 'assets/audio/button-press.ogg');
+    this.load.audio(AUDIO_KEYS.REWIND, 'assets/audio/rewind.ogg');
     this.load.audio(AUDIO_KEYS.FOUNDATION_PILE_COMPLETED, 'assets/audio/foundation-pile-completed.ogg');
     this.load.audio(AUDIO_KEYS.FOUNDATION_PILE_ADDED, 'assets/audio/foundation-pile-added.ogg');
     this.load.audio(AUDIO_KEYS.MUSIC_GAME, 'assets/audio/music-talon-solitaire.ogg');

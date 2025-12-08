@@ -142,6 +142,20 @@ export class Solitaire {
   }
 
 
+  public rewindOneCard(): boolean {
+    if (this.#deck.discardPile.length === 0) {
+      return false;
+    }
+    const card = this.#deck.discardPile.pop();
+    if (card === undefined) {
+      return false;
+    }
+    card.flip();
+    this.#deck.drawPile.unshift(card);
+    return true;
+  }
+
+
   public restartDrawPile(): boolean {
     if (this.#deck.discardPile.length < 2) {
       return false;
