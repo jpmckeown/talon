@@ -32,6 +32,7 @@ export const AUDIO_KEYS = {
   MUSIC_GAME: 'musicGame',
   DRAW_CARD: 'cardDraw',
   INVALID: 'invalid',
+  ABANDON: 'abandon',
   EASY_MOVE: 'easyMove',
   FOUNDATION_ADD: 'foundationAdd',
   TABLEAU_ADD: 'tableauAdd',

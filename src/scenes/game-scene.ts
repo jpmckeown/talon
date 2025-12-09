@@ -236,7 +236,7 @@ export class GameScene extends Phaser.Scene {
       //     this.#logTimer = 0;
       // }
   }
-  
+
 
   #loadCardBackPreference(): void {
     const saved = localStorage.getItem('solitaireCardBack');
@@ -845,7 +845,15 @@ export class GameScene extends Phaser.Scene {
         const cardIndex = gameObject.getData('cardIndex') as number;
 
         if (!wasDropped) {
-          // for invalid moves, animate cards return
+          const moveType = gameObject.getData('moveType') as string | undefined;
+          // if no moveType set, was dropped on tablecloth (abandoned)
+          if (moveType !== 'invalid' && moveType !== 'abandoned') {
+            console.log('Abandoned move - on tablecloth');
+            this.sound.play(AUDIO_KEYS.ABANDON, { volume: 0.2 });
+          }
+          gameObject.setData('moveType', undefined);
+
+          // for invalid or abandoned moves, animate cards return
           const moveBackDuration = 150;
           gameObject.setData('returning', true);
 
@@ -856,6 +864,8 @@ export class GameScene extends Phaser.Scene {
             y: gameObject.getData('y') as number,
             onComplete: () => {
               gameObject.setData('returning', false);
+              // card arrives back at original tableau
+              this.sound.play(AUDIO_KEYS.PLACE_CARD, { volume: 0.1 });
             }
           });
 
@@ -1038,6 +1048,7 @@ export class GameScene extends Phaser.Scene {
 
     // if this is not a valid move, we don't need to update anything on the card since the `dragend` event handler will move the card back to the original location
     if (!isValidMove) {
+      gameObject.setData('moveType', 'invalid');
       this.sound.play(AUDIO_KEYS.INVALID, { volume: 0.4 });
       return;
     }
@@ -1094,7 +1105,6 @@ export class GameScene extends Phaser.Scene {
 
   #handleMoveCardToTableau(gameObject: Phaser.GameObjects.Image, targetTableauPileIndex: number): void {
     let isValidMove: boolean | 'cheat' = false;
-    // let isValidMove = false;
     let isCardFromDiscardPile = false;
 
     // get original size of Tableau pile: enables check on length limit; and where to put card(s)
@@ -1102,6 +1112,14 @@ export class GameScene extends Phaser.Scene {
 
     // check if card is from Talon or Tableau pile based on the pileIndex in data manager
     const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
+
+    // card picked up but drpped back on original tableau stack
+    if (tableauPileIndex !== undefined && tableauPileIndex === targetTableauPileIndex) {
+      gameObject.setData('moveType', 'abandoned');
+      console.log('Abandoned move & dropped on original tableau stack');
+      // let drag-end handle return animation      
+      return;
+    }
     const tableauCardIndex = gameObject.getData('cardIndex') as number;
 
     let quantityCardsMoving = 1;
@@ -1129,6 +1147,7 @@ export class GameScene extends Phaser.Scene {
 
     // if this is not a valid move, we don't need to update anything on the card(s) since the `dragend` event handler will move the card(s) back to the original location.
     if (!isValidMove) {
+      gameObject.setData('moveType', 'invalid');
       this.sound.play(AUDIO_KEYS.INVALID, { volume: 0.4 });
       return;
     }
