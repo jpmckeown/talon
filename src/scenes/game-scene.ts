@@ -266,6 +266,53 @@ export class GameScene extends Phaser.Scene {
   }
 
 
+  #showStackLimitWarning(): void {
+    const popupWidth = GAME_WIDTH / 4 * 5;
+    const popupHeight = GAME_HEIGHT / 3;
+    const popupX = GAME_WIDTH / 2 - popupWidth / 2;
+    const popupY = GAME_HEIGHT * 0.7 - popupHeight / 2;
+
+    const overlay = this.add.container(0, 0).setDepth(100);
+    const bg = this.add.graphics();
+    bg.fillStyle(0x000000, 0.8);
+    bg.fillRoundedRect(popupX, popupY, popupWidth, popupHeight, 30);
+
+    const messageText = this.add.text(
+      GAME_WIDTH / 2,
+      GAME_HEIGHT / 2,
+      'Move not allowed because it would make\ntableau stack too long.',
+      {
+        fontSize: `${24 * UI_CONFIG.scale}px`,
+        color: '#ffff00',
+        stroke: '#000000',
+        strokeThickness: 3,
+        align: 'center'
+      }
+    ).setOrigin(0.5);
+
+    overlay.add([bg, messageText]);
+
+    // click to dismiss
+    const hitArea = new Phaser.Geom.Rectangle(popupX, popupY, popupWidth, popupHeight);
+    bg.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains).on('pointerdown', () => {
+      overlay.destroy();
+      if (fadeTimer) {
+        fadeTimer.remove();
+      }
+    });
+
+    // but also auto-fade after 5 seconds
+    const fadeTimer = this.time.delayedCall(5000, () => {
+      this.tweens.add({
+        targets: overlay,
+        alpha: 0,
+        duration: 500,
+        onComplete: () => overlay.destroy()
+      });
+    });
+  }
+
+
   makeMenuButton() {
     const x = (DISCARD_PILE_X_POSITION + FOUNDATION_PILE_X_POSITIONS[0]) / 2;
     const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT * 0.60;
@@ -1113,7 +1160,7 @@ export class GameScene extends Phaser.Scene {
     // check if card is from Talon or Tableau pile based on the pileIndex in data manager
     const tableauPileIndex = gameObject.getData('pileIndex') as number | undefined;
 
-    // card picked up but drpped back on original tableau stack
+    // card picked up but drppped back on original tableau stack
     if (tableauPileIndex !== undefined && tableauPileIndex === targetTableauPileIndex) {
       gameObject.setData('moveType', 'abandoned');
       console.log('Abandoned move & dropped on original tableau stack');
@@ -1131,6 +1178,7 @@ export class GameScene extends Phaser.Scene {
     if (originalTargetPileSize + quantityCardsMoving > CONFIG.maxTableauStack) {
       console.log(`Sorry, moving ${quantityCardsMoving} card(s) to tableau pile ${targetTableauPileIndex}: would exceed stack length limit of ${CONFIG.maxTableauStack} cards`);
       this.sound.play(AUDIO_KEYS.INVALID, { volume: 0.4 });
+      this.#showStackLimitWarning();
       return;
     }
 

@@ -9,7 +9,7 @@ export const CONFIG = {
   allowRevealOnGiveUp: true,
 
   // UI constraints
-  maxTableauStack: 13, // experimental increase 
+  maxTableauStack: 12, // experimental increase
   // 10 reduced from 11 to stop overlap with lower UI
 } as const;
 
