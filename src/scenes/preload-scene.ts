@@ -46,13 +46,26 @@ export class PreloadScene extends Phaser.Scene {
                         this.sys.game.device.os.iPhone;
     this.registry.set('isTouchDevice', isTouchDevice);
 
+    const sfxVolume = parseInt(localStorage.getItem('talonSoundVolume') || '70', 10);
+    const musicVolume = parseInt(localStorage.getItem('talonMusicVolume') || '30', 10);
+    this.registry.set('sfxVolume', sfxVolume);
+    this.registry.set('musicVolume', musicVolume);
+
+    // start music once for whole game
+    const music = this.sound.add(AUDIO_KEYS.MUSIC_GAME, {
+      volume: (musicVolume / 100) * 0.3,
+      loop: true
+    });
+    music.play();
+    this.registry.set('music', music);
+
     if (UI_CONFIG.skipTitleScene) {
-      this.scene.start(SCENE_KEYS.GAME);
+      // this.scene.start(SCENE_KEYS.GAME);
       // this.scene.start(SCENE_KEYS.SCORES);
       // this.scene.start(SCENE_KEYS.HELP);
       // this.scene.start(SCENE_KEYS.MENU);
       // this.scene.start(SCENE_KEYS.CREDITS);
-      // this.scene.start(SCENE_KEYS.SETTINGS);
+      this.scene.start(SCENE_KEYS.SETTINGS);
     } else {
       this.scene.start(SCENE_KEYS.TITLE);
     }

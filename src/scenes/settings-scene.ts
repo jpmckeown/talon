@@ -25,20 +25,29 @@ export class SettingsScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     this.#loadVolumes();
+    // const musicVolume = this.registry.get('musicVolume') as number;
+    // const sceneVolume = MUSIC_VOLUME_BY_SCENE[SCENE_KEYS.SETTINGS];
+    // this.#music = this.sound.add(AUDIO_KEYS.MUSIC_GAME, {
+    //   volume: (musicVolume / 100) * sceneVolume,
+    //   loop: true
+    // });
+    // this.#music.play();
+
     this.#makeVolumeControls();
     this.#makeBackButton();
   }
 
 
   #loadVolumes(): void {
-    this.#sfxVolume = parseInt(localStorage.getItem('talonSoundVolume') || '80', 10);
-    this.#musicVolume = parseInt(localStorage.getItem('talonMusicVolume') || '50', 10);
+    this.#sfxVolume = parseInt(localStorage.getItem('talonSoundVolume') || '70', 10);
+    this.#musicVolume = parseInt(localStorage.getItem('talonMusicVolume') || '30', 10);
   }
 
 
   #saveVolumes(): void {
     localStorage.setItem('talonSoundVolume', this.#sfxVolume.toString());
     localStorage.setItem('talonMusicVolume', this.#musicVolume.toString());
+    console.log(`Volume sound: ${this.#sfxVolume}, music: ${this.#musicVolume}`);
   }
 
 
@@ -140,6 +149,9 @@ export class SettingsScene extends Phaser.Scene {
     this.#sfxVolume = Math.max(0, Math.min(100, this.#sfxVolume + change));
     this.#sfxText.setText(`${this.#sfxVolume}%`);
     this.#saveVolumes();
+    this.registry.set('sfxVolume', this.#sfxVolume);
+
+    // immediate test play
     this.sound.volume = this.#sfxVolume / 100;
     this.sound.play(AUDIO_KEYS.PLACE_CARD, { volume: 1 });
   }
@@ -149,6 +161,13 @@ export class SettingsScene extends Phaser.Scene {
     this.#musicVolume = Math.max(0, Math.min(100, this.#musicVolume + change));
     this.#musicText.setText(`${this.#musicVolume}%`);
     this.#saveVolumes();
+    this.registry.set('musicVolume', this.#musicVolume);
+
+    // immediate feedback
+    const music = this.registry.get('music') as Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
+    if (music) {
+      music.volume = (this.#musicVolume / 100) * 0.2;
+    }
   }
 
 

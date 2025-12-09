@@ -44,6 +44,16 @@ export const AUDIO_KEYS = {
   FOUNDATION_PILE_ADDED: 'foundationPileAdded'
 };
 
+export const MUSIC_VOLUME_BY_SCENE = {
+  [SCENE_KEYS.GAME]: 0.2,
+  [SCENE_KEYS.TITLE]: 0.3,
+  [SCENE_KEYS.MENU]: 0.3,
+  [SCENE_KEYS.SETTINGS]: 0.3,
+  [SCENE_KEYS.SCORES]: 0.3,
+  [SCENE_KEYS.CREDITS]: 0.3,
+  [SCENE_KEYS.HELP]: 0.3,
+} as const;
+
 export const CARD_WIDTH = 56 * UI_CONFIG.scale;
 export const CARD_HEIGHT = 78 * UI_CONFIG.scale;
 
