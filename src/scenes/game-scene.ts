@@ -279,7 +279,7 @@ export class GameScene extends Phaser.Scene {
 
     const messageText = this.add.text(
       GAME_WIDTH / 2,
-      GAME_HEIGHT / 2,
+      popupY + popupHeight / 2,
       'Move not allowed because it would make\ntableau stack too long.',
       {
         fontSize: `${24 * UI_CONFIG.scale}px`,
@@ -390,7 +390,7 @@ export class GameScene extends Phaser.Scene {
 
   makeRewindButton() {
     const x = GAME_WIDTH - 175 * UI_CONFIG.scale;
-    const y = GAME_HEIGHT - CARD_HEIGHT * 0.6;
+    const y = GAME_HEIGHT - CARD_HEIGHT * 0.7;
 
     const buttonWidth = CARD_WIDTH * 3;
     const buttonHeight = CARD_HEIGHT * 0.4;
@@ -474,9 +474,9 @@ export class GameScene extends Phaser.Scene {
 
   makeEasyCounter() {
     const x = DRAW_PILE_X_POSITION + CARD_WIDTH / 3;
-    const y = GAME_HEIGHT - 21 * UI_CONFIG.scale;
+    const y = GAME_HEIGHT - 24 * UI_CONFIG.scale;
     this.easyCounterText = this.add.text(x, y, `Easy moves: ${this.#solitaire.sameColourMoves}`, {
-      fontSize: `${18 * UI_CONFIG.scale}px`,
+      fontSize: `${19 * UI_CONFIG.scale}px`,
       color: '#ffdd44',
       stroke: '#000000',
       strokeThickness: 2
