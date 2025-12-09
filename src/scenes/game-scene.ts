@@ -236,14 +236,7 @@ export class GameScene extends Phaser.Scene {
       //     this.#logTimer = 0;
       // }
   }
-
-  // #updateMusicVolume(): void {
-  //   if (this.#music && this.#music.isPlaying) {
-  //     const musicVolume = this.registry.get('musicVolume') as number;
-  //     const sceneVolume = MUSIC_VOLUME_BY_SCENE[SCENE_KEYS.GAME];
-  //     this.#music.setVolume((musicVolume / 100) * sceneVolume);
-  //   }
-  // }
+  
 
   #loadCardBackPreference(): void {
     const saved = localStorage.getItem('solitaireCardBack');

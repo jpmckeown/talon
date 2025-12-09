@@ -25,14 +25,6 @@ export class SettingsScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     this.#loadVolumes();
-    // const musicVolume = this.registry.get('musicVolume') as number;
-    // const sceneVolume = MUSIC_VOLUME_BY_SCENE[SCENE_KEYS.SETTINGS];
-    // this.#music = this.sound.add(AUDIO_KEYS.MUSIC_GAME, {
-    //   volume: (musicVolume / 100) * sceneVolume,
-    //   loop: true
-    // });
-    // this.#music.play();
-
     this.#makeVolumeControls();
     this.#makeBackButton();
   }
@@ -166,7 +158,8 @@ export class SettingsScene extends Phaser.Scene {
     // immediate feedback
     const music = this.registry.get('music') as Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
     if (music) {
-      music.volume = (this.#musicVolume / 100) * 0.2;
+      music.volume = Math.pow(this.#musicVolume / 100, 1.5) * 0.5;
+      //music.volume = (this.#musicVolume / 100) * 0.2;
     }
   }
 
