@@ -2,13 +2,15 @@ export const CONFIG = {
   // game-rule changes for easier progress
   requireAlternatingColours: true,
   sameColourMovesPerGame: 7,
+  cardAllowBeginTableau: 2,
   letQueenBeginTableau: true,
 
   // player options
   allowRevealOnGiveUp: true,
 
   // UI constraints
-  maxTableauStack: 11,
+  maxTableauStack: 13, // experimental increase 
+  // 10 reduced from 11 to stop overlap with lower UI
 } as const;
 
 export type CardSuit = keyof typeof CARD_SUIT;

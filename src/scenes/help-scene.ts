@@ -26,8 +26,8 @@ export class HelpScene extends Phaser.Scene {
 
     const tutorialContent = [
       "Draw new card by clicking facedown stack top-left of screen.",
-      "Drag card to any tableau from another tableau or from drawn pile.",
-      "Tableau allows card with next number down and other colour; Easy mode allows same-colour placement, up to 7 times. In an empty tableau put a King (or Queen). Each tableau has a stacking limit of 11 cards to avoid bottom of screen.",
+      "Drag card to a tableau from another tableau or from drawn pile.",
+      "Tableau allows card with next number down and other colour; Easy mode allows same-colour placement, up to 7 times. An empty tableau accepts any card (except ace). Each tableau stack is limited to 13 cards to avoid bottom of screen.",
       "Foundation piles top-right, one for each suit; begin with Ace; score by adding to foundation, win by completing suits.",
     ].join('\n\n');
 
