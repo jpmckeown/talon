@@ -96,8 +96,10 @@ export class GameScene extends Phaser.Scene {
   #lastSavedScore: number = 0;
   #isTouchDevice!: boolean;
 
-  #drawPileButton!: Phaser.GameObjects.Graphics;
-  #drawPileButtonText!: Phaser.GameObjects.Text;
+  #rewindButton!: Phaser.GameObjects.Graphics;
+  #rewindButtonText!: Phaser.GameObjects.Text;
+  // #drawPileButton!: Phaser.GameObjects.Graphics;
+  // #drawPileButtonText!: Phaser.GameObjects.Text;
   #peekButton!: Phaser.GameObjects.Graphics;
   #peekButtonText!: Phaser.GameObjects.Text;
 
@@ -346,18 +348,18 @@ export class GameScene extends Phaser.Scene {
     const x = (DISCARD_PILE_X_POSITION + FOUNDATION_PILE_X_POSITIONS[0]) / 2 + CARD_WIDTH * 1.1;
     const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT * 0.60;
 
-    const buttonWidth = CARD_WIDTH;
-    const buttonHeight = CARD_HEIGHT * 0.30;
+    const buttonWidth = CARD_WIDTH * 1.2;
+    const buttonHeight = CARD_HEIGHT * 0.35;
 
     this.#peekButton = this.add.graphics({ x, y });
-    this.#peekButton.fillStyle(0x03befc, 1);
+    this.#peekButton.fillStyle(0xffd700, 1); // 0x03befc
     this.#peekButton.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
 
     this.#peekButtonText = this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Peek', {
       fontSize: `${15 * UI_CONFIG.scale}px`,
-      color: '#ffffff',
+      color: '#000000',
       stroke: '#000000',
-      strokeThickness: 2
+      strokeThickness: 0
     }).setOrigin(0.5);
 
     const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
@@ -391,16 +393,17 @@ export class GameScene extends Phaser.Scene {
 
 
   makeRewindButton() {
-    const x = GAME_WIDTH - 175 * UI_CONFIG.scale;
-    const y = GAME_HEIGHT - CARD_HEIGHT * 0.7;
+    const x = 150 * UI_CONFIG.scale; //GAME_WIDTH - 175 * UI_CONFIG.scale;
+    const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT * 0.60;
+    // const y = 50 * UI_CONFIG.scale; //GAME_HEIGHT - CARD_HEIGHT * 0.7;
 
-    const buttonWidth = CARD_WIDTH * 3;
-    const buttonHeight = CARD_HEIGHT * 0.4;
+    const buttonWidth = CARD_WIDTH * 1.4;
+    const buttonHeight = CARD_HEIGHT * 0.35;
 
-    this.#drawPileButton = this.add.graphics({ x, y });
-    this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0xffd700);
+    this.#rewindButton = this.add.graphics({ x, y });
+    this.#setRewindColour(buttonWidth, buttonHeight, 0xffd700);
 
-      this.#drawPileButtonText = this.add.text(
+    this.#rewindButtonText = this.add.text(
       x + buttonWidth / 2,
       y + buttonHeight / 2,
       'Rewind',
@@ -411,25 +414,25 @@ export class GameScene extends Phaser.Scene {
     ).setOrigin(0.5);
 
     // hidden at start because not eligible for shuffle or rewind
-    this.#drawPileButton.setVisible(false);
-    this.#drawPileButtonText.setVisible(false);
+    this.#rewindButton.setVisible(false);
+    this.#rewindButtonText.setVisible(false);
 
     const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
-    this.#drawPileButton.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
+    this.#rewindButton.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
       .on('pointerdown', () => {
-        this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0xdaa520);
-        this.#handleDrawPileButtonClick();
+        this.#setRewindColour(buttonWidth, buttonHeight, 0xdaa520);
+        this.#handleRewindClick();
       })
       .on('pointerup', () => {
-        this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0xffd700);
+        this.#setRewindColour(buttonWidth, buttonHeight, 0xffd700);
       })
       .on('pointerout', () => {
-        this.#redrawDrawPileButton(buttonWidth, buttonHeight, 0xffd700);
+        this.#setRewindColour(buttonWidth, buttonHeight, 0xffd700);
       });
   }
 
 
-  #handleDrawPileButtonClick(): void {
+  #handleRewindClick(): void {
     if (this.#solitaire.drawPile.length === 0) {
       this.#solitaire.shuffleDiscardPile();
       this.sound.play(AUDIO_KEYS.SHUFFLE_DECK, { volume: 1 });
@@ -438,7 +441,7 @@ export class GameScene extends Phaser.Scene {
     } else {
       this.#doRewindCard();
     }
-    this.#updateDrawPileButton();
+    this.#updateRewindButton();
   }
 
   #doRewindCard(): void {
@@ -450,27 +453,27 @@ export class GameScene extends Phaser.Scene {
   }
 
 
-  #updateDrawPileButton(): void {
+  #updateRewindButton(): void {
     const hasEnoughCards = this.#solitaire.discardPile.length >= 2;
     if (!hasEnoughCards) {
-      this.#drawPileButton.setVisible(false);
-      this.#drawPileButtonText.setVisible(false);
+      this.#rewindButton.setVisible(false);
+      this.#rewindButtonText.setVisible(false);
       return;
     }
-    this.#drawPileButton.setVisible(true);
-    this.#drawPileButtonText.setVisible(true);
+    this.#rewindButton.setVisible(true);
+    this.#rewindButtonText.setVisible(true);
 
     if (this.#solitaire.drawPile.length === 0) {
-      this.#drawPileButtonText.setText('Shuffle draw-pile');
+      this.#rewindButtonText.setText('Shuffle');
     } else {
-      this.#drawPileButtonText.setText('Rewind draw-pile');
+      this.#rewindButtonText.setText('Rewind');
     }
   }
 
-  #redrawDrawPileButton(width: number, height: number, colour: number): void {
-    this.#drawPileButton.clear();
-    this.#drawPileButton.fillStyle(colour, 1);
-    this.#drawPileButton.fillRoundedRect(0, 0, width, height, 24);
+  #setRewindColour(width: number, height: number, colour: number): void {
+    this.#rewindButton.clear();
+    this.#rewindButton.fillStyle(colour, 1);
+    this.#rewindButton.fillRoundedRect(0, 0, width, height, 24);
   }
 
 
@@ -478,7 +481,7 @@ export class GameScene extends Phaser.Scene {
     const x = DRAW_PILE_X_POSITION + CARD_WIDTH / 3;
     const y = GAME_HEIGHT - 24 * UI_CONFIG.scale;
     // this.easyCounterText = this.add.text(x, y, `Easy moves: ${this.#solitaire.sameColourMoves}`, {
-    this.easyCounterText = this.add.text(x, y, `Easy moves`, {
+    this.easyCounterText = this.add.text(x, y, `Easymoves`, {
       fontSize: `${16 * UI_CONFIG.scale}px`,
       color: '#ffdd44',
       stroke: '#000000',
@@ -487,8 +490,8 @@ export class GameScene extends Phaser.Scene {
 
     this.#easyMedallions = [];
     const medallionStartX = x + this.easyCounterText.width + 22 * UI_CONFIG.scale;
-    const medallionSpacing = 36 * UI_CONFIG.scale;
-    const medallionY = y - 14 * UI_CONFIG.scale; // was 17
+    const medallionSpacing = 34 * UI_CONFIG.scale;
+    const medallionY = y - 10 * UI_CONFIG.scale; // was 17
 
     for (let i = 0; i < CONFIG.sameColourMovesPerGame; i++) {
       const medallion = this.add.image(
@@ -499,7 +502,6 @@ export class GameScene extends Phaser.Scene {
       this.#easyMedallions.push(medallion);
     }
   }
-
 
   #flashEasyCounter() {
     this.tweens.add({
@@ -642,7 +644,7 @@ export class GameScene extends Phaser.Scene {
         this.#discardPileCards.forEach((card) => card.setVisible(false));
         // show cards in draw pile based on number of cards in pile
         this.#showCardsInDrawPile();
-        this.#updateDrawPileButton();
+        this.#updateRewindButton();
         return;
       }
 
@@ -650,7 +652,7 @@ export class GameScene extends Phaser.Scene {
       this.#solitaire.drawCard();
       this.sound.play(AUDIO_KEYS.DRAW_CARD, { volume: 0.3 });
       this.#animateDrawCard();
-      this.#updateDrawPileButton();
+      this.#updateRewindButton();
 
       // update shown cards in draw pile, based on number of cards in pile
       //this.#showCardsInDrawPile();
@@ -1124,7 +1126,7 @@ export class GameScene extends Phaser.Scene {
     // update discard pile cards, or flip over tableau cards if needed
     if (isCardFromDiscardPile) {
       this.#updateCardGameObjectsInDiscardPile();
-      this.#updateDrawPileButton();
+      this.#updateRewindButton();
     }
     else {
       // only destroy card if it came from a tableau
@@ -1252,7 +1254,7 @@ export class GameScene extends Phaser.Scene {
       
       // update the remaining cards in discard pile, and the Rewind button visibility
       this.#updateCardGameObjectsInDiscardPile();
-      this.#updateDrawPileButton();
+      this.#updateRewindButton();
       this.#updateTableauDropZones();
 
       if (!this.#fastCompleteOfferDismissed && this.#checkFastCompleteCondition()) {
@@ -1717,7 +1719,7 @@ export class GameScene extends Phaser.Scene {
             this.#solitaire.rewindOneCard();
             this.#showCardsInDrawPile();
             this.#updateCardGameObjectsInDiscardPile();
-            this.#updateDrawPileButton();
+            this.#updateRewindButton();
             this.input.enabled = true;
           }
         });
@@ -1734,7 +1736,7 @@ export class GameScene extends Phaser.Scene {
     // this.sound.play(AUDIO_KEYS.SHUFFLE_DECK, { volume: 1 });
     this.#discardPileCards.forEach((card) => card.setVisible(false));
     this.#showCardsInDrawPile();
-    this.#updateDrawPileButton();
+    this.#updateRewindButton();
   }
 
 }
