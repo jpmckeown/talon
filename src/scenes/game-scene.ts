@@ -327,13 +327,14 @@ export class GameScene extends Phaser.Scene {
     const buttonBase = this.add.graphics({ x, y });
     buttonBase.fillStyle(0x03befc, 1);
     buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+    buttonBase.setDepth(10);
 
     this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Menu', {
       fontSize: `${15 * UI_CONFIG.scale}px`,
       color: '#ffffff',
       stroke: '#000000',
       strokeThickness: 2
-    }).setOrigin(0.5);
+    }).setOrigin(0.5).setDepth(10);
 
     const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
     buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains).on('pointerdown', () => {
@@ -1515,7 +1516,6 @@ export class GameScene extends Phaser.Scene {
         overlay.destroy();
         this.resetGame();
       });
-
     overlay.add([titleText, buttonGraphics, buttonText]);
   }
 
@@ -1548,7 +1548,7 @@ export class GameScene extends Phaser.Scene {
       );
       this.input.enabled = false;
 
-      this.time.delayedCall(1000, () => {
+      this.time.delayedCall(500, () => {
         // animation to flip card on vertical axis
         const flipDuration = 150;
         // card GO origin is 0 which looks wrong when flipping
@@ -1609,6 +1609,7 @@ export class GameScene extends Phaser.Scene {
       });
     });
   }
+
 
   #startPeekMode(): void {
     this.#isPeeking = true;
@@ -1782,5 +1783,4 @@ export class GameScene extends Phaser.Scene {
     this.#showCardsInDrawPile();
     this.#updateRewindButton();
   }
-
 }
