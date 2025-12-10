@@ -88,6 +88,8 @@ export class GameScene extends Phaser.Scene {
   #logTimer: number = 0;
   #liftDealTime: number = 300;
   #showDealTime: number = 500;
+  #minRatioDealTime: number = 0.6;
+
   #tableauRevealDelay: number = 1000;
   #minimumTableauRevealDelay: number = 500;
   #winAnimDuration: integer = 4000;
@@ -1734,11 +1736,15 @@ export class GameScene extends Phaser.Scene {
 
             this.#discardPileCards[1].setFrame(this.#getCardFrame(card)).setVisible(true);
             this.input.enabled = true;
+            // gradually make animation faster each time
+            this.#liftDealTime = Math.max(180, this.#liftDealTime - 30);
+            this.#showDealTime = Math.max(300, this.#showDealTime - 50);
           }
         });
       }
     });
   }
+
 
   #animateRewindCard(): void {
     this.input.enabled = false;
@@ -1752,8 +1758,6 @@ export class GameScene extends Phaser.Scene {
 
     this.tweens.add({
       targets: tempCard,
-      x: DRAW_PILE_X_POSITION,
-      y: DRAW_PILE_Y_POSITION,
       scaleX: 0,
       duration: 150,
       ease: 'Sine.easeInOut',
@@ -1761,6 +1765,8 @@ export class GameScene extends Phaser.Scene {
         tempCard.setFrame(this.#cardBackFrame);
         this.tweens.add({
           targets: tempCard,
+          x: DRAW_PILE_X_POSITION,
+          y: DRAW_PILE_Y_POSITION,
           scaleX: liftedScale,
           duration: 300,
           ease: 'Sine.easeInOut',
@@ -1776,7 +1782,7 @@ export class GameScene extends Phaser.Scene {
       }
     });
   }
-
+ 
 
   #doRestartDrawPile(): void {
     if (this.#solitaire.discardPile.length < 2) {
