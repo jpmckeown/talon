@@ -1750,6 +1750,16 @@ export class GameScene extends Phaser.Scene {
     this.input.enabled = false;
     const liftedScale = 1.05;
     const card = this.#solitaire.discardPile[this.#solitaire.discardPile.length - 1];
+
+    // before discard begins "turning" (shrinking in X) change top card that is being revealed.
+    // previously this was only happening after the animation was complete.
+    const newTopCard = this.#solitaire.discardPile[this.#solitaire.discardPile.length - 2];
+    if (newTopCard) {
+      this.#discardPileCards[1].setFrame(this.#getCardFrame(newTopCard));
+    } else {
+      this.#discardPileCards[1].setVisible(false);
+    }
+
     const tempCard = this.add
       .image(DISCARD_PILE_X_POSITION, DISCARD_PILE_Y_POSITION, ASSET_KEYS.CARDS, this.#getCardFrame(card))
       .setOrigin(0)
