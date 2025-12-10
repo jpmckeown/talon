@@ -86,6 +86,10 @@ export class GameScene extends Phaser.Scene {
 
   #lastTime: number = 0;
   #logTimer: number = 0;
+  #liftDealTime: number = 300;
+  #showDealTime: number = 500;
+  #tableauRevealDelay: number = 1000;
+  #minimumTableauRevealDelay: number = 500;
   #winAnimDuration: integer = 4000;
 
   #fastCompleteOfferDismissed: boolean = false;
@@ -1548,7 +1552,8 @@ export class GameScene extends Phaser.Scene {
       );
       this.input.enabled = false;
 
-      this.time.delayedCall(500, () => {
+      this.time.delayedCall(this.#tableauRevealDelay, () => {
+        this.#tableauRevealDelay = Math.max(this.#minimumTableauRevealDelay, this.#tableauRevealDelay - 100);
         // animation to flip card on vertical axis
         const flipDuration = 150;
         // card GO origin is 0 which looks wrong when flipping
@@ -1710,14 +1715,14 @@ export class GameScene extends Phaser.Scene {
       x: DISCARD_PILE_X_POSITION,
       y: DISCARD_PILE_Y_POSITION,
       scaleX: 0,
-      duration: 250,
+      duration: this.#liftDealTime,
       ease: 'Sine.easeInOut',
       onComplete: () => {
         tempCard.setFrame(this.#getCardFrame(card));
         this.tweens.add({
           targets: tempCard,
           scaleX: liftedScale,
-          duration: 500,
+          duration: this.#showDealTime,
           ease: 'Sine.easeInOut',
           onComplete: () => {
             tempCard.destroy();
