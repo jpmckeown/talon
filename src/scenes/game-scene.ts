@@ -314,8 +314,10 @@ export class GameScene extends Phaser.Scene {
 
 
   makeMenuButton() {
-    const x = (DISCARD_PILE_X_POSITION + FOUNDATION_PILE_X_POSITIONS[0]) / 2;
-    const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT * 0.60;
+    const x = GAME_WIDTH - 80 * UI_CONFIG.scale;
+    const y = GAME_HEIGHT - 40 * UI_CONFIG.scale;
+    // const x = (DISCARD_PILE_X_POSITION + FOUNDATION_PILE_X_POSITIONS[0]) / 2;
+    // const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT * 0.60;
 
     const buttonWidth = CARD_WIDTH;
     const buttonHeight = CARD_HEIGHT * 0.30;
@@ -325,7 +327,7 @@ export class GameScene extends Phaser.Scene {
     buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
 
     this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Menu', {
-      fontSize: `${12 * UI_CONFIG.scale}px`,
+      fontSize: `${15 * UI_CONFIG.scale}px`,
       color: '#ffffff',
       stroke: '#000000',
       strokeThickness: 2
@@ -352,7 +354,7 @@ export class GameScene extends Phaser.Scene {
     this.#peekButton.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
 
     this.#peekButtonText = this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Peek', {
-      fontSize: `${12 * UI_CONFIG.scale}px`,
+      fontSize: `${15 * UI_CONFIG.scale}px`,
       color: '#ffffff',
       stroke: '#000000',
       strokeThickness: 2
@@ -401,7 +403,7 @@ export class GameScene extends Phaser.Scene {
       this.#drawPileButtonText = this.add.text(
       x + buttonWidth / 2,
       y + buttonHeight / 2,
-      'Rewind draw-pile',
+      'Rewind',
       {
         fontSize: `${15 * UI_CONFIG.scale}px`,
         color: '#000000'
@@ -475,24 +477,25 @@ export class GameScene extends Phaser.Scene {
   makeEasyCounter() {
     const x = DRAW_PILE_X_POSITION + CARD_WIDTH / 3;
     const y = GAME_HEIGHT - 24 * UI_CONFIG.scale;
-    this.easyCounterText = this.add.text(x, y, `Easy moves: ${this.#solitaire.sameColourMoves}`, {
-      fontSize: `${19 * UI_CONFIG.scale}px`,
+    // this.easyCounterText = this.add.text(x, y, `Easy moves: ${this.#solitaire.sameColourMoves}`, {
+    this.easyCounterText = this.add.text(x, y, `Easy moves`, {
+      fontSize: `${16 * UI_CONFIG.scale}px`,
       color: '#ffdd44',
       stroke: '#000000',
       strokeThickness: 2
     }).setOrigin(0, 1).setDepth(9);
 
     this.#easyMedallions = [];
-    const medallionStartX = x + this.easyCounterText.width + 36 * UI_CONFIG.scale;
-    const medallionSpacing = 38 * UI_CONFIG.scale;
-    const medallionY = y - 17 * UI_CONFIG.scale;
+    const medallionStartX = x + this.easyCounterText.width + 22 * UI_CONFIG.scale;
+    const medallionSpacing = 36 * UI_CONFIG.scale;
+    const medallionY = y - 14 * UI_CONFIG.scale; // was 17
 
     for (let i = 0; i < CONFIG.sameColourMovesPerGame; i++) {
       const medallion = this.add.image(
         medallionStartX + i * medallionSpacing,
         medallionY,
         ASSET_KEYS.PLAY_MEDALLION
-      ).setScale(UI_CONFIG.scale).setDepth(9);
+      ).setScale(UI_CONFIG.scale * 0.9).setDepth(9);
       this.#easyMedallions.push(medallion);
     }
   }
@@ -567,7 +570,7 @@ export class GameScene extends Phaser.Scene {
       this.#drawPileTutorialTimer.remove();
     }
 
-    this.easyCounterText.setText(`Easy moves: ${this.#solitaire.sameColourMoves}`);
+    // this.easyCounterText.setText(`Easy moves: ${this.#solitaire.sameColourMoves}`);
     this.easyCounterText.setColor('#ffdd44');
     this.#easyMedallions.forEach(medallion => medallion.clearTint());
 
@@ -1200,13 +1203,13 @@ export class GameScene extends Phaser.Scene {
       return;
     }
     gameObject.setData('wasDropped', true);
-    this.easyCounterText.setText(`Easy moves: ${this.#solitaire.sameColourMoves}`);
+    // this.easyCounterText.setText(`Easy moves: ${this.#solitaire.sameColourMoves}`);
 
     const isCheatMove = isValidMove === 'cheat';
     if (isCheatMove) {
       this.sound.play(AUDIO_KEYS.EASY_MOVE, { volume: 0.3 });
       const remaining = this.#solitaire.sameColourMoves;
-      this.easyCounterText.setText(remaining > 0 ? `Easy moves: ${remaining}` : 'Easy moves: 0');
+      // this.easyCounterText.setText(remaining > 0 ? `Easy moves: ${remaining}` : 'Easy moves: 0');
       this.#flashEasyCounter();
     }
     else {
