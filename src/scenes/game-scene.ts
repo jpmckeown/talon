@@ -503,7 +503,50 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  #flashEasyCounter() {
+
+  #animateEasyCount() {
+    this.tweens.add({
+      targets: this.easyCounterText,
+      scale: 1.15,
+      duration: 150,
+      yoyo: true,
+      repeat: 1
+    });
+
+    // vanish medallion starting from right-hand side (to make space on screen for long stacks)
+    const usedCount = CONFIG.sameColourMovesPerGame - this.#solitaire.sameColourMoves;
+    if (usedCount > 0 && usedCount <= this.#easyMedallions.length) {
+      const medallionIndex = CONFIG.sameColourMovesPerGame - usedCount;
+      const medallion = this.#easyMedallions[medallionIndex];
+
+      // spin on central vertical axis with flash effect
+      this.tweens.add({
+        targets: medallion,
+        scaleX: 0,
+        duration: 500,
+        yoyo: true,
+        repeat: 0,
+        ease: 'Sine.easeInOut',
+        onUpdate: () => {
+          // colour effect during spin
+          const brightness = 1 + Math.abs(medallion.scaleX - 0.5);
+          medallion.setTint(Phaser.Display.Color.GetColor(255 * brightness, 255 * brightness, 255 * brightness));
+        },
+        onComplete: () => {
+          medallion.clearTint();
+          medallion.setTint(0xff6600); // orange colour
+          this.tweens.add({
+            targets: medallion,
+            alpha: 0,
+            duration: 1000,
+            ease: 'Sine.easeOut'
+          });
+        }
+      });
+    }
+  }
+
+  #oldanimateEasyCount() {
     this.tweens.add({
       targets: this.easyCounterText,
       scale: 1.15,
@@ -1211,8 +1254,9 @@ export class GameScene extends Phaser.Scene {
     if (isCheatMove) {
       this.sound.play(AUDIO_KEYS.EASY_MOVE, { volume: 0.3 });
       const remaining = this.#solitaire.sameColourMoves;
+      this.easyCounterText.setText(remaining > 0 ? `Easymoves` : '');
       // this.easyCounterText.setText(remaining > 0 ? `Easy moves: ${remaining}` : 'Easy moves: 0');
-      this.#flashEasyCounter();
+      this.#animateEasyCount();
     }
     else {
       this.sound.play(AUDIO_KEYS.PLACE_CARD, { volume: 0.2 });
