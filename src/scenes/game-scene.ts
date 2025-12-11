@@ -222,18 +222,23 @@ export class GameScene extends Phaser.Scene {
       }
     });
 
-    // this.input.keyboard?.on('keydown-B', () => {
-    //   this.#testUtils.setupFastCompleteTest2(
-    //     this.#tableauContainers,
-    //     this.#drawPileCards,
-    //     this.#discardPileCards,
-    //     this.#getCardFrameFromSuit.bind(this),
-    //     this.#getCardFrame.bind(this)
-    //   );
-    //   if (this.#checkFastCompleteCondition()) {
-    //     this.#showFastCompleteOverlay();
-    //   }
-    // });
+    this.input.keyboard?.on('keydown-B', () => {
+      this.#testUtils.setupNearlyFastComplete(
+        this.#tableauContainers,
+        this.#drawPileCards,
+        this.#discardPileCards,
+        this.#getCardFrameFromSuit.bind(this),
+        this.#getCardFrame.bind(this)
+      );
+      this.#updateFoundationPiles();
+      this.#updateTableauDropZones();
+      if (this.#foundationTutorialTexts) {
+        this.#foundationTutorialTexts.forEach(text => text.setVisible(false));
+      }
+      if (this.#checkFastCompleteCondition()) { // expected to not quite meet conditions
+        this.#showFastCompleteOverlay();
+      }
+    });
 
     this.input.keyboard?.on('keydown-ESC', () => {
       this.saveCurrentScore();

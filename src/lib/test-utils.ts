@@ -1,5 +1,7 @@
 import { Solitaire } from './solitaire';
 import { CARD_SUIT } from './common';
+import { Card } from './card';
+import { CardValue } from './common';
 
 export class TestUtils {
   #solitaire: Solitaire;
@@ -7,7 +9,6 @@ export class TestUtils {
   constructor(solitaire: Solitaire) {
     this.#solitaire = solitaire;
   }
-
 
   // instantly advance all 4 foundation piles to specified values
   // default is all Kings (13) for instant win
@@ -44,6 +45,90 @@ export class TestUtils {
     }
   }
 
+
+  public setupNearlyFastComplete(
+    tableauContainers: Phaser.GameObjects.Container[],
+    drawPileCards: Phaser.GameObjects.Image[],
+    discardPileCards: Phaser.GameObjects.Image[],
+    getCardFrameFromSuit: (suit: string, value: number) => number,
+    getCardFrame: (card: any) => number
+  ): void {
+    console.log('setup scenario near to triggering fast-complete invite');
+
+    // clear game state
+    this.#solitaire.tableauPiles.forEach(pile => pile.length = 0);
+    this.#solitaire.drawPile.length = 0;
+    this.#solitaire.discardPile.length = 0;
+
+    // set all Foundation piles to ace
+    const piles = this.#solitaire.foundationPiles;
+    piles.forEach(pile => {
+      if (pile.value !== 1) {
+        this.#forceFoundationValue(pile, 1);
+      }
+    });
+
+    const suits = [CARD_SUIT.SPADE, CARD_SUIT.HEART, CARD_SUIT.CLUB, CARD_SUIT.DIAMOND];
+    // build 4 king-headed tableau (down to card number 4)
+    for (let i = 0; i < 4; i++) {
+      for (let value = 13; value >= 4; value--) {
+        const card = new Card(suits[i], value as CardValue, true);
+        this.#solitaire.tableauPiles[i].push(card);
+      }
+    }
+
+    // build 3 other tableau with 3 and 2
+    for (let i = 0; i < 3; i++) {
+      const card3 = new Card(suits[i], 3, true);
+      const card2 = new Card(suits[i], 2, true);
+      this.#solitaire.tableauPiles[4 + i].push(card3);
+      this.#solitaire.tableauPiles[4 + i].push(card2);
+    }
+
+    // add 4th suit's 2 and 3 to discard pile (2 first, then 3 on top)
+    const card2 = new Card(CARD_SUIT.DIAMOND, 2, true);
+    const card3 = new Card(CARD_SUIT.DIAMOND, 3, true);
+    this.#solitaire.discardPile.push(card2);
+    this.#solitaire.discardPile.push(card3);
+
+    this.clearTableauContainers(tableauContainers);
+
+    const STACK_Y_GAP = 28 * 2; // UI_CONFIG.scale is 2
+    const OBJECT_SCALE = 1;
+
+    // recreate tableau display (see #createTableauPiles in game-scene)
+    this.#solitaire.tableauPiles.forEach((pile, pileIndex) => {
+      pile.forEach((card, cardIndex) => {
+        const frame = getCardFrameFromSuit(card.suit, card.value);
+        const scene = tableauContainers[pileIndex].scene;
+        const horizontalShift = 0;
+
+        const cardGO = scene.add
+          .image(horizontalShift, cardIndex * STACK_Y_GAP, 'CARDS', frame)
+          .setOrigin(0)
+          .setInteractive({ draggable: true })
+          .setScale(OBJECT_SCALE)
+          .setData({
+            x: horizontalShift,
+            y: cardIndex * STACK_Y_GAP,
+            cardIndex,
+            pileIndex,
+            horizontalShift: horizontalShift
+          });
+        // console.log(`Created card: pile=${pileIndex}, card=${cardIndex}, frame=${frame}, visible=${cardGO.visible}`);
+        tableauContainers[pileIndex].add(cardGO);
+      });
+    });
+
+    // update discards and deal piles display
+    discardPileCards[0].setFrame(getCardFrame(card2)).setVisible(true);
+    discardPileCards[1].setFrame(getCardFrame(card3)).setVisible(true);
+    drawPileCards.forEach(card => card.setVisible(false));
+  }
+
+  public clearTableauContainers(tableauContainers: Phaser.GameObjects.Container[]): void {
+    tableauContainers.forEach(container => container.removeAll(true));
+  }
 
   // empties a specific tableau pile (0-6 from left to right)
   public emptyTableau(pileIndex: number): void {
@@ -122,7 +207,7 @@ export class TestUtils {
   }
 
 
-  // scenario master for near-complete condition
+  // scenario for near-complete condition
   public setupFastCompleteTest(
     containers: Phaser.GameObjects.Container[],
     drawPileCards: Phaser.GameObjects.Image[],
