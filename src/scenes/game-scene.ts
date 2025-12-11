@@ -109,6 +109,13 @@ export class GameScene extends Phaser.Scene {
   #peekButton!: Phaser.GameObjects.Graphics;
   #peekButtonText!: Phaser.GameObjects.Text;
 
+  buttonBase!: Phaser.GameObjects.Graphics;
+  buttonBaseText!: Phaser.GameObjects.Text;
+  buttonBaseOriginalX!: number;
+  buttonBaseTextOriginalX!: number;
+  #menuButton!: Phaser.GameObjects.Container;
+  #menuButtonOriginalX!: number;
+
   constructor() {
     super({ key: SCENE_KEYS.GAME });
   }
@@ -337,29 +344,74 @@ export class GameScene extends Phaser.Scene {
   makeMenuButton() {
     const x = GAME_WIDTH - 80 * UI_CONFIG.scale;
     const y = GAME_HEIGHT - 40 * UI_CONFIG.scale;
-    // const x = (DISCARD_PILE_X_POSITION + FOUNDATION_PILE_X_POSITIONS[0]) / 2;
-    // const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT * 0.60;
-
     const buttonWidth = CARD_WIDTH;
     const buttonHeight = CARD_HEIGHT * 0.30;
 
-    const buttonBase = this.add.graphics({ x, y });
+    const buttonBase = this.add.graphics();
     buttonBase.fillStyle(0x03befc, 1);
     buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
-    buttonBase.setDepth(10);
 
-    this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Menu', {
+    const buttonText = this.add.text(buttonWidth / 2, buttonHeight / 2, 'Menu', {
       fontSize: `${15 * UI_CONFIG.scale}px`,
       color: '#ffffff',
       stroke: '#000000',
       strokeThickness: 2
-    }).setOrigin(0.5).setDepth(10);
+    }).setOrigin(0.5);
+
+    this.#menuButton = this.add.container(x, y, [buttonBase, buttonText]);
+    this.#menuButton.setDepth(10);
+    this.#menuButtonOriginalX = x;
 
     const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
-    buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains).on('pointerdown', () => {
+    buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains);
+    buttonBase.on('pointerdown', () => {
       this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
       this.scene.pause();
       this.scene.launch(SCENE_KEYS.MENU);
+    });
+  }
+
+  // oldMakeMenuButton() {
+  //   const x = GAME_WIDTH - 80 * UI_CONFIG.scale;
+  //   const y = GAME_HEIGHT - 40 * UI_CONFIG.scale;
+  //   const buttonWidth = CARD_WIDTH;
+  //   const buttonHeight = CARD_HEIGHT * 0.30;
+  //   const buttonBase = this.add.graphics({ x, y });
+  //   this.buttonBaseOriginalX = x;
+  //   buttonBase.fillStyle(0x03befc, 1);
+  //   buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+  //   buttonBase.setDepth(10);
+
+  //   // this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Menu', {
+  //   this.buttonBaseText = this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Menu', {
+  //     fontSize: `${15 * UI_CONFIG.scale}px`,
+  //     color: '#ffffff',
+  //     stroke: '#000000',
+  //     strokeThickness: 2
+  //   }).setOrigin(0.5).setDepth(10);
+
+  //   this.buttonBaseTextOriginalX = x + buttonWidth / 2;
+
+  //   const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
+  //   // buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains).on('pointerdown', () => {
+  //   this.buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains).on('pointerdown', () => {
+  //     this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
+  //     this.scene.pause();
+  //     this.scene.launch(SCENE_KEYS.MENU);
+  //   });
+  // }
+
+
+  #updateMenuButtonPosition(): void {
+    const rightmostTableauLength = this.#solitaire.tableauPiles[6].length;
+    const offset = rightmostTableauLength > 10 ? -1.5 * CARD_WIDTH : 0;
+    console.log(`tableau 6 length: ${rightmostTableauLength}, offset: ${offset}`);
+
+    this.tweens.add({
+      targets: this.#menuButton,
+      x: this.#menuButtonOriginalX + offset,
+      duration: 300,
+      ease: 'Sine.easeInOut'
     });
   }
 
@@ -1382,6 +1434,7 @@ export class GameScene extends Phaser.Scene {
     if (!this.#fastCompleteOfferDismissed && this.#checkFastCompleteCondition()) {
       this.#showFastCompleteOverlay();
     }
+    this.#updateMenuButtonPosition();
   }
 
 
@@ -1390,7 +1443,7 @@ export class GameScene extends Phaser.Scene {
     if (this.#solitaire.drawPile.length > 0 || this.#solitaire.discardPile.length > 0) {
       return false;
     }
-
+    // don't require 3 empty tableau
     // const nEmptyTableau = countEmptyTableau(this.#solitaire.tableauPiles);
     // console.log('Empty tableau count = ', nEmptyTableau)
     // if (nEmptyTableau !== 3) {
