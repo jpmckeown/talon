@@ -96,6 +96,7 @@ export class GameScene extends Phaser.Scene {
 
   #fastCompleteOfferDismissed: boolean = false;
   #fastCompleteOverlay?: Phaser.GameObjects.Container;
+  #winOverlay?: Phaser.GameObjects.Container;
 
   score: number = 0;
   scoreText!: Phaser.GameObjects.Text;
@@ -244,7 +245,7 @@ export class GameScene extends Phaser.Scene {
     window.addEventListener('beforeunload', () => {
       this.saveCurrentScore();
     });
-    // this.#updatePeekButtonVisibility();
+    this.#updatePeekButtonVisibility();
 
     // game is starting so play an intro sound
     // if this seems to play too late, it is because
@@ -679,6 +680,10 @@ export class GameScene extends Phaser.Scene {
     this.#lastSavedScore = 0;
     this.scoreText.setText('Score 0');
     this.#fastCompleteOfferDismissed = false;
+    if (this.#winOverlay) {
+      this.#winOverlay.destroy();
+      this.#winOverlay = undefined;
+    }
 
     // reset draw pile tutorial
     this.#hasUsedDrawPile = false;
@@ -709,7 +714,9 @@ export class GameScene extends Phaser.Scene {
     this.#createFoundationPiles();
     this.#createTableauPiles();
     this.#updateRewindButton();
+    this.#updatePeekButtonVisibility();
   }
+
 
   #scale(value: number): number {
     return value * UI_CONFIG.scale;
@@ -1249,6 +1256,7 @@ export class GameScene extends Phaser.Scene {
       const emptyCount = countEmptyTableau(this.#solitaire.tableauPiles);
       this.#handleRevealingNewTableauCards(tableauPileIndex as number);
       this.#updateTableauDropZones();
+      this.#updatePeekButtonVisibility();
     }
     // console.log(`Empty tableau piles: ${emptyCount}`);
 
@@ -1372,6 +1380,7 @@ export class GameScene extends Phaser.Scene {
       this.#updateCardGameObjectsInDiscardPile();
       this.#updateRewindButton();
       this.#updateTableauDropZones();
+      this.#updatePeekButtonVisibility();
 
       if (!this.#fastCompleteOfferDismissed && this.#checkFastCompleteCondition()) {
         this.#showFastCompleteOverlay();
@@ -1547,7 +1556,7 @@ export class GameScene extends Phaser.Scene {
 
   #showWinOverlay(): void {
     const overlay = this.add.container(0, 0).setDepth(100);
-
+    this.#winOverlay = overlay;
     const titleText = this.add.text(
       this.scale.width / 2,
       150 * UI_CONFIG.scale,
