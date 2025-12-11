@@ -1520,6 +1520,10 @@ export class GameScene extends Phaser.Scene {
       .on('pointerdown', () => {
         this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
         overlay.destroy();
+        const music = this.registry.get('music') as Phaser.Sound.BaseSound;
+        if (music) {
+          music.resume();
+        }
         this.resetGame();
       });
     overlay.add([titleText, buttonGraphics, buttonText]);
