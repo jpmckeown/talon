@@ -214,6 +214,19 @@ export class GameScene extends Phaser.Scene {
       }
     });
 
+    // this.input.keyboard?.on('keydown-B', () => {
+    //   this.#testUtils.setupFastCompleteTest2(
+    //     this.#tableauContainers,
+    //     this.#drawPileCards,
+    //     this.#discardPileCards,
+    //     this.#getCardFrameFromSuit.bind(this),
+    //     this.#getCardFrame.bind(this)
+    //   );
+    //   if (this.#checkFastCompleteCondition()) {
+    //     this.#showFastCompleteOverlay();
+    //   }
+    // });
+
     this.input.keyboard?.on('keydown-ESC', () => {
       this.saveCurrentScore();
       this.scene.start(SCENE_KEYS.TITLE);
@@ -1378,27 +1391,33 @@ export class GameScene extends Phaser.Scene {
       return false;
     }
 
-    const nEmptyTableau = countEmptyTableau(this.#solitaire.tableauPiles);
-    console.log('Empty tableau count = ', nEmptyTableau)
-    if (nEmptyTableau !== 3) {
-      return false;
-    }
+    // const nEmptyTableau = countEmptyTableau(this.#solitaire.tableauPiles);
+    // console.log('Empty tableau count = ', nEmptyTableau)
+    // if (nEmptyTableau !== 3) {
+    //   return false;
+    // }
 
+    let kingCount = 0;
     for (const pile of this.#solitaire.tableauPiles) {
       if (pile.length > 0) {
         const headerCard = pile[0];
         console.log('top card value = ', headerCard.value)
-        if (headerCard.value !== 13 || !headerCard.isFaceUp) {
-          return false;
+        if (headerCard.value === 13) {
+          kingCount++;
         }
-
+        // if (headerCard.value !== 13 || !headerCard.isFaceUp) {
+        //   return false;
+        // }
         for (const card of pile) {
-          // console.log('other card value ', card.value)
+          console.log('other card value ', card.value)
           if (!card.isFaceUp) {
             return false;
           }
         }
       }
+    }
+    if (kingCount !== 4) {
+      return false;
     }
     console.log('Game completion is inevitable now and it only requires moving cards from tableau to Foundation piles');
     return true;
@@ -1456,6 +1475,9 @@ export class GameScene extends Phaser.Scene {
       const scoring = "Score " + this.score;
       this.scoreText.setText(scoring)
       this.#updateFoundationPiles();
+      this.time.delayedCall(this.#winAnimDuration, () => {
+        this.#showWinOverlay();
+      });
     });
 
     noText.on('pointerover', () => noText.setColor('#ffffff'));
