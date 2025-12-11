@@ -8,6 +8,7 @@ export class TitleScene extends Phaser.Scene {
   #easyText!: Phaser.GameObjects.Text;
   #startButton?: Phaser.GameObjects.Image;
   #isTouchDevice!: boolean;
+  #animationStep: number = 0;
 
   constructor() {
     super({ key: SCENE_KEYS.TITLE });
@@ -15,14 +16,11 @@ export class TitleScene extends Phaser.Scene {
 
   public create(): void {
     this.#isTouchDevice = this.registry.get('isTouchDevice') as boolean;
-
     this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 1).setOrigin(0);
-
     this.#makeTitle();
     this.#makeTutorialTableau();
     this.#makeEasyCounterText();
     this.time.delayedCall(500, () => this.#startTutorialAnimation());
-
     this.#makeStartButton();
     this.#makeHelpHint();
 
@@ -48,7 +46,6 @@ export class TitleScene extends Phaser.Scene {
   #makeStartButton(): void {
     const centreX = this.scale.width / 2;
     const centreY = 390 * UI_CONFIG.scale;
-
     const feltBg = this.add.image(centreX, centreY, ASSET_KEYS.TABLE_BACKGROUND)
       .setDisplaySize(CARD_WIDTH * 3.5, CARD_HEIGHT * 0.6)
       .setOrigin(0.5)
@@ -67,7 +64,6 @@ export class TitleScene extends Phaser.Scene {
         this.scene.start(SCENE_KEYS.GAME);
       });
     };
-
     feltBg.on('pointerdown', startGame);
     buttonText.on('pointerdown', startGame);
 
@@ -89,7 +85,6 @@ export class TitleScene extends Phaser.Scene {
   #makeHelpHint(): void {
     let helpTextSuffix = "Help / how to play (h)";
     if (this.#isTouchDevice) helpTextSuffix = "Help / how to play";
-
     const helpText = this.add.text(
       this.scale.width / 2,
       this.scale.height - 40 * UI_CONFIG.scale,
@@ -152,13 +147,13 @@ export class TitleScene extends Phaser.Scene {
     const stackGap = STACK_Y_GAP;
 
     const stackLayouts = [
-      [40, 41],
-      [34],
-      [0, 1, 25],
-      [13, 14, 15],
-      [39, 24],
-      [],
-      [26]
+      [15, 25, 11],    // 0: 3♦, K♦, Q♣
+      [8],             // 1: 9♣
+      [39, 23, 28],    // 2: A♠, J♦, 3♥
+      [27, 21, 42, 7],  // 3: 2♥, 9♦, 4♠, 8♣
+      [44],            // 4: 6♠
+      [35, 4, 45],    // 5: 10♥, 5♦, 7♠
+      [16, 37, 9]     // 6: 4♦, Q♥, 10♣
     ];
     this.#tutorialCards = [];
 
@@ -169,22 +164,16 @@ export class TitleScene extends Phaser.Scene {
       frames.forEach((frame, cardIndex) => {
         const y = startY + cardIndex * stackGap;
         const card = this.add.image(x, y, ASSET_KEYS.CARDS, frame).setScale(1);
+        card.setData({ originalX: x, originalY: y, originalFrame: frame });
         stackCards.push(card);
       });
-
-      if (stackIndex === 3) {
-        const y = startY + frames.length * stackGap;
-        this.#movingCard = this.add.image(x, y, ASSET_KEYS.CARDS, 33).setScale(1);
-        this.#movingCard.setData({ originalX: x, originalY: y });
-        stackCards.push(this.#movingCard);
-      }
       this.#tutorialCards.push(stackCards);
     });
   }
 
 
   #makeEasyCounterText(): void {
-    this.#easyText = this.add.text(50 * UI_CONFIG.scale, 300 * UI_CONFIG.scale, `Easy moves (same-colour) allowance: ${this.#easyCounter}`, {
+    this.#easyText = this.add.text(50 * UI_CONFIG.scale, 320 * UI_CONFIG.scale, `Easy moves (same-colour) allowance: ${this.#easyCounter}`, {
       fontSize: `${20 * UI_CONFIG.scale}px`,
       color: '#ffaa00',
       stroke: '#000000',
@@ -193,78 +182,145 @@ export class TitleScene extends Phaser.Scene {
   }
 
 
+
   #startTutorialAnimation(): void {
-    const targetStack = this.#tutorialCards[1];
-    const targetCard = targetStack[0];
+    this.#animationStep = 0;
+    this.#doNextAnimationStep();
+  }
 
-    if (this.#easyCounter > 0) {
-      this.tweens.add({
-        targets: this.#movingCard,
-        x: targetCard.x,
-        y: targetCard.y + STACK_Y_GAP,
-        duration: 800,
-        ease: 'Power2',
-        onComplete: () => {
-          this.sound.play(AUDIO_KEYS.EASY_MOVE, { volume: 0.5 });
-          this.#easyCounter--;
-          this.#easyText.setText(`Easy moves (same-colour) allowance: ${this.#easyCounter}`);
 
-          this.time.delayedCall(2000, () => {
-            this.#resetTutorialAnimation();
-          });
-        }
-      });
-    } else {
-      const originalX = this.#movingCard.getData('originalX');
-      const originalY = this.#movingCard.getData('originalY');
-
-      this.tweens.add({
-        targets: this.#movingCard,
-        x: targetCard.x,
-        y: targetCard.y + STACK_Y_GAP,
-        duration: 800,
-        ease: 'Power2',
-        onComplete: () => {
-          // game-scene currently does not play any sound when no Easy moves remain and card gets moved back from inavlid placement (sound naming misleading, should use word Easy, and invalid move perhaps needs a different sound)
-          // this.sound.play(AUDIO_KEYS.INVALID, { volume: 0.5 });
-
-          this.tweens.add({
-            targets: this.#movingCard,
-            x: originalX,
-            y: originalY,
-            duration: 600,
-            ease: 'Power2',
-            onComplete: () => {
-              this.#easyCounter = 3;
-              this.#easyText.setText(`Easy moves (same-colour) allowance: ${this.#easyCounter}`);
-              this.time.delayedCall(3000, () => {
-                this.#resetTutorialAnimation();
-              });
-            }
-          });
-        }
-      });
+  #doNextAnimationStep(): void {
+    const stack1 = this.#tutorialCards[1];
+    switch (this.#animationStep) {
+      case 0:
+        this.#moveCardToStack(3, 3, 1, true);
+        break;
+      case 1:
+        this.#moveCardToStack(5, 2, 1, true);
+        break;
+      case 2:
+        this.#moveCardToStack(4, 0, 1, true);
+        break;
+      case 3:
+        this.#tryFailedMove(5, 1, 1);
+        break;
+      case 4:
+        this.#moveCardToStack(6, 2, 4, false);
+        break;
+      case 5:
+        this.time.delayedCall(3000, () => {
+          this.#resetAllCards();
+        });
+        break;
     }
   }
 
 
-  #resetTutorialAnimation(): void {
-    const originalX = this.#movingCard.getData('originalX');
-    const originalY = this.#movingCard.getData('originalY');
+  #moveCardToStack(fromStack: number, fromIndex: number, toStack: number, isEasyMove: boolean): void {
+    const card = this.#tutorialCards[fromStack][fromIndex];
+    card.setDepth(10);
+    const targetStack = this.#tutorialCards[toStack];
+    const targetY = targetStack.length > 0
+      ? targetStack[targetStack.length - 1].y + STACK_Y_GAP
+      : 170 * UI_CONFIG.scale;
 
     this.tweens.add({
-      targets: this.#movingCard,
-      alpha: 0,
-      duration: 300,
+      targets: card,
+      x: targetStack.length > 0 ? targetStack[0].x : 90 * UI_CONFIG.scale + toStack * 70 * UI_CONFIG.scale,
+      y: targetY,
+      duration: 800,
+      ease: 'Power2',
       onComplete: () => {
-        this.#movingCard.setPosition(originalX, originalY);
+        card.setDepth(0);
+        this.sound.play(isEasyMove ? AUDIO_KEYS.EASY_MOVE : AUDIO_KEYS.PLACE_CARD, { volume: 0.5 });
+
+        if (isEasyMove) {
+          this.#easyCounter--;
+          this.#easyText.setText(`Easy moves (same-colour) allowance: ${this.#easyCounter}`);
+        }
+
+        this.#tutorialCards[fromStack].splice(fromIndex, 1);
+        this.#tutorialCards[toStack].push(card);
+
+        this.time.delayedCall(2000, () => {
+          this.#animationStep++;
+          this.#doNextAnimationStep();
+        });
+      }
+    });
+  }
+
+
+  #tryFailedMove(fromStack: number, fromIndex: number, toStack: number): void {
+    const card = this.#tutorialCards[fromStack][fromIndex];
+    card.setDepth(10);
+    const targetStack = this.#tutorialCards[toStack];
+    const targetX = targetStack[0].x;
+    const targetY = targetStack[targetStack.length - 1].y + STACK_Y_GAP;
+    const originalX = card.getData('originalX');
+    const originalY = card.getData('originalY');
+
+    this.tweens.add({
+      targets: card,
+      x: targetX,
+      y: targetY,
+      duration: 800,
+      ease: 'Power2',
+      onComplete: () => {
+        this.sound.play(AUDIO_KEYS.INVALID, { volume: 0.5 });
         this.tweens.add({
-          targets: this.#movingCard,
-          alpha: 1,
-          duration: 300,
+          targets: card,
+          x: originalX,
+          y: originalY,
+          duration: 600,
+          ease: 'Power2',
           onComplete: () => {
-            // this.#isAnimating = false;
-            this.time.delayedCall(500, () => this.#startTutorialAnimation());
+            card.setDepth(0);
+            this.time.delayedCall(2000, () => {
+              this.#animationStep++;
+              this.#doNextAnimationStep();
+            });
+          }
+        });
+      }
+    });
+  }
+
+
+  #resetAllCards(): void {
+    const allCards: Phaser.GameObjects.Image[] = [];
+    this.#tutorialCards.forEach(stack => {
+      stack.forEach(card => allCards.push(card));
+    });
+
+    this.tweens.add({
+      targets: allCards,
+      alpha: 0,
+      duration: 1000,
+      onComplete: () => {
+        this.#tutorialCards = [];
+        allCards.forEach(card => card.destroy());
+
+        this.#makeTutorialTableau();
+        this.#easyCounter = 3;
+        this.#easyText.setText(`Easy moves (same-colour) allowance: ${this.#easyCounter}`);
+
+        const newCards: Phaser.GameObjects.Image[] = [];
+        this.#tutorialCards.forEach(stack => {
+          stack.forEach(card => {
+            card.setAlpha(0);
+            newCards.push(card);
+          });
+        });
+
+        this.tweens.add({
+          targets: newCards,
+          alpha: 1,
+          duration: 1000,
+          onComplete: () => {
+            this.time.delayedCall(1000, () => {
+              this.#startTutorialAnimation();
+            });
           }
         });
       }
