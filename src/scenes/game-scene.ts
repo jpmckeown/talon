@@ -643,7 +643,7 @@ export class GameScene extends Phaser.Scene {
     this.#createDiscardPile();
     this.#createFoundationPiles();
     this.#createTableauPiles();
-    // this.#updatePeekButtonVisibility();
+    this.#updateRewindButton();
   }
 
   #scale(value: number): number {
@@ -1604,7 +1604,6 @@ export class GameScene extends Phaser.Scene {
 
   #revealTableauCards(): void {
     this.#solitaire.revealAllTableauCards();
-
     this.#tableauContainers.forEach((container, pileIndex) => {
       const pile = this.#solitaire.tableauPiles[pileIndex];
       pile.forEach((card, cardIndex) => {

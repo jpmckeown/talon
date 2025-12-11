@@ -93,12 +93,12 @@ export class Solitaire {
     this.#foundationPileSpade.reset();
 
     this.#sameColourMoves = CONFIG.sameColourMovesPerGame;
-    if (!CONFIG.requireAlternatingColours) {
-      console.log('Alternating colour for tableau is not currently enforced.')
-    }
-    else if (this.#sameColourMoves > 0) {
-      console.log(`${this.#sameColourMoves} cheats (play same colour on tableau) available per game.`)
-    }
+    // if (!CONFIG.requireAlternatingColours) {
+    //   console.log('Alternating colour for tableau is not currently enforced.')
+    // }
+    // else if (this.#sameColourMoves > 0) {
+    //   console.log(`${this.#sameColourMoves} cheats (play same colour on tableau) available per game.`)
+    // }
 
     for (let i = 0; i < 7; i += 1) {
       for (let j = i; j < 7; j += 1) {

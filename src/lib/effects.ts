@@ -16,7 +16,7 @@ export class Effects {
     diamondEmitter!: Phaser.GameObjects.Particles.ParticleEmitter;
 
     constructor(currentScene: Phaser.Scene) {
-        console.log("creating particle effect emitters!");
+        // console.log("creating particle effect emitters!");
         if (!currentScene) {
             console.log("ERROR: Effects has no scene to add particles to!");
             return;
