@@ -4,12 +4,14 @@ import { ASSET_KEYS, SCENE_KEYS, AUDIO_KEYS, UI_CONFIG, CARD_WIDTH, CARD_HEIGHT,
 export class TitleScene extends Phaser.Scene {
   #tutorialCards!: Phaser.GameObjects.Image[][];
   #movingCard!: Phaser.GameObjects.Image;
+  #tableauStartY!: number;
   #easyCounter: number = 3;
   #easyText!: Phaser.GameObjects.Text;
   #easyMedallions!: Phaser.GameObjects.Image[];
   #startButton?: Phaser.GameObjects.Image;
   #isTouchDevice!: boolean;
   #animationStep: number = 0;
+  #animationRunCount: number = 0;
 
   constructor() {
     super({ key: SCENE_KEYS.TITLE });
@@ -46,11 +48,13 @@ export class TitleScene extends Phaser.Scene {
 
   #makeStartButton(): void {
     const centreX = this.scale.width / 2;
-    const centreY = 395 * UI_CONFIG.scale;
+    const centreY = 370 * UI_CONFIG.scale;
     const feltBg = this.add.image(centreX, centreY, ASSET_KEYS.TABLE_BACKGROUND)
       .setDisplaySize(CARD_WIDTH * 3, CARD_HEIGHT * 0.6)
       .setOrigin(0.5)
       .setInteractive();;
+    feltBg.on('pointerover', () => feltBg.setTint(0xffff00));
+    feltBg.on('pointerout', () => feltBg.clearTint());
 
     const buttonText = this.add.text(centreX, centreY, 'Start', {
       fontSize: `${20 * UI_CONFIG.scale}px`,
@@ -88,7 +92,7 @@ export class TitleScene extends Phaser.Scene {
     if (this.#isTouchDevice) helpTextSuffix = "Help / how to play";
     const helpText = this.add.text(
       this.scale.width / 2,
-      this.scale.height - 40 * UI_CONFIG.scale,
+      this.scale.height - 65 * UI_CONFIG.scale,
       helpTextSuffix,
       {
         fontSize: `${14 * UI_CONFIG.scale}px`,
@@ -143,7 +147,8 @@ export class TitleScene extends Phaser.Scene {
 
   #makeTutorialTableau(): void {
     const startX = 90 * UI_CONFIG.scale;
-    const startY = 170 * UI_CONFIG.scale;
+    const startY = 150 * UI_CONFIG.scale;
+    this.#tableauStartY = startY;
     const stackSpacing = 70 * UI_CONFIG.scale;
     const stackGap = STACK_Y_GAP;
 
@@ -175,7 +180,7 @@ export class TitleScene extends Phaser.Scene {
 
   #makeEasyCounterText(): void {
     const x = 50 * UI_CONFIG.scale;
-    const y = 320 * UI_CONFIG.scale;
+    const y = 300 * UI_CONFIG.scale;
     this.#easyText = this.add.text(x, y, `Easymoves (same-colour) limit: ${this.#easyCounter}`, {
       fontSize: `${20 * UI_CONFIG.scale}px`,
       color: '#ffaa00',
@@ -295,7 +300,7 @@ export class TitleScene extends Phaser.Scene {
     const targetStack = this.#tutorialCards[toStack];
     const targetY = targetStack.length > 0
       ? targetStack[targetStack.length - 1].y + STACK_Y_GAP
-      : 170 * UI_CONFIG.scale;
+      : this.#tableauStartY;
 
     this.tweens.add({
       targets: card,
@@ -332,7 +337,7 @@ export class TitleScene extends Phaser.Scene {
     const targetX = targetStack.length > 0 ? targetStack[0].x : 90 * UI_CONFIG.scale + toStack * 70 * UI_CONFIG.scale;
     const targetY = targetStack.length > 0
       ? targetStack[targetStack.length - 1].y + STACK_Y_GAP
-      : 170 * UI_CONFIG.scale;
+      : this.#tableauStartY;
 
     const startX = card.x;
     const startY = card.y;
@@ -420,39 +425,54 @@ export class TitleScene extends Phaser.Scene {
 
     this.tweens.add({
       targets: [...allCards, this.#easyText, ...this.#easyMedallions],
-      // targets: allCards,
       alpha: 0,
-      duration: 1000,
+      duration: 500,
       onComplete: () => {
-        this.#tutorialCards = [];
-        allCards.forEach(card => card.destroy());
+        this.time.delayedCall(1000, () => {
+          this.#tutorialCards = [];
+          allCards.forEach(card => card.destroy());
 
-        this.#makeTutorialTableau();
-        this.#easyCounter = 3;
-        this.#easyText.setText(`Easymoves (same-colour) limit: ${this.#easyCounter}`);
+          this.#makeTutorialTableau();
+          this.#easyCounter = 3;
+          this.#easyText.setText(`Easymoves (same-colour) limit: ${this.#easyCounter}`);
           this.#easyMedallions.forEach(medallion => {
-          medallion.clearTint();
-          medallion.setAlpha(1);
-          medallion.setVisible(false);
-        });
-
-        const newCards: Phaser.GameObjects.Image[] = [];
-        this.#tutorialCards.forEach(stack => {
-          stack.forEach(card => {
-            card.setAlpha(0);
-            newCards.push(card);
+            medallion.clearTint();
+            medallion.setAlpha(1);
+            medallion.setVisible(false);
           });
-        });
 
-        this.tweens.add({
-          targets: newCards,
-          alpha: 1,
-          duration: 1000,
-          onComplete: () => {
-            this.time.delayedCall(1000, () => {
-              this.#startTutorialAnimation();
+          const newCards: Phaser.GameObjects.Image[] = [];
+          this.#tutorialCards.forEach(stack => {
+            stack.forEach(card => {
+              card.setAlpha(0);
+              newCards.push(card);
             });
-          }
+          });
+
+          this.tweens.add({
+            targets: newCards,
+            alpha: 1,
+            duration: 500,
+            onComplete: () => {
+              this.time.delayedCall(500, () => {
+                this.#animationRunCount++;
+                if (this.#animationRunCount === 2 && this.#startButton) {
+                  this.tweens.add({
+                    targets: this.#startButton,
+                    alpha: {
+                      start: 1,
+                      from: 1,
+                      to: 0,
+                    },
+                    duration: 1000,
+                    repeat: -1,
+                    yoyo: true,
+                  });
+                }
+                this.#startTutorialAnimation();
+              });
+            }
+          });
         });
       }
     });
