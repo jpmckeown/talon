@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import { ASSET_KEYS, SCENE_KEYS, UI_CONFIG, GAME_WIDTH, GAME_HEIGHT } from './common';
 
 export class HelpScene extends Phaser.Scene {
-  #returnToScene: string = SCENE_KEYS.TITLE;
+  #returnToScene: string = SCENE_KEYS.MENU;
   #isTouchDevice!: boolean;
 
   constructor() {
@@ -27,7 +27,7 @@ export class HelpScene extends Phaser.Scene {
     const tutorialContent = [
       "Draw new card by clicking stack at top-left of screen.",
       "Drag card to a tableau from another tableau or from drawn.",
-      "Tableau allows card with next number down and other colour; Easy mode allows same-colour placement, up to 7 times. An empty tableau accepts any card (except ace). Each tableau is limited to 12 cards to avoid exceeding screen-space.",
+      "Tableau allows card with next number down and other colour; Easy mode allows a few same-colour placements. An empty tableau accepts any card (except ace). Each tableau is limited to 12 cards to stop cards going off bottom of screenhh.",
       "Foundation piles top-right, one for each suit; begin with Ace; score by adding cards, and win by completing all suits.",
     ].join('\n\n');
 
@@ -44,11 +44,19 @@ export class HelpScene extends Phaser.Scene {
   }
 
 
-  #addBackButton(): void {
+#addBackButton(): void {
+    const isReturningToTitle = this.#returnToScene === SCENE_KEYS.TITLE;
+    const destination = isReturningToTitle ? 'Title' : 'Menu';
+    const shortcutKey = isReturningToTitle ? 't' : 'm';
+
+    const buttonText = this.#isTouchDevice
+      ? `back to ${destination}`
+      : `back to ${destination} (${shortcutKey})`;
+
     const backText = this.add.text(
       this.scale.width / 2,
       this.scale.height - 40 * UI_CONFIG.scale,
-      this.#isTouchDevice ? 'back to Menu' : 'back to Menu (m)',
+      buttonText,
       {
         fontSize: `${18 * UI_CONFIG.scale}px`,
         color: '#ffffff'
@@ -59,8 +67,11 @@ export class HelpScene extends Phaser.Scene {
     backText.on('pointerout', () => backText.setColor('#ffffff'));
     backText.on('pointerdown', () => this.#goBack());
 
-    this.input.keyboard!.on('keydown-B', () => this.#goBack());
-    this.input.keyboard!.on('keydown-M', () => this.#goBack());
+    if (isReturningToTitle) {
+      this.input.keyboard!.on('keydown-T', () => this.#goBack());
+    } else {
+      this.input.keyboard!.on('keydown-M', () => this.#goBack());
+    }
   }
 
 
