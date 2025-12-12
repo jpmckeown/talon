@@ -20,7 +20,7 @@ export class TitleScene extends Phaser.Scene {
     this.#makeTitle();
     this.#makeTutorialTableau();
     this.#makeEasyCounterText();
-    this.time.delayedCall(500, () => this.#startTutorialAnimation());
+    this.time.delayedCall(1000, () => this.#startTutorialAnimation());
     this.#makeStartButton();
     this.#makeHelpHint();
 
@@ -45,9 +45,9 @@ export class TitleScene extends Phaser.Scene {
 
   #makeStartButton(): void {
     const centreX = this.scale.width / 2;
-    const centreY = 390 * UI_CONFIG.scale;
+    const centreY = 395 * UI_CONFIG.scale;
     const feltBg = this.add.image(centreX, centreY, ASSET_KEYS.TABLE_BACKGROUND)
-      .setDisplaySize(CARD_WIDTH * 3.5, CARD_HEIGHT * 0.6)
+      .setDisplaySize(CARD_WIDTH * 3, CARD_HEIGHT * 0.6)
       .setOrigin(0.5)
       .setInteractive();;
 
@@ -147,13 +147,13 @@ export class TitleScene extends Phaser.Scene {
     const stackGap = STACK_Y_GAP;
 
     const stackLayouts = [
-      [15, 25, 11],    // 0: 3♦, K♦, Q♣
-      [8],             // 1: 9♣
+      [15, 25],    // 0: 3♦, K♦
+      [8, 11],    // 1: 9♣, Q♣
       [39, 23, 28],    // 2: A♠, J♦, 3♥
-      [27, 21, 42, 7],  // 3: 2♥, 9♦, 4♠, 8♣
+      [27, 21, 7],  // 3: 2♥, 9♦, 8♣
       [44],            // 4: 6♠
       [35, 4, 45],    // 5: 10♥, 5♦, 7♠
-      [16, 37, 9]     // 6: 4♦, Q♥, 10♣
+      [16, 37, 42]     // 6: 4♦, Q♥, 4♠
     ];
     this.#tutorialCards = [];
 
@@ -178,7 +178,7 @@ export class TitleScene extends Phaser.Scene {
       color: '#ffaa00',
       stroke: '#000000',
       strokeThickness: 3
-    }).setOrigin(0);
+    }).setOrigin(0).setVisible(false);
   }
 
 
@@ -193,26 +193,51 @@ export class TitleScene extends Phaser.Scene {
     const stack1 = this.#tutorialCards[1];
     switch (this.#animationStep) {
       case 0:
-        this.#moveCardToStack(3, 3, 1, true);
+        this.#moveCardWithArc(1, 1, 0, false, 100);
         break;
       case 1:
-        this.#moveCardToStack(5, 2, 1, true);
+        this.#moveCardWithArc(2, 2, 6, false, 100);
         break;
       case 2:
-        this.#moveCardToStack(4, 0, 1, true);
+        this.#showEasyCounterText();
         break;
       case 3:
-        this.#tryFailedMove(5, 1, 1);
+        this.#moveCardToStack(3, 2, 1, true);
         break;
       case 4:
-        this.#moveCardToStack(6, 2, 4, false);
+        this.#moveCardToStack(5, 2, 1, true);
         break;
       case 5:
+        this.#moveCardToStack(4, 0, 1, true);
+        break;
+      case 6:
+        this.#tryFailedMove(5, 1, 1);
+        break;
+      case 7:
+        this.#moveCardToStack(6, 3, 4, false);
+        break;
+      case 8:
         this.time.delayedCall(3000, () => {
           this.#resetAllCards();
         });
         break;
     }
+  }
+
+
+  #showEasyCounterText(): void {
+    this.#easyText.setVisible(true);
+    this.tweens.add({
+      targets: this.#easyText,
+      alpha: { from: 0, to: 1 },
+      duration: 500,
+      onComplete: () => {
+        this.time.delayedCall(1000, () => {
+          this.#animationStep++;
+          this.#doNextAnimationStep();
+        });
+      }
+    });
   }
 
 
@@ -239,6 +264,56 @@ export class TitleScene extends Phaser.Scene {
           this.#easyText.setText(`Easy moves (same-colour) allowance: ${this.#easyCounter}`);
         }
 
+        this.#tutorialCards[fromStack].splice(fromIndex, 1);
+        this.#tutorialCards[toStack].push(card);
+
+        this.time.delayedCall(2000, () => {
+          this.#animationStep++;
+          this.#doNextAnimationStep();
+        });
+      }
+    });
+  }
+
+
+  #moveCardWithArc(fromStack: number, fromIndex: number, toStack: number, isEasyMove: boolean, arcHeight: number): void {
+    const card = this.#tutorialCards[fromStack][fromIndex];
+    card.setDepth(10);
+    const targetStack = this.#tutorialCards[toStack];
+    const targetX = targetStack.length > 0 ? targetStack[0].x : 90 * UI_CONFIG.scale + toStack * 70 * UI_CONFIG.scale;
+    const targetY = targetStack.length > 0
+      ? targetStack[targetStack.length - 1].y + STACK_Y_GAP
+      : 170 * UI_CONFIG.scale;
+
+    const startX = card.x;
+    const startY = card.y;
+    const midX = (startX + targetX) / 2;
+    const midY = Math.max(startY, targetY) + arcHeight;
+
+    const curve = new Phaser.Curves.QuadraticBezier(
+      new Phaser.Math.Vector2(startX, startY),
+      new Phaser.Math.Vector2(midX, midY),
+      new Phaser.Math.Vector2(targetX, targetY)
+    );
+    let progress = 0;
+    this.tweens.add({
+      targets: { t: 0 },
+      t: 1,
+      duration: 800,
+      ease: 'Power2',
+      onUpdate: (tween) => {
+        progress = tween.getValue() ?? 0;
+        const point = curve.getPoint(progress);
+        card.setPosition(point.x, point.y);
+      },
+      onComplete: () => {
+        card.setDepth(0);
+        this.sound.play(isEasyMove ? AUDIO_KEYS.EASY_MOVE : AUDIO_KEYS.PLACE_CARD, { volume: 0.5 });
+
+        if (isEasyMove) {
+          this.#easyCounter--;
+          this.#easyText.setText(`Easy moves (same-colour) allowance: ${this.#easyCounter}`);
+        }
         this.#tutorialCards[fromStack].splice(fromIndex, 1);
         this.#tutorialCards[toStack].push(card);
 
@@ -294,7 +369,8 @@ export class TitleScene extends Phaser.Scene {
     });
 
     this.tweens.add({
-      targets: allCards,
+      targets: [...allCards, this.#easyText],
+      // targets: allCards,
       alpha: 0,
       duration: 1000,
       onComplete: () => {
