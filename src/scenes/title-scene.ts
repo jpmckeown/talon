@@ -6,6 +6,7 @@ export class TitleScene extends Phaser.Scene {
   #movingCard!: Phaser.GameObjects.Image;
   #easyCounter: number = 3;
   #easyText!: Phaser.GameObjects.Text;
+  #easyMedallions!: Phaser.GameObjects.Image[];
   #startButton?: Phaser.GameObjects.Image;
   #isTouchDevice!: boolean;
   #animationStep: number = 0;
@@ -38,7 +39,7 @@ export class TitleScene extends Phaser.Scene {
   }
 
   public shutdown(): void {
-    // delete animation timer when leaving title scene
+    // delete animation timer when leaving title-scene
     this.time.removeAllEvents();
   }
 
@@ -67,17 +68,17 @@ export class TitleScene extends Phaser.Scene {
     feltBg.on('pointerdown', startGame);
     buttonText.on('pointerdown', startGame);
 
-    this.tweens.add({
-      targets: [feltBg, buttonText],
-      alpha: {
-        start: 1,
-        from: 1,
-        to: 0,
-      },
-      duration: 1000,
-      repeat: -1,
-      yoyo: true,
-    });
+    // this.tweens.add({
+    //   targets: [feltBg, buttonText],
+    //   alpha: {
+    //     start: 1,
+    //     from: 1,
+    //     to: 0,
+    //   },
+    //   duration: 1000,
+    //   repeat: -1,
+    //   yoyo: true,
+    // });
     this.#startButton = feltBg;
   }
 
@@ -173,14 +174,29 @@ export class TitleScene extends Phaser.Scene {
 
 
   #makeEasyCounterText(): void {
-    this.#easyText = this.add.text(50 * UI_CONFIG.scale, 320 * UI_CONFIG.scale, `Easy moves (same-colour) allowance: ${this.#easyCounter}`, {
+    const x = 50 * UI_CONFIG.scale;
+    const y = 320 * UI_CONFIG.scale;
+    this.#easyText = this.add.text(x, y, `Easymoves (same-colour) limit: ${this.#easyCounter}`, {
       fontSize: `${20 * UI_CONFIG.scale}px`,
       color: '#ffaa00',
       stroke: '#000000',
       strokeThickness: 3
     }).setOrigin(0).setVisible(false);
-  }
 
+    this.#easyMedallions = [];
+    const medallionStartX = x + this.#easyText.width + 22 * UI_CONFIG.scale;
+    const medallionSpacing = 34 * UI_CONFIG.scale;
+    const medallionY = y + 10 * UI_CONFIG.scale;
+
+    for (let i = 0; i < this.#easyCounter; i++) {
+      const medallion = this.add.image(
+        medallionStartX + i * medallionSpacing,
+        medallionY,
+        ASSET_KEYS.PLAY_MEDALLION
+      ).setScale(UI_CONFIG.scale * 0.9).setVisible(false);
+      this.#easyMedallions.push(medallion);
+    }
+  }
 
 
   #startTutorialAnimation(): void {
@@ -227,8 +243,9 @@ export class TitleScene extends Phaser.Scene {
 
   #showEasyCounterText(): void {
     this.#easyText.setVisible(true);
+    this.#easyMedallions.forEach(m => m.setVisible(true));
     this.tweens.add({
-      targets: this.#easyText,
+      targets: [this.#easyText, ...this.#easyMedallions],
       alpha: { from: 0, to: 1 },
       duration: 500,
       onComplete: () => {
@@ -238,6 +255,37 @@ export class TitleScene extends Phaser.Scene {
         });
       }
     });
+  }
+
+#animateEasyMedallion(): void {
+    const usedCount = 3 - this.#easyCounter;
+    if (usedCount > 0 && usedCount <= this.#easyMedallions.length) {
+      const medallionIndex = 3 - usedCount;
+      const medallion = this.#easyMedallions[medallionIndex];
+
+      this.tweens.add({
+        targets: medallion,
+        scaleX: 0,
+        duration: 500,
+        yoyo: true,
+        repeat: 0,
+        ease: 'Sine.easeInOut',
+        onUpdate: () => {
+          const brightness = 1 + Math.abs(medallion.scaleX - 0.5);
+          medallion.setTint(Phaser.Display.Color.GetColor(255 * brightness, 255 * brightness, 255 * brightness));
+        },
+        onComplete: () => {
+          medallion.clearTint();
+          medallion.setTint(0xff6600);
+          this.tweens.add({
+            targets: medallion,
+            alpha: 0,
+            duration: 1000,
+            ease: 'Sine.easeOut'
+          });
+        }
+      });
+    }
   }
 
 
@@ -257,11 +305,12 @@ export class TitleScene extends Phaser.Scene {
       ease: 'Power2',
       onComplete: () => {
         card.setDepth(0);
-        this.sound.play(isEasyMove ? AUDIO_KEYS.EASY_MOVE : AUDIO_KEYS.PLACE_CARD, { volume: 0.5 });
+        this.sound.play(isEasyMove ? AUDIO_KEYS.EASY_MOVE : AUDIO_KEYS.PLACE_CARD, { volume: 0.3 });
 
         if (isEasyMove) {
           this.#easyCounter--;
-          this.#easyText.setText(`Easy moves (same-colour) allowance: ${this.#easyCounter}`);
+          this.#easyText.setText(`Easymoves (same-colour) limit: ${this.#easyCounter}`);
+          this.#animateEasyMedallion();
         }
 
         this.#tutorialCards[fromStack].splice(fromIndex, 1);
@@ -308,11 +357,12 @@ export class TitleScene extends Phaser.Scene {
       },
       onComplete: () => {
         card.setDepth(0);
-        this.sound.play(isEasyMove ? AUDIO_KEYS.EASY_MOVE : AUDIO_KEYS.PLACE_CARD, { volume: 0.5 });
+        this.sound.play(isEasyMove ? AUDIO_KEYS.EASY_MOVE : AUDIO_KEYS.PLACE_CARD, { volume: 0.3 });
 
         if (isEasyMove) {
           this.#easyCounter--;
-          this.#easyText.setText(`Easy moves (same-colour) allowance: ${this.#easyCounter}`);
+          this.#easyText.setText(`Easymoves (same-colour) limit: ${this.#easyCounter}`);
+          this.#animateEasyMedallion();
         }
         this.#tutorialCards[fromStack].splice(fromIndex, 1);
         this.#tutorialCards[toStack].push(card);
@@ -369,7 +419,7 @@ export class TitleScene extends Phaser.Scene {
     });
 
     this.tweens.add({
-      targets: [...allCards, this.#easyText],
+      targets: [...allCards, this.#easyText, ...this.#easyMedallions],
       // targets: allCards,
       alpha: 0,
       duration: 1000,
@@ -379,7 +429,12 @@ export class TitleScene extends Phaser.Scene {
 
         this.#makeTutorialTableau();
         this.#easyCounter = 3;
-        this.#easyText.setText(`Easy moves (same-colour) allowance: ${this.#easyCounter}`);
+        this.#easyText.setText(`Easymoves (same-colour) limit: ${this.#easyCounter}`);
+          this.#easyMedallions.forEach(medallion => {
+          medallion.clearTint();
+          medallion.setAlpha(1);
+          medallion.setVisible(false);
+        });
 
         const newCards: Phaser.GameObjects.Image[] = [];
         this.#tutorialCards.forEach(stack => {
