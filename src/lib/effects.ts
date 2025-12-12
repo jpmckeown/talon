@@ -85,6 +85,10 @@ export class Effects {
     }
 
     winFX() {
+        const music = this.parentScene.registry.get('music') as Phaser.Sound.BaseSound;
+        if (music) {
+          music.pause(); // music.resume later called by showWinOverlay() in game-scene.ts
+        }
         console.log("starting game win animation!");
         this.parentScene.sound.play(AUDIO_KEYS.GAME_WIN, { volume: 0.25 });
 

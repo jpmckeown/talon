@@ -96,6 +96,7 @@ export class GameScene extends Phaser.Scene {
 
   #fastCompleteOfferDismissed: boolean = false;
   #fastCompleteOverlay?: Phaser.GameObjects.Container;
+  #winOverlay?: Phaser.GameObjects.Container;
 
   score: number = 0;
   scoreText!: Phaser.GameObjects.Text;
@@ -108,6 +109,13 @@ export class GameScene extends Phaser.Scene {
   // #drawPileButtonText!: Phaser.GameObjects.Text;
   #peekButton!: Phaser.GameObjects.Graphics;
   #peekButtonText!: Phaser.GameObjects.Text;
+
+  buttonBase!: Phaser.GameObjects.Graphics;
+  buttonBaseText!: Phaser.GameObjects.Text;
+  buttonBaseOriginalX!: number;
+  buttonBaseTextOriginalX!: number;
+  #menuButton!: Phaser.GameObjects.Container;
+  #menuButtonOriginalX!: number;
 
   constructor() {
     super({ key: SCENE_KEYS.GAME });
@@ -214,6 +222,24 @@ export class GameScene extends Phaser.Scene {
       }
     });
 
+    this.input.keyboard?.on('keydown-B', () => {
+      this.#testUtils.setupNearlyFastComplete(
+        this.#tableauContainers,
+        this.#drawPileCards,
+        this.#discardPileCards,
+        this.#getCardFrameFromSuit.bind(this),
+        this.#getCardFrame.bind(this)
+      );
+      this.#updateFoundationPiles();
+      this.#updateTableauDropZones();
+      if (this.#foundationTutorialTexts) {
+        this.#foundationTutorialTexts.forEach(text => text.setVisible(false));
+      }
+      if (this.#checkFastCompleteCondition()) { // expected to not quite meet conditions
+        this.#showFastCompleteOverlay();
+      }
+    });
+
     this.input.keyboard?.on('keydown-ESC', () => {
       this.saveCurrentScore();
       this.scene.start(SCENE_KEYS.TITLE);
@@ -224,7 +250,7 @@ export class GameScene extends Phaser.Scene {
     window.addEventListener('beforeunload', () => {
       this.saveCurrentScore();
     });
-    // this.#updatePeekButtonVisibility();
+    this.#updatePeekButtonVisibility();
 
     // game is starting so play an intro sound
     // if this seems to play too late, it is because
@@ -324,29 +350,74 @@ export class GameScene extends Phaser.Scene {
   makeMenuButton() {
     const x = GAME_WIDTH - 80 * UI_CONFIG.scale;
     const y = GAME_HEIGHT - 40 * UI_CONFIG.scale;
-    // const x = (DISCARD_PILE_X_POSITION + FOUNDATION_PILE_X_POSITIONS[0]) / 2;
-    // const y = FOUNDATION_PILE_Y_POSITION + CARD_HEIGHT * 0.60;
-
     const buttonWidth = CARD_WIDTH;
     const buttonHeight = CARD_HEIGHT * 0.30;
 
-    const buttonBase = this.add.graphics({ x, y });
+    const buttonBase = this.add.graphics();
     buttonBase.fillStyle(0x03befc, 1);
     buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
-    buttonBase.setDepth(10);
 
-    this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Menu', {
+    const buttonText = this.add.text(buttonWidth / 2, buttonHeight / 2, 'Menu', {
       fontSize: `${15 * UI_CONFIG.scale}px`,
       color: '#ffffff',
       stroke: '#000000',
       strokeThickness: 2
-    }).setOrigin(0.5).setDepth(10);
+    }).setOrigin(0.5);
+
+    this.#menuButton = this.add.container(x, y, [buttonBase, buttonText]);
+    this.#menuButton.setDepth(10);
+    this.#menuButtonOriginalX = x;
 
     const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
-    buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains).on('pointerdown', () => {
+    buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains);
+    buttonBase.on('pointerdown', () => {
       this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
       this.scene.pause();
       this.scene.launch(SCENE_KEYS.MENU);
+    });
+  }
+
+  // oldMakeMenuButton() {
+  //   const x = GAME_WIDTH - 80 * UI_CONFIG.scale;
+  //   const y = GAME_HEIGHT - 40 * UI_CONFIG.scale;
+  //   const buttonWidth = CARD_WIDTH;
+  //   const buttonHeight = CARD_HEIGHT * 0.30;
+  //   const buttonBase = this.add.graphics({ x, y });
+  //   this.buttonBaseOriginalX = x;
+  //   buttonBase.fillStyle(0x03befc, 1);
+  //   buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+  //   buttonBase.setDepth(10);
+
+  //   // this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Menu', {
+  //   this.buttonBaseText = this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Menu', {
+  //     fontSize: `${15 * UI_CONFIG.scale}px`,
+  //     color: '#ffffff',
+  //     stroke: '#000000',
+  //     strokeThickness: 2
+  //   }).setOrigin(0.5).setDepth(10);
+
+  //   this.buttonBaseTextOriginalX = x + buttonWidth / 2;
+
+  //   const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
+  //   // buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains).on('pointerdown', () => {
+  //   this.buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains).on('pointerdown', () => {
+  //     this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
+  //     this.scene.pause();
+  //     this.scene.launch(SCENE_KEYS.MENU);
+  //   });
+  // }
+
+
+  #updateMenuButtonPosition(): void {
+    const rightmostTableauLength = this.#solitaire.tableauPiles[6].length;
+    const offset = rightmostTableauLength > 10 ? -1.5 * CARD_WIDTH : 0;
+    console.log(`tableau 6 length: ${rightmostTableauLength}, offset: ${offset}`);
+
+    this.tweens.add({
+      targets: this.#menuButton,
+      x: this.#menuButtonOriginalX + offset,
+      duration: 300,
+      ease: 'Sine.easeInOut'
     });
   }
 
@@ -614,6 +685,10 @@ export class GameScene extends Phaser.Scene {
     this.#lastSavedScore = 0;
     this.scoreText.setText('Score 0');
     this.#fastCompleteOfferDismissed = false;
+    if (this.#winOverlay) {
+      this.#winOverlay.destroy();
+      this.#winOverlay = undefined;
+    }
 
     // reset draw pile tutorial
     this.#hasUsedDrawPile = false;
@@ -644,7 +719,9 @@ export class GameScene extends Phaser.Scene {
     this.#createFoundationPiles();
     this.#createTableauPiles();
     this.#updateRewindButton();
+    this.#updatePeekButtonVisibility();
   }
+
 
   #scale(value: number): number {
     return value * UI_CONFIG.scale;
@@ -1184,6 +1261,7 @@ export class GameScene extends Phaser.Scene {
       const emptyCount = countEmptyTableau(this.#solitaire.tableauPiles);
       this.#handleRevealingNewTableauCards(tableauPileIndex as number);
       this.#updateTableauDropZones();
+      this.#updatePeekButtonVisibility();
     }
     // console.log(`Empty tableau piles: ${emptyCount}`);
 
@@ -1307,6 +1385,7 @@ export class GameScene extends Phaser.Scene {
       this.#updateCardGameObjectsInDiscardPile();
       this.#updateRewindButton();
       this.#updateTableauDropZones();
+      this.#updatePeekButtonVisibility();
 
       if (!this.#fastCompleteOfferDismissed && this.#checkFastCompleteCondition()) {
         this.#showFastCompleteOverlay();
@@ -1369,6 +1448,7 @@ export class GameScene extends Phaser.Scene {
     if (!this.#fastCompleteOfferDismissed && this.#checkFastCompleteCondition()) {
       this.#showFastCompleteOverlay();
     }
+    this.#updateMenuButtonPosition();
   }
 
 
@@ -1377,28 +1457,34 @@ export class GameScene extends Phaser.Scene {
     if (this.#solitaire.drawPile.length > 0 || this.#solitaire.discardPile.length > 0) {
       return false;
     }
+    // don't require 3 empty tableau
+    // const nEmptyTableau = countEmptyTableau(this.#solitaire.tableauPiles);
+    // console.log('Empty tableau count = ', nEmptyTableau)
+    // if (nEmptyTableau !== 3) {
+    //   return false;
+    // }
 
-    const nEmptyTableau = countEmptyTableau(this.#solitaire.tableauPiles);
-    console.log('Empty tableau count = ', nEmptyTableau)
-    if (nEmptyTableau !== 3) {
-      return false;
-    }
-
+    let kingCount = 0;
     for (const pile of this.#solitaire.tableauPiles) {
       if (pile.length > 0) {
         const headerCard = pile[0];
         console.log('top card value = ', headerCard.value)
-        if (headerCard.value !== 13 || !headerCard.isFaceUp) {
-          return false;
+        if (headerCard.value === 13) {
+          kingCount++;
         }
-
+        // if (headerCard.value !== 13 || !headerCard.isFaceUp) {
+        //   return false;
+        // }
         for (const card of pile) {
-          // console.log('other card value ', card.value)
+          console.log('other card value ', card.value)
           if (!card.isFaceUp) {
             return false;
           }
         }
       }
+    }
+    if (kingCount !== 4) {
+      return false;
     }
     console.log('Game completion is inevitable now and it only requires moving cards from tableau to Foundation piles');
     return true;
@@ -1456,6 +1542,9 @@ export class GameScene extends Phaser.Scene {
       const scoring = "Score " + this.score;
       this.scoreText.setText(scoring)
       this.#updateFoundationPiles();
+      this.time.delayedCall(this.#winAnimDuration, () => {
+        this.#showWinOverlay();
+      });
     });
 
     noText.on('pointerover', () => noText.setColor('#ffffff'));
@@ -1472,7 +1561,7 @@ export class GameScene extends Phaser.Scene {
 
   #showWinOverlay(): void {
     const overlay = this.add.container(0, 0).setDepth(100);
-
+    this.#winOverlay = overlay;
     const titleText = this.add.text(
       this.scale.width / 2,
       150 * UI_CONFIG.scale,
@@ -1520,6 +1609,10 @@ export class GameScene extends Phaser.Scene {
       .on('pointerdown', () => {
         this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
         overlay.destroy();
+        const music = this.registry.get('music') as Phaser.Sound.BaseSound;
+        if (music) {
+          music.resume();
+        }
         this.resetGame();
       });
     overlay.add([titleText, buttonGraphics, buttonText]);
