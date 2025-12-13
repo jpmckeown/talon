@@ -42,7 +42,8 @@ export const AUDIO_KEYS = {
   REWIND: 'rewind',
   BUTTON_PRESS: 'buttonPress',
   FOUNDATION_PILE_COMPLETED: 'foundationPileCompleted',
-  FOUNDATION_PILE_ADDED: 'foundationPileAdded'
+  FOUNDATION_PILE_ADDED: 'foundationPileAdded',
+  PEEK_AT_FACEDOWN_CARDS: 'peek'
 };
 
 export const MUSIC_VOLUME_BY_SCENE = {

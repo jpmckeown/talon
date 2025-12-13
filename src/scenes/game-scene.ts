@@ -1722,6 +1722,7 @@ export class GameScene extends Phaser.Scene {
         }
       });
     });
+    this.sound.play(AUDIO_KEYS.PEEK_AT_FACEDOWN_CARDS, { volume: 1 });
   }
 
   #endPeekMode(): void {

@@ -34,6 +34,7 @@ export class PreloadScene extends Phaser.Scene {
     this.load.audio(AUDIO_KEYS.FOUNDATION_PILE_COMPLETED, 'assets/audio/foundation-pile-completed.ogg');
     this.load.audio(AUDIO_KEYS.FOUNDATION_PILE_ADDED, 'assets/audio/foundation-pile-added.ogg');
     this.load.audio(AUDIO_KEYS.MUSIC_GAME, 'assets/audio/music-talon-solitaire.ogg');
+    this.load.audio(AUDIO_KEYS.PEEK_AT_FACEDOWN_CARDS, 'assets/audio/card-peek.ogg');
 
     const sfxVolume = parseInt(localStorage.getItem('talonSoundVolume') || '80', 10);
     this.sound.volume = sfxVolume / 100;
