@@ -39,7 +39,7 @@ export class SettingsScene extends Phaser.Scene {
   #saveVolumes(): void {
     localStorage.setItem('talonSoundVolume', this.#sfxVolume.toString());
     localStorage.setItem('talonMusicVolume', this.#musicVolume.toString());
-    console.log(`Volume sound: ${this.#sfxVolume}, music: ${this.#musicVolume}`);
+    // console.log(`Volume sound: ${this.#sfxVolume}, music: ${this.#musicVolume}`);
   }
 
 

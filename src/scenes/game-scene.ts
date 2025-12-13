@@ -145,7 +145,7 @@ export class GameScene extends Phaser.Scene {
     this.#createDragEvents();
 
     this.input.keyboard?.on('keydown-W', () => {
-      console.log('W key pressed: advancing Foundation piles for instant win');
+      // console.log('W key pressed: advancing Foundation piles for instant win');
       this.#hideDrawPileTutorial();
       if (this.#foundationTutorialTexts) {
         this.#foundationTutorialTexts.forEach(text => text.setVisible(false));
@@ -644,7 +644,7 @@ export class GameScene extends Phaser.Scene {
 
     localStorage.setItem('solitaireHighScores', JSON.stringify(highScores));
     this.#lastSavedScore = this.score;
-    console.log(`Saved score: ${this.score} at ${timestamp}`);
+    // console.log(`Saved score: ${this.score} at ${timestamp}`);
   }
 
 
@@ -1005,8 +1005,8 @@ export class GameScene extends Phaser.Scene {
           // only treat move as Abandoned if card was significantly dragged and then dropped on cloth
           // if no moveType set, was dropped on tablecloth (abandoned)
           if (stronglyMoved && moveType !== 'invalid' && moveType !== 'abandoned') {
-            console.log('Abandoned move - on tablecloth');
-            this.sound.play(AUDIO_KEYS.ABANDON, { volume: 0.2 });
+            // console.log('Abandoned move - on tablecloth');
+            this.sound.play(AUDIO_KEYS.ABANDON, { volume: 0.4 });
           }
           gameObject.setData('moveType', undefined);
 
@@ -1302,7 +1302,7 @@ export class GameScene extends Phaser.Scene {
     
     // check target tableau stack length limit before attempting move
     if (originalTargetPileSize + quantityCardsMoving > CONFIG.maxTableauStack) {
-      console.log(`Sorry, moving ${quantityCardsMoving} card(s) to tableau pile ${targetTableauPileIndex}: would exceed stack length limit of ${CONFIG.maxTableauStack} cards`);
+      // console.log(`Sorry, moving ${quantityCardsMoving} card(s) to tableau pile ${targetTableauPileIndex}: would exceed stack length limit of ${CONFIG.maxTableauStack} cards`);
       this.sound.play(AUDIO_KEYS.INVALID, { volume: 0.4 });
       this.#showStackLimitWarning();
       return;
@@ -1461,15 +1461,12 @@ export class GameScene extends Phaser.Scene {
     for (const pile of this.#solitaire.tableauPiles) {
       if (pile.length > 0) {
         const headerCard = pile[0];
-        console.log('top card value = ', headerCard.value)
+        // console.log('top card value = ', headerCard.value)
         if (headerCard.value === 13) {
           kingCount++;
         }
-        // if (headerCard.value !== 13 || !headerCard.isFaceUp) {
-        //   return false;
-        // }
         for (const card of pile) {
-          console.log('other card value ', card.value)
+          // console.log('other card value ', card.value)
           if (!card.isFaceUp) {
             return false;
           }
@@ -1479,7 +1476,7 @@ export class GameScene extends Phaser.Scene {
     if (kingCount !== 4) {
       return false;
     }
-    console.log('Game completion is inevitable now and it only requires moving cards from tableau to Foundation piles');
+    // console.log('Game completion is inevitable now and it only requires moving cards from tableau to Foundation piles');
     return true;
   }
 
@@ -1783,7 +1780,7 @@ export class GameScene extends Phaser.Scene {
     this.#drawPileCards.forEach(card => {
       card.setVisible(false);
     });
-    console.log('Talon, draw, and Tableau all cleared for instant win');
+    // console.log('Talon, draw, and Tableau all cleared for instant win');
   }
 
 

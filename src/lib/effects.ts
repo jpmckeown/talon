@@ -18,7 +18,7 @@ export class Effects {
     constructor(currentScene: Phaser.Scene) {
         // console.log("creating particle effect emitters!");
         if (!currentScene) {
-            console.log("ERROR: Effects has no scene to add particles to!");
+            // console.log("ERROR: Effects has no scene to add particles to!");
             return;
         }
         this.parentScene = currentScene;
@@ -89,7 +89,7 @@ export class Effects {
         if (music) {
           music.pause(); // music.resume later called by showWinOverlay() in game-scene.ts
         }
-        console.log("starting game win animation!");
+        // console.log("starting game win animation!");
         this.parentScene.sound.play(AUDIO_KEYS.GAME_WIN, { volume: 0.25 });
 
         this.cardEmitter.explode(12,FOUNDATION_PILE_X_POSITIONS[0], FOUNDATION_PILE_Y_POSITION);
