@@ -380,9 +380,16 @@ export class GameScene extends Phaser.Scene {
 
   #updateMenuButtonPosition(): void {
     const rightmostTableauLength = this.#solitaire.tableauPiles[6].length;
-    const offset = rightmostTableauLength >= 10 ? -1.5 * CARD_WIDTH : 0;
+    const neighbourTableau5Length = this.#solitaire.tableauPiles[5].length;
+    let offset = 0;
+    if (rightmostTableauLength >= 10) {
+      offset = -1.5 * CARD_WIDTH;
+      if (neighbourTableau5Length >= 10) {
+        offset = -3.0 * CARD_WIDTH;
+      }
+    }
+    // const offset = rightmostTableauLength >= 10 ? -1.5 * CARD_WIDTH : 0;
     // console.log(`tableau 6 length: ${rightmostTableauLength}, offset: ${offset}`);
-
     this.tweens.add({
       targets: this.#menuButton,
       x: this.#menuButtonOriginalX + offset,
