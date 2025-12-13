@@ -67,7 +67,7 @@ export class Solitaire {
 
   public checkForWin(): boolean {
       if (this.wonGame) {
-        console.log('Win - all foundation piles complete.');
+        // console.log('Win - all foundation piles complete.');
         this.#fx.winFX();
         return true;
       }
@@ -409,7 +409,7 @@ export class Solitaire {
         return false;
       }
       this.#sameColourMoves--;
-      console.log(`${this.sameColourMoves} same-colour cheat-moves remaining.`);
+      // console.log(`${this.sameColourMoves} same-colour cheat-moves remaining.`);
       return 'cheat';
     }
 

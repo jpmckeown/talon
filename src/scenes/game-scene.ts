@@ -302,7 +302,7 @@ export class GameScene extends Phaser.Scene {
 
   #showStackLimitWarning(): void {
     const popupWidth = GAME_WIDTH / 4 * 5;
-    const popupHeight = GAME_HEIGHT / 3;
+    const popupHeight = GAME_HEIGHT / 4;
     const popupX = GAME_WIDTH / 2 - popupWidth / 2;
     const popupY = GAME_HEIGHT * 0.7 - popupHeight / 2;
 
@@ -314,7 +314,7 @@ export class GameScene extends Phaser.Scene {
     const messageText = this.add.text(
       GAME_WIDTH / 2,
       popupY + popupHeight / 2,
-      'Move not allowed because it would make\ntableau stack too long.',
+      'Move prevented because long tableau stack\nwould make lowest card unreachable.',
       {
         fontSize: `${24 * UI_CONFIG.scale}px`,
         color: '#ffff00',
@@ -377,41 +377,11 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  // oldMakeMenuButton() {
-  //   const x = GAME_WIDTH - 80 * UI_CONFIG.scale;
-  //   const y = GAME_HEIGHT - 40 * UI_CONFIG.scale;
-  //   const buttonWidth = CARD_WIDTH;
-  //   const buttonHeight = CARD_HEIGHT * 0.30;
-  //   const buttonBase = this.add.graphics({ x, y });
-  //   this.buttonBaseOriginalX = x;
-  //   buttonBase.fillStyle(0x03befc, 1);
-  //   buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
-  //   buttonBase.setDepth(10);
-
-  //   // this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Menu', {
-  //   this.buttonBaseText = this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Menu', {
-  //     fontSize: `${15 * UI_CONFIG.scale}px`,
-  //     color: '#ffffff',
-  //     stroke: '#000000',
-  //     strokeThickness: 2
-  //   }).setOrigin(0.5).setDepth(10);
-
-  //   this.buttonBaseTextOriginalX = x + buttonWidth / 2;
-
-  //   const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
-  //   // buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains).on('pointerdown', () => {
-  //   this.buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains).on('pointerdown', () => {
-  //     this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
-  //     this.scene.pause();
-  //     this.scene.launch(SCENE_KEYS.MENU);
-  //   });
-  // }
-
 
   #updateMenuButtonPosition(): void {
     const rightmostTableauLength = this.#solitaire.tableauPiles[6].length;
-    const offset = rightmostTableauLength > 10 ? -1.5 * CARD_WIDTH : 0;
-    console.log(`tableau 6 length: ${rightmostTableauLength}, offset: ${offset}`);
+    const offset = rightmostTableauLength >= 10 ? -1.5 * CARD_WIDTH : 0;
+    // console.log(`tableau 6 length: ${rightmostTableauLength}, offset: ${offset}`);
 
     this.tweens.add({
       targets: this.#menuButton,

@@ -62,13 +62,13 @@ export class PreloadScene extends Phaser.Scene {
     this.registry.set('music', music);
 
     if (UI_CONFIG.skipTitleScene) {
-      // this.scene.start(SCENE_KEYS.GAME);
+      this.scene.start(SCENE_KEYS.GAME);
       // this.scene.start(SCENE_KEYS.SCORES);
       // this.scene.start(SCENE_KEYS.HELP);
       // this.scene.start(SCENE_KEYS.MENU);
       // this.scene.start(SCENE_KEYS.CREDITS);
       // this.scene.start(SCENE_KEYS.SETTINGS);
-      this.scene.start(SCENE_KEYS.CARD_BACK_SELECTOR);
+      // this.scene.start(SCENE_KEYS.CARD_BACK_SELECTOR);
     } else {
       this.scene.start(SCENE_KEYS.TITLE);
     }

@@ -9,8 +9,8 @@ export const CONFIG = {
   allowRevealOnGiveUp: true,
 
   // UI constraints
-  maxTableauStack: 12, // experimental increase
-  // 10 reduced from 11 to stop overlap with lower UI
+  maxTableauStack: 12, // experimental increase, see Menu button dodge elsewhere
+  // 10 was reduced from 11 to stop overlap with lower UI
 } as const;
 
 export type CardSuit = keyof typeof CARD_SUIT;
