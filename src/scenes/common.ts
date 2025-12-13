@@ -1,7 +1,7 @@
 export const UI_CONFIG = {
   scale: 2,
   // scene control for developer convenience
-  skipTitleScene: false,
+  skipTitleScene: true,
   // semi-transparent red areas show dynamic extent of dropzones
   showDropZones: false,
   enableShadows: false,

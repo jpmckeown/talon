@@ -927,8 +927,10 @@ export class GameScene extends Phaser.Scene {
           return;
         }
 
-        // store objects position
+        // store object position
         gameObject.setData({ x: gameObject.x, y: gameObject.y });
+        // store drag start position to distinguish click or tiny-move from an intentional dragging
+        gameObject.setData({ startDragX: gameObject.x, startDragY: gameObject.y });
         // remember this card hasn't yet been successfully dropped
         gameObject.setData('wasDropped', false);
 
@@ -995,8 +997,15 @@ export class GameScene extends Phaser.Scene {
 
         if (!wasDropped) {
           const moveType = gameObject.getData('moveType') as string | undefined;
+          const startDragX = gameObject.getData('startDragX') as number;
+          const startDragY = gameObject.getData('startDragY') as number;
+          const deltaX = Math.abs(gameObject.x - startDragX);
+          const deltaY = Math.abs(gameObject.y - startDragY);
+          const stronglyMoved = deltaY >= 15 || deltaX >= 5;
+
+          // only treat move as Abandoned if card was significantly dragged and then dropped on cloth
           // if no moveType set, was dropped on tablecloth (abandoned)
-          if (moveType !== 'invalid' && moveType !== 'abandoned') {
+          if (stronglyMoved && moveType !== 'invalid' && moveType !== 'abandoned') {
             console.log('Abandoned move - on tablecloth');
             this.sound.play(AUDIO_KEYS.ABANDON, { volume: 0.2 });
           }
