@@ -991,7 +991,6 @@ export class GameScene extends Phaser.Scene {
         if (!gameObject.active) {
           return;
         }
-
         const wasDropped = gameObject.getData('wasDropped') as boolean;
         const cardIndex = gameObject.getData('cardIndex') as number;
 
@@ -1001,7 +1000,7 @@ export class GameScene extends Phaser.Scene {
           const startDragY = gameObject.getData('startDragY') as number;
           const deltaX = Math.abs(gameObject.x - startDragX);
           const deltaY = Math.abs(gameObject.y - startDragY);
-          const stronglyMoved = deltaY >= 15 || deltaX >= 5;
+          const stronglyMoved = deltaY >= 25 || deltaX >= 10;
 
           // only treat move as Abandoned if card was significantly dragged and then dropped on cloth
           // if no moveType set, was dropped on tablecloth (abandoned)
@@ -1011,35 +1010,50 @@ export class GameScene extends Phaser.Scene {
           }
           gameObject.setData('moveType', undefined);
 
-          // for invalid or abandoned moves, animate cards return
-          const moveBackDuration = 150;
-          gameObject.setData('returning', true);
+          // different actions for click or tiny-move
+          if (stronglyMoved) {
+            // for invalid or abandoned moves, animate cards return
+            const moveBackDuration = 150;
+            gameObject.setData('returning', true);
 
-          this.tweens.add({
-            targets: gameObject,
-            duration: moveBackDuration,
-            x: gameObject.getData('x') as number,
-            y: gameObject.getData('y') as number,
-            onComplete: () => {
-              gameObject.setData('returning', false);
-              // card arrives back at original tableau
-              this.sound.play(AUDIO_KEYS.PLACE_CARD, { volume: 0.1 });
+            this.tweens.add({
+              targets: gameObject,
+              duration: moveBackDuration,
+              x: gameObject.getData('x') as number,
+              y: gameObject.getData('y') as number,
+              onComplete: () => {
+                gameObject.setData('returning', false);
+                // card arrives back at original tableau
+                this.sound.play(AUDIO_KEYS.PLACE_CARD, { volume: 0.1 });
+              }
+            });
+
+            // if any stacked cards also move those back
+            if (tableauPileIndex !== undefined) {
+              const numberOfCardsToMove = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex, cardIndex);
+              for (let i = 1; i <= numberOfCardsToMove; i += 1) {
+                const cardToMove = this.#tableauContainers[tableauPileIndex].getAt<Phaser.GameObjects.Image>(
+                  cardIndex + i,
+                );
+                this.tweens.add({
+                  targets: cardToMove,
+                  duration: moveBackDuration,
+                  x: cardToMove.getData('x') as number,
+                  y: cardToMove.getData('y') as number,
+                });
+              }
             }
-          });
-
-          // if any stacked cards also move those back
-          if (tableauPileIndex !== undefined) {
-            const numberOfCardsToMove = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex, cardIndex);
-            for (let i = 1; i <= numberOfCardsToMove; i += 1) {
-              const cardToMove = this.#tableauContainers[tableauPileIndex].getAt<Phaser.GameObjects.Image>(
-                cardIndex + i,
-              );
-              this.tweens.add({
-                targets: cardToMove,
-                duration: moveBackDuration,
-                x: cardToMove.getData('x') as number,
-                y: cardToMove.getData('y') as number,
-              });
+          } else {
+            // snap back silently for mere click or tiny movement
+            gameObject.setPosition(gameObject.getData('x') as number, gameObject.getData('y') as number);
+            if (tableauPileIndex !== undefined) {
+              const numberOfCardsToMove = this.#getNumberOfCardsToMoveAsPartOfStack(tableauPileIndex, cardIndex);
+              for (let i = 1; i <= numberOfCardsToMove; i += 1) {
+                const cardToMove = this.#tableauContainers[tableauPileIndex].getAt<Phaser.GameObjects.Image>(
+                  cardIndex + i,
+                );
+                cardToMove.setPosition(cardToMove.getData('x') as number, cardToMove.getData('y') as number);
+              }
             }
           }
         } else {
@@ -1275,7 +1289,7 @@ export class GameScene extends Phaser.Scene {
     // card picked up but drppped back on original tableau stack
     if (tableauPileIndex !== undefined && tableauPileIndex === targetTableauPileIndex) {
       gameObject.setData('moveType', 'abandoned');
-      console.log('Abandoned move & dropped on original tableau stack');
+      // console.log('Abandoned move & dropped on original tableau stack');
       // let drag-end handle return animation      
       return;
     }
