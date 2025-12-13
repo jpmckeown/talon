@@ -209,7 +209,6 @@ export class TitleScene extends Phaser.Scene {
     this.#doNextAnimationStep();
   }
 
-
   #doNextAnimationStep(): void {
     const stack1 = this.#tutorialCards[1];
     switch (this.#animationStep) {
@@ -262,7 +261,7 @@ export class TitleScene extends Phaser.Scene {
     });
   }
 
-#animateEasyMedallion(): void {
+  #animateEasyMedallion(): void {
     const usedCount = 3 - this.#easyCounter;
     if (usedCount > 0 && usedCount <= this.#easyMedallions.length) {
       const medallionIndex = 3 - usedCount;
@@ -294,37 +293,63 @@ export class TitleScene extends Phaser.Scene {
   }
 
 
+  #flashEasyText(): void {
+    this.#easyCounter--;
+    this.#easyText.setText(`Easymoves (same-colour) limit: ${this.#easyCounter}`);
+    let flashCount = 0;
+    const flashInterval = this.time.addEvent({
+      delay: 150,
+      callback: () => {
+        this.#easyText.setColor(flashCount % 2 === 0 ? '#ffffff' : '#ffaa00');
+        flashCount++;
+        if (flashCount >= 4) {
+          flashInterval.remove();
+        }
+      },
+      repeat: 3
+    });
+  }
+
+
+  #getTargetPosition(toStack: number): { x: number, y: number } {
+    const targetStack = this.#tutorialCards[toStack];
+    const x = targetStack.length > 0 ? targetStack[0].x : 90 * UI_CONFIG.scale + toStack * 70 * UI_CONFIG.scale;
+    const y = targetStack.length > 0
+      ? targetStack[targetStack.length - 1].y + STACK_Y_GAP
+      : this.#tableauStartY;
+    return { x, y };
+  }
+
+  #completeCardMove(card: Phaser.GameObjects.Image, fromStack: number, fromIndex: number, toStack: number, isEasyMove: boolean): void {
+    card.setDepth(0);
+    this.sound.play(isEasyMove ? AUDIO_KEYS.EASY_MOVE : AUDIO_KEYS.PLACE_CARD, { volume: 0.3 });
+    if (isEasyMove) {
+      this.#flashEasyText();
+      this.#animateEasyMedallion();
+    }
+    this.#tutorialCards[fromStack].splice(fromIndex, 1);
+    this.#tutorialCards[toStack].push(card);
+
+    this.time.delayedCall(2000, () => {
+      this.#animationStep++;
+      this.#doNextAnimationStep();
+    });
+  }
+
+
   #moveCardToStack(fromStack: number, fromIndex: number, toStack: number, isEasyMove: boolean): void {
     const card = this.#tutorialCards[fromStack][fromIndex];
     card.setDepth(10);
-    const targetStack = this.#tutorialCards[toStack];
-    const targetY = targetStack.length > 0
-      ? targetStack[targetStack.length - 1].y + STACK_Y_GAP
-      : this.#tableauStartY;
+    const targetPos = this.#getTargetPosition(toStack);
 
     this.tweens.add({
       targets: card,
-      x: targetStack.length > 0 ? targetStack[0].x : 90 * UI_CONFIG.scale + toStack * 70 * UI_CONFIG.scale,
-      y: targetY,
+      x: targetPos.x,
+      y: targetPos.y,
       duration: 800,
       ease: 'Power2',
       onComplete: () => {
-        card.setDepth(0);
-        this.sound.play(isEasyMove ? AUDIO_KEYS.EASY_MOVE : AUDIO_KEYS.PLACE_CARD, { volume: 0.3 });
-
-        if (isEasyMove) {
-          this.#easyCounter--;
-          this.#easyText.setText(`Easymoves (same-colour) limit: ${this.#easyCounter}`);
-          this.#animateEasyMedallion();
-        }
-
-        this.#tutorialCards[fromStack].splice(fromIndex, 1);
-        this.#tutorialCards[toStack].push(card);
-
-        this.time.delayedCall(2000, () => {
-          this.#animationStep++;
-          this.#doNextAnimationStep();
-        });
+        this.#completeCardMove(card, fromStack, fromIndex, toStack, isEasyMove);
       }
     });
   }
@@ -333,49 +358,25 @@ export class TitleScene extends Phaser.Scene {
   #moveCardWithArc(fromStack: number, fromIndex: number, toStack: number, isEasyMove: boolean, arcHeight: number): void {
     const card = this.#tutorialCards[fromStack][fromIndex];
     card.setDepth(10);
-    const targetStack = this.#tutorialCards[toStack];
-    const targetX = targetStack.length > 0 ? targetStack[0].x : 90 * UI_CONFIG.scale + toStack * 70 * UI_CONFIG.scale;
-    const targetY = targetStack.length > 0
-      ? targetStack[targetStack.length - 1].y + STACK_Y_GAP
-      : this.#tableauStartY;
-
-    const startX = card.x;
-    const startY = card.y;
-    const midX = (startX + targetX) / 2;
-    const midY = Math.max(startY, targetY) + arcHeight;
+    const targetPos = this.#getTargetPosition(toStack);
 
     const curve = new Phaser.Curves.QuadraticBezier(
-      new Phaser.Math.Vector2(startX, startY),
-      new Phaser.Math.Vector2(midX, midY),
-      new Phaser.Math.Vector2(targetX, targetY)
+      new Phaser.Math.Vector2(card.x, card.y),
+      new Phaser.Math.Vector2((card.x + targetPos.x) / 2, Math.max(card.y, targetPos.y) + arcHeight),
+      new Phaser.Math.Vector2(targetPos.x, targetPos.y)
     );
-    let progress = 0;
+
     this.tweens.add({
       targets: { t: 0 },
       t: 1,
       duration: 800,
       ease: 'Power2',
       onUpdate: (tween) => {
-        progress = tween.getValue() ?? 0;
-        const point = curve.getPoint(progress);
+        const point = curve.getPoint(tween.getValue() ?? 0);
         card.setPosition(point.x, point.y);
       },
       onComplete: () => {
-        card.setDepth(0);
-        this.sound.play(isEasyMove ? AUDIO_KEYS.EASY_MOVE : AUDIO_KEYS.PLACE_CARD, { volume: 0.3 });
-
-        if (isEasyMove) {
-          this.#easyCounter--;
-          this.#easyText.setText(`Easymoves (same-colour) limit: ${this.#easyCounter}`);
-          this.#animateEasyMedallion();
-        }
-        this.#tutorialCards[fromStack].splice(fromIndex, 1);
-        this.#tutorialCards[toStack].push(card);
-
-        this.time.delayedCall(2000, () => {
-          this.#animationStep++;
-          this.#doNextAnimationStep();
-        });
+        this.#completeCardMove(card, fromStack, fromIndex, toStack, isEasyMove);
       }
     });
   }
