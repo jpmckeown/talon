@@ -41,30 +41,16 @@ export class MenuScene extends Phaser.Scene {
     menuItems.push(
       { text: this.#menuText('New Game', 'n'), key: 'N', action: () => this.startNewGame() },
       { text: this.#menuText('How to play', 'h'), key: 'H', action: () => this.showHelp() },
-      { text: this.#menuText('Settings', 't'), key: 'T', action: () => this.showSettings() },
+      // { text: this.#menuText('Title tutorial', 'ESC'), key: 'ESC', action: () => this.showTitle() },
+      { text: this.#menuText('Settings', 'i'), key: 'I', action: () => this.showSettings() },
       { text: this.#menuText('Card Back', 'b'), key: 'B', action: () => this.showCardBackSelector() },
       { text: this.#menuText('Credits', 'c'), key: 'C', action: () => this.showCredits() },
       { text: this.#menuText('High Scores', 's'), key: 'S', action: () => this.showHighScores() },
     );
 
-    // menuItems.push(
-    //   { text: 'New Game (n)', key: 'N', action: () => this.startNewGame() },
-    //   { text: 'How to play (h)', key: 'H', action: () => this.showHelp() },
-    //   { text: 'Settings (t)', key: 'T', action: () => this.showSettings() },
-    //   { text: 'Card Back (b)', key: 'B', action: () => this.showCardBackSelector() },
-    //   { text: 'Credits (c)', key: 'C', action: () => this.showCredits() },
-    //   { text: 'High Scores (s)', key: 'S', action: () => this.showHighScores() },
-    // );
-
     // draw the Menu
     let yPos = menuStartY * UI_CONFIG.scale;
     menuItems.forEach((item, index) => {
-      // let yPos = (menuStartY + index * menuSpacing) * UI_CONFIG.scale;
-      // // reduce vertical gap between Settings and Card Back
-      // if (item.text.startsWith('Card Back')) {
-      //   yPos -= (20 * UI_CONFIG.scale);
-      // }
-
       const menuText = this.add.text(this.scale.width / 2, yPos, item.text, {
         fontSize: `${menuFontSize * UI_CONFIG.scale}px`,
         color: '#ffffff'
@@ -126,6 +112,12 @@ export class MenuScene extends Phaser.Scene {
     this.scene.stop(SCENE_KEYS.MENU);
     this.scene.pause(SCENE_KEYS.GAME);
     this.scene.start(SCENE_KEYS.HELP, { from: SCENE_KEYS.MENU });
+  }
+
+  showTitle(): void {
+    this.scene.stop(SCENE_KEYS.MENU);
+    this.scene.stop(SCENE_KEYS.GAME);
+    this.scene.start(SCENE_KEYS.TITLE, { from: SCENE_KEYS.MENU });
   }
 
   showSettings(): void {

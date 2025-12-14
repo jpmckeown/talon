@@ -36,6 +36,7 @@ export class TitleScene extends Phaser.Scene {
     });
 
     this.input.keyboard!.on('keydown-M', () => {
+      this.scene.stop(SCENE_KEYS.TITLE);
       this.scene.start(SCENE_KEYS.MENU);
     });
   }
@@ -66,23 +67,12 @@ export class TitleScene extends Phaser.Scene {
     const startGame = () => {
       this.cameras.main.fadeOut(50, 0, 0, 0);
       this.cameras.main.once('camerafadeoutcomplete', () => {
+        this.scene.stop(SCENE_KEYS.TITLE);
         this.scene.start(SCENE_KEYS.GAME);
       });
     };
     feltBg.on('pointerdown', startGame);
     buttonText.on('pointerdown', startGame);
-
-    // this.tweens.add({
-    //   targets: [feltBg, buttonText],
-    //   alpha: {
-    //     start: 1,
-    //     from: 1,
-    //     to: 0,
-    //   },
-    //   duration: 1000,
-    //   repeat: -1,
-    //   yoyo: true,
-    // });
     this.#startButton = feltBg;
   }
 
