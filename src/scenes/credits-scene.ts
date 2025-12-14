@@ -67,20 +67,24 @@ export class CreditsScene extends Phaser.Scene {
         contributions: 'talons card-back design, and integration on spritesheet.'
       },
       {
+        name: 'Philippe Vaillancourt (snowfrogdev)',
+        contributions: 'video and audio feedback from multiple game playthroughs.'
+      },
+      {
         name: 'Jason Timms (fizzybuzzybeezy)',
-        contributions: 'soundfx for Peek.'
+        contributions: 'soundfx for Peek, and integration in-game.'
       },
       {
         name: 'Mike DiGiovanni',
         contributions: 'edit and typo fixes in Readme.'
       },
       {
-        name: 'Chris DeLeon',
-        contributions: 'itch.io dimensions workaround, Dev Pods.'
+        name: 'QA playtesters',
+        contributions: 'Philippe Vaillancourt (snowfrogdev), Michael Avrie, Tim Sargent, Noah Wizard, Simone | ZilpioGaming, Jason Timms, Mike DiGiovanni, Dominic Beacham.'
       },
       {
-        name: 'QA playtesters',
-        contributions: 'Philippe Vaillancourt, Michael Avrie, Tim Sargent, Noah Wizard, Simone | ZilpioGaming, Jason Timms, Mike DiGiovanni, Dominic Beacham.'
+        name: 'Chris DeLeon',
+        contributions: 'itch.io dimensions workaround.'
       },
     ];
 
