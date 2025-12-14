@@ -314,7 +314,7 @@ export class GameScene extends Phaser.Scene {
     const messageText = this.add.text(
       GAME_WIDTH / 2,
       popupY + popupHeight / 2,
-      'Move prevented because long tableau stack\nwould make lowest card unreachable.',
+      'Move prevented because over-long tableau\nstack would put lowest card off screen.',
       {
         fontSize: `${24 * UI_CONFIG.scale}px`,
         color: '#ffff00',
@@ -1360,7 +1360,7 @@ export class GameScene extends Phaser.Scene {
         const bottomCard = this.#tableauContainers[targetTableauPileIndex].getAt<Phaser.GameObjects.Image>(originalTargetPileSize - 1);
         const previousShift = bottomCard.getData('horizontalShift') as number;
         horizontalShift = this.#getValidShift(previousShift);
-  }
+      }
       // const horizontalShift = this.#getRandomHorizontalShift();
       // const horizontalShift = Math.floor(Math.random() * (2*maxShiftX+1)) - maxShiftX;
 
@@ -1390,6 +1390,7 @@ export class GameScene extends Phaser.Scene {
       if (!this.#fastCompleteOfferDismissed && this.#checkFastCompleteCondition()) {
         this.#showFastCompleteOverlay();
       }
+      this.#updateMenuButtonPosition();
       return;
     }
 

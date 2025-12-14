@@ -27,7 +27,7 @@ export class HelpScene extends Phaser.Scene {
     const tutorialContent = [
       "Draw new card by clicking stack at top-left of screen.",
       "Drag card to a tableau from another tableau or from drawn.",
-      "Tableau allows card with next number down and other colour; Easy mode allows a few same-colour placements. An empty tableau accepts any card (except ace). Each tableau is limited to 12 cards to stop cards going off bottom of screenhh.",
+      "Tableau allows card with next number down and other colour; Easy mode allows a few same-colour placements. An empty tableau accepts any card (except ace). Each tableau is limited in length to stop cards going off the screen.",
       "Foundation piles top-right, one for each suit; begin with Ace; score by adding cards, and win by completing all suits.",
     ].join('\n\n');
 
@@ -44,7 +44,7 @@ export class HelpScene extends Phaser.Scene {
   }
 
 
-#addBackButton(): void {
+  #addBackButton(): void {
     const isReturningToTitle = this.#returnToScene === SCENE_KEYS.TITLE;
     const destination = isReturningToTitle ? 'Title' : 'Menu';
     const shortcutKey = isReturningToTitle ? 't' : 'm';
