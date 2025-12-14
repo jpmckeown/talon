@@ -15,16 +15,8 @@ export class CreditsScene extends Phaser.Scene {
 
   public create(): void {
     this.#isTouchDevice = this.registry.get('isTouchDevice') as boolean;
-    const TITLE_AREA_HEIGHT = 64 * UI_CONFIG.scale;
+    const TITLE_AREA_HEIGHT = 96 * UI_CONFIG.scale;
     const BOTTOM_MARGIN = 80 * UI_CONFIG.scale;
-
-    // this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x2a4d2a).setOrigin(0);
-
-    // const maskShape = this.make.graphics();
-    // maskShape.fillStyle(0xffffff);
-    // maskShape.fillRect(0, TITLE_AREA_HEIGHT, GAME_WIDTH, this.scale.height - TITLE_AREA_HEIGHT);
-    // const mask = maskShape.createGeometryMask();
-    // this.cameras.main.setMask(mask);
 
     this.add.tileSprite(0, 0, GAME_WIDTH, GAME_HEIGHT * 3, ASSET_KEYS.TABLE_BACKGROUND)
       .setOrigin(0);
@@ -39,33 +31,56 @@ export class CreditsScene extends Phaser.Scene {
       color: '#ffffff',
     }).setOrigin(0).setScrollFactor(0).setDepth(99);
 
+    const leftMargin = 45 * UI_CONFIG.scale;
+    const rightMargin = 30 * UI_CONFIG.scale;
+    const availableWidth = this.scale.width - leftMargin - rightMargin;
+    
+    const baseText = this.add.text(leftMargin, 65 * UI_CONFIG.scale, 'Built on a Phaser tutorial code-base by Scott Westover.', {
+      fontSize: `${14 * UI_CONFIG.scale}px`,
+      color: '#ffffff',
+      wordWrap: { width: availableWidth },
+      align: 'left'
+    }).setOrigin(0, 0).setScrollFactor(0).setDepth(99);
+
     this.#addBackButton();
     // this.#creditsContainer = this.add.container(0, 75 * UI_CONFIG.scale);
 
     const credits = [
       {
         name: 'Patrick McKeown',
-        contributions: 'project lead; deck spritesheet; owl art; red-kite art; feather card-back; UI navigation; dynamic resize dropzones; scaling for sharper card font; experiments on card shadow and border; sound system; allow same-colour moves and show remaining; easy-move soundfx; scoring snd high-scores; reveal hidden cards while keydown, Peek button; test 4 Kings tableau offer quick-win; reveal flip on central axis; bugfixing.'
+        contributions: 'project lead; deck spritesheet; owl art; red-kite art; feather card-back; animated tutorial on Title scene; UI navigation; dynamic resize dropzones; scaling for sharper card font; card border and experimental shadow; deal & rewind animations; allow same-colour easy-moves and show remaining; sound system & UI volume settings; quack easy-move sound; scoring snd high-score storage; Peek reveal hidden cards while keydown; test if 4 Kings tableau offer quick-win; tableau card reveal by flip on central axis; random X shift cards; long tableau handling & dodge for menu-button; stop card-click triggering abandoned & placing sounds; scrolling Credits; text for Help; utilities for test; bugfixing.'
       },
       {
-        name: 'McFunkypants (Christer Kaitila)',
-        contributions: 'animated particle fx for good card placement; victory animation card-splosion!! on win; eagle art; crow art; cloth background art; soundfx for shuffle, card-pickup, card-place, foundation-place, complete-foundation, game win, button-press.'
+        name: 'Christer Kaitila (McFunkypants)',
+        contributions: 'animated particle fx for good card placement on tableau and foundation; victory animation card-splosion!! on win; eagle art; crow art; card-back art (birds & waves), cloth background art; sound fx files for shuffle, card-pickup, card-placement, foundation-add, complete-foundation, game-win, button-press, eagle cry (invalid-move), owl hoot (rewind), and integrating sounds in game.'
       },
       {
         name: 'Dan Dela Rosa',
-        contributions: 'when card move invalid they animate back to where they started, and bugfix; Menu button on game, with navigation; Escape key; nvmrc file.'
+        contributions: 'when card(s) move invalid they animate back to where they started, and bugfix; Menu button on game, with navigation; Escape key to title; nvmrc file.'
       },
       {
-        name: 'QA playtesters',
-        contributions: 'Philippe Vaillancourt, Michael Avrie, Tim Sargent, Noah Wizard, Simone | ZilpioGaming, Jason Timms, Mike DiGiovanni, Dominic Beacham, Calum McKeown, Kirsten McKeown.'
+        name: 'Noah Wizard',
+        contributions: 'music wav, two versions of medallion to count easymoves.'
       },
       {
-        name: 'Scott Westover',
-        contributions: 'tutorial code, logic and core mechanics is the foundation for Talon Solitaire.'
+        name: 'Elizabeth McMahill (McMahem)',
+        contributions: 'talons card-back design, and integration on spritesheet.'
+      },
+      {
+        name: 'Jason Timms (fizzybuzzybeezy)',
+        contributions: 'soundfx for Peek.'
+      },
+      {
+        name: 'Mike DiGiovanni',
+        contributions: 'edit and typo fixes in Readme.'
       },
       {
         name: 'Chris DeLeon',
         contributions: 'itch.io dimensions workaround, Dev Pods.'
+      },
+      {
+        name: 'QA playtesters',
+        contributions: 'Philippe Vaillancourt, Michael Avrie, Tim Sargent, Noah Wizard, Simone | ZilpioGaming, Jason Timms, Mike DiGiovanni, Dominic Beacham.'
       },
     ];
 
@@ -95,17 +110,10 @@ export class CreditsScene extends Phaser.Scene {
       .setScrollFactor(0);
     this.input.setDraggable(scrollZone);
 
-    // this.#creditsContainer.setInteractive(
-    //   new Phaser.Geom.Rectangle(0, 0, GAME_WIDTH, contentHeight),
-    //   Phaser.Geom.Rectangle.Contains
-    // );
-    // this.input.setDraggable(this.#creditsContainer);
-
     let dragStartY = 0;
     let cameraStartY = 0;
 
     this.input.on('dragstart', (pointer: Phaser.Input.Pointer, gameObject: any) => {
-      //if (gameObject === this.#creditsContainer) {
       if (gameObject === scrollZone) {
         dragStartY = pointer.y;
         cameraStartY = this.cameras.main.scrollY;
@@ -150,15 +158,6 @@ export class CreditsScene extends Phaser.Scene {
     }).setOrigin(0);
 
     return nameText.height + contribText.height;
-    // const fullText = name + ': ' + contributions;
-    // const fullTextObj = this.add.text(leftMargin, yPos, fullText, {
-    //   fontSize: `${14 * UI_CONFIG.scale}px`,
-    //   color: '#ffffff',
-    //   wordWrap: { width: availableWidth },
-    //   align: 'left'
-    // }).setOrigin(0);
-    // this.#creditsContainer.add(fullTextObj);
-    // return fullTextObj.height;
   }
 
 
