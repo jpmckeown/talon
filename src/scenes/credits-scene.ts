@@ -48,7 +48,7 @@ export class CreditsScene extends Phaser.Scene {
     const credits = [
       {
         name: 'Patrick McKeown',
-        contributions: 'project lead; deck spritesheet; owl art; red-kite art; feather card-back; animated tutorial on Title scene; UI navigation; dynamic resize dropzones; scaling for sharper card font; card border and experimental shadow; deal & rewind animations; allow same-colour easy-moves and show remaining; sound system & UI volume settings; quack easy-move sound; scoring snd high-score storage; Peek reveal hidden cards while keydown; test if 4 Kings tableau offer quick-win; tableau card reveal by flip on central axis; random X shift cards; long tableau handling & dodge for menu-button; stop card-click triggering abandoned & placing sounds; scrolling Credits; text for Help; utilities for test; bugfixing.'
+        contributions: 'project lead; spritesheet; owl art; red-kite art; feather card-back; animated tutorial on Title; UI navigation; dynamic dropzones; scaling sharper font; card border; deal & rewind animations; easy-move count; volume settings; quack sound; igh-score storage; Peek reveal hidden cards; test if 4 Kings tableau & offer quick-win; tableau card reveal flip; random X shift cards; long tableau handling & dodge for menu-button; stop card-click triggering abandoned sound; Credits; Help; utilities for test; bugfixing.'
       },
       {
         name: 'Christer Kaitila (McFunkypants)',
@@ -60,7 +60,7 @@ export class CreditsScene extends Phaser.Scene {
       },
       {
         name: 'Noah Wizard',
-        contributions: 'music wav, two versions of medallion to count easymoves.'
+        contributions: 'music wav; two versions of medallion to count easymoves; advertising text for itch.io page.'
       },
       {
         name: 'Elizabeth McMahill (McMahem)',
@@ -84,7 +84,7 @@ export class CreditsScene extends Phaser.Scene {
       },
       {
         name: 'Chris DeLeon',
-        contributions: 'itch.io dimensions workaround.'
+        contributions: 'GIF showreel; itch.io dimensions workaround.'
       },
     ];
 

@@ -107,7 +107,6 @@ export class MenuScene extends Phaser.Scene {
     }
   }
 
-
   showHelp(): void {
     this.scene.stop(SCENE_KEYS.MENU);
     this.scene.pause(SCENE_KEYS.GAME);
