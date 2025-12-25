@@ -105,7 +105,7 @@ export class TitleScene extends Phaser.Scene {
       titleY,
       'Talon Solitaire',
       {
-        fontSize: '140px',
+        fontSize: '130px',
         color: '#ffd700',  // gold colour
         stroke: '#000000',
         strokeThickness: 5,
@@ -120,18 +120,18 @@ export class TitleScene extends Phaser.Scene {
       }
     ).setOrigin(0.5);
 
-    if (talonText.preFX) {
+    if (talonText.preFX && !this.#isTouchDevice) {
       talonText.preFX.addGlow(0xffd700, 2, 0, false, 0.1, 32);
     }
 
-    this.tweens.add({
-      targets: talonText,
-      y: titleY - 40,
-      duration: 3000,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut'
-    });
+    // this.tweens.add({
+    //   targets: talonText,
+    //   y: titleY - 40,
+    //   duration: 3000,
+    //   yoyo: true,
+    //   repeat: -1,
+    //   ease: 'Sine.easeInOut'
+    // });
   }
 
 

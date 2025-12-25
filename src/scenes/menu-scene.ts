@@ -22,6 +22,7 @@ export class MenuScene extends Phaser.Scene {
     const gameScene = this.scene.get(SCENE_KEYS.GAME) as any;
     const currentScore = gameScene.score || 0;
     const gameIsActive = this.scene.isActive(SCENE_KEYS.GAME) || this.scene.isPaused(SCENE_KEYS.GAME);
+    const hasScores = (JSON.parse(localStorage.getItem('solitaireHighScores') || '[]') as any[]).length > 0;
 
     this.add.text(this.scale.width / 2, 50 * UI_CONFIG.scale, 'Paused', {
       fontSize: `${42 * UI_CONFIG.scale}px`,
@@ -45,8 +46,12 @@ export class MenuScene extends Phaser.Scene {
       { text: this.#menuText('Settings', 'i'), key: 'I', action: () => this.showSettings() },
       { text: this.#menuText('Card Back', 'b'), key: 'B', action: () => this.showCardBackSelector() },
       { text: this.#menuText('Credits', 'c'), key: 'C', action: () => this.showCredits() },
-      { text: this.#menuText('High Scores', 's'), key: 'S', action: () => this.showHighScores() },
     );
+
+    if (hasScores) {
+      menuItems.push({ text: this.#menuText('High Scores', 's'), key: 'S', action: () => this.showHighScores() });
+      // { text: this.#menuText('High Scores', 's'), key: 'S', action: () => this.showHighScores() },
+    }
 
     // draw the Menu
     let yPos = menuStartY * UI_CONFIG.scale;
@@ -83,6 +88,13 @@ export class MenuScene extends Phaser.Scene {
       this.scene.stop(SCENE_KEYS.MENU);
       this.scene.stop(SCENE_KEYS.GAME);
       this.scene.start(SCENE_KEYS.TITLE);
+    });
+
+    this.input.keyboard?.on('keydown-DELETE', () => {
+      if (confirm('Delete all high scores?')) {
+        localStorage.removeItem('solitaireHighScores');
+        alert('Scores cleared');
+      }
     });
   }
 

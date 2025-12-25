@@ -65,8 +65,8 @@ export class PreloadScene extends Phaser.Scene {
       // this.scene.start(SCENE_KEYS.GAME);
       // this.scene.start(SCENE_KEYS.SCORES);
       // this.scene.start(SCENE_KEYS.HELP);
-      // this.scene.start(SCENE_KEYS.MENU);
-      this.scene.start(SCENE_KEYS.CREDITS);
+      this.scene.start(SCENE_KEYS.MENU);
+      // this.scene.start(SCENE_KEYS.CREDITS);
       // this.scene.start(SCENE_KEYS.SETTINGS);
       // this.scene.start(SCENE_KEYS.CARD_BACK_SELECTOR);
     } else {

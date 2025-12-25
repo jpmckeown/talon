@@ -48,7 +48,7 @@ export class CreditsScene extends Phaser.Scene {
     const credits = [
       {
         name: 'Patrick McKeown',
-        contributions: 'project lead; spritesheet; owl art; red-kite art; feather card-back; animated tutorial on Title; UI navigation; dynamic dropzones; scaling sharper font; card border; deal & rewind animations; easy-move count; volume settings; quack sound; igh-score storage; Peek reveal hidden cards; test if 4 Kings tableau & offer quick-win; tableau card reveal flip; random X shift cards; long tableau handling & dodge for menu-button; stop card-click triggering abandoned sound; Credits; Help; utilities for test; bugfixing.'
+        contributions: 'project lead; deck spritesheet; owl art; red-kite art; feathers card-back; animated tutorial on Title; UI navigation; dynamic dropzones; scaling sharper font; card border; deal & rewind animations; easy-move count; volume settings; quack sound; high-score storage; Peek reveal hidden cards; test if 4 Kings tableau & offer quick-win; tableau card reveal flip; random X shift cards; long tableau handling & dodge for menu-button; stop card-click triggering abandoned sound; Credits; Help; utilities for test; bugfixing.'
       },
       {
         name: 'Christer Kaitila (McFunkypants)',
@@ -60,7 +60,7 @@ export class CreditsScene extends Phaser.Scene {
       },
       {
         name: 'Noah Wizard',
-        contributions: 'music wav; two versions of medallion to count easymoves; advertising text for itch.io page.'
+        contributions: 'music (for game and menus); two versions of medallion to count easymoves; advertising text for itch.io page.'
       },
       {
         name: 'Elizabeth McMahill (McMahem)',
@@ -80,7 +80,7 @@ export class CreditsScene extends Phaser.Scene {
       },
       {
         name: 'QA playtesters',
-        contributions: 'Philippe Vaillancourt (snowfrogdev), Michael Avrie, Tim Sargent, Noah Wizard, Simone | ZilpioGaming, Jason Timms, Mike DiGiovanni, Dominic Beacham.'
+        contributions: 'Philippe Vaillancourt (snowfrogdev), Michael Avrie, Tim Sargent, Noah Wizard, Simone | ZilpioGaming, Jason Timms, Mike DiGiovanni, Dominic Beacham, Calum McKeown, Kirsten McKeown.'
       },
       {
         name: 'Chris DeLeon',

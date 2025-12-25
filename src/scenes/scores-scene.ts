@@ -21,16 +21,23 @@ export class ScoreScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     const allScores = JSON.parse(localStorage.getItem('solitaireHighScores') || '[]') as ScoreEntry[];
+
+    const validScores = allScores.filter(entry =>
+      entry.score !== undefined &&
+      entry.score !== null &&
+      entry.timestamp !== undefined
+    );
+
     let displayScores: ScoreEntry[];
     const maxScoresDisplay = 8;
 
-    if (allScores.length <= maxScoresDisplay) {
+    if (validScores.length <= maxScoresDisplay) {
       // show all scores including non-unique numbers when fewer scores than display max
-      displayScores = allScores.slice(0, maxScoresDisplay);
+      displayScores = validScores.slice(0, maxScoresDisplay);
     } else {
       // if more than max show only unique values, up to highest 8
       const uniqueScores = new Map<number, ScoreEntry>();
-      for (const entry of allScores) {
+      for (const entry of validScores) {
         if (!uniqueScores.has(entry.score)) {
           uniqueScores.set(entry.score, entry);
         }
@@ -40,16 +47,6 @@ export class ScoreScene extends Phaser.Scene {
         .slice(0, 8);
     }
 
-    // const uniqueScores = new Map<number, ScoreEntry>();
-    // for (const entry of allScores) {
-    //   if (!uniqueScores.has(entry.score)) {
-    //     uniqueScores.set(entry.score, entry);
-    //   }
-    // }
-    // const displayScores = Array.from(uniqueScores.values())
-    //   .sort((a, b) => b.score - a.score)
-    //   .slice(0, 7);
-   
     // display scores or empty message
     if (displayScores.length === 0) {
       this.add.text(this.scale.width / 2, this.scale.height / 2, 'No scores yet!', {
@@ -88,6 +85,7 @@ export class ScoreScene extends Phaser.Scene {
     
     this.input.keyboard!.on('keydown-M', () => this.backToMenu());
   }
+
 
   backToMenu(): void {
     this.scene.stop(SCENE_KEYS.SCORES);
