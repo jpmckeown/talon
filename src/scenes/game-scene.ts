@@ -347,28 +347,54 @@ export class GameScene extends Phaser.Scene {
   }
 
 
+  makeButton(config: {
+    width: number;
+    height: number;
+    text: string;
+    fillColor: number;
+    textColor: string;
+    textStroke?: string;
+    textStrokeThickness?: number;
+    fontSize?: string;
+  }): { graphics: Phaser.GameObjects.Graphics; text: Phaser.GameObjects.Text; hitArea: Phaser.Geom.Rectangle } {
+    const buttonWidth = config.width;
+    const buttonHeight = config.height;
+
+    const graphics = this.add.graphics();
+    graphics.fillStyle(config.fillColor, 1);
+    graphics.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+
+    const text = this.add.text(buttonWidth / 2, buttonHeight / 2, config.text, {
+      fontSize: config.fontSize || `${15 * UI_CONFIG.scale}px`,
+      color: config.textColor,
+      stroke: config.textStroke || '#000000',
+      strokeThickness: config.textStrokeThickness !== undefined ? config.textStrokeThickness : 2
+    }).setOrigin(0.5);
+
+    const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
+
+    return { graphics, text, hitArea };
+  }
+
+
   makeMenuButton() {
     const x = GAME_WIDTH - 80 * UI_CONFIG.scale;
     const y = GAME_HEIGHT - 40 * UI_CONFIG.scale;
     const buttonWidth = CARD_WIDTH;
     const buttonHeight = CARD_HEIGHT * 0.30;
 
-    const buttonBase = this.add.graphics();
-    buttonBase.fillStyle(0x03befc, 1);
-    buttonBase.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
-
-    const buttonText = this.add.text(buttonWidth / 2, buttonHeight / 2, 'Menu', {
-      fontSize: `${15 * UI_CONFIG.scale}px`,
-      color: '#ffffff',
-      stroke: '#000000',
-      strokeThickness: 2
-    }).setOrigin(0.5);
+    const { graphics: buttonBase, text: buttonText, hitArea } = this.makeButton({
+      width: buttonWidth,
+      height: buttonHeight,
+      text: 'Menu',
+      fillColor: 0x03befc,
+      textColor: '#ffffff'
+    });
 
     this.#menuButton = this.add.container(x, y, [buttonBase, buttonText]);
     this.#menuButton.setDepth(10);
     this.#menuButtonOriginalX = x;
 
-    const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
     buttonBase.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains);
     buttonBase.on('pointerdown', () => {
       this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
@@ -406,23 +432,27 @@ export class GameScene extends Phaser.Scene {
     const buttonWidth = CARD_WIDTH * 1.2;
     const buttonHeight = CARD_HEIGHT * 0.35;
 
-    this.#peekButton = this.add.graphics({ x, y });
-    this.#peekButton.fillStyle(0xffd700, 1); // 0x03befc
-    this.#peekButton.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+    const { graphics, text, hitArea } = this.makeButton({
+      width: buttonWidth,
+      height: buttonHeight,
+      text: 'Peek',
+      fillColor: 0xffd700,
+      textColor: '#000000',
+      textStroke: '#000000',
+      textStrokeThickness: 0
+    });
 
-    this.#peekButtonText = this.add.text(x + buttonWidth / 2, y + buttonHeight / 2, 'Peek', {
-      fontSize: `${15 * UI_CONFIG.scale}px`,
-      color: '#000000',
-      stroke: '#000000',
-      strokeThickness: 0
-    }).setOrigin(0.5);
+    this.#peekButton = graphics;
+    this.#peekButton.setPosition(x, y);
 
-    const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
+    this.#peekButtonText = text;
+    this.#peekButtonText.setPosition(x + buttonWidth / 2, y + buttonHeight / 2);
+
     this.#peekButton.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
       .on('pointerdown', () => {
         this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
         this.#peekButton.clear();
-        this.#peekButton.fillStyle(0x0288c7, 1);  // darker colour when pressed; TODO match peek card tint?
+        this.#peekButton.fillStyle(0x0288c7, 1);
         this.#peekButton.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
         if (!this.#isPeeking) {
           this.#startPeekMode();
@@ -430,7 +460,7 @@ export class GameScene extends Phaser.Scene {
       })
       .on('pointerup', () => {
         this.#peekButton.clear();
-        this.#peekButton.fillStyle(0x03befc, 1);  // restore original colour
+        this.#peekButton.fillStyle(0x03befc, 1);
         this.#peekButton.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
         if (this.#isPeeking) {
           this.#endPeekMode();
@@ -438,7 +468,7 @@ export class GameScene extends Phaser.Scene {
       })
       .on('pointerout', () => {
         this.#peekButton.clear();
-        this.#peekButton.fillStyle(0x03befc, 1);  // if pointer leaves button while held down, treat that as unpressing
+        this.#peekButton.fillStyle(0x03befc, 1);
         this.#peekButton.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
         if (this.#isPeeking) {
           this.#endPeekMode();
