@@ -377,6 +377,13 @@ export class GameScene extends Phaser.Scene {
   }
 
 
+  #setButtonColour(button: Phaser.GameObjects.Graphics, colour: number, width: number, height: number, radius: number = 24): void {
+    button.clear();
+    button.fillStyle(colour, 1);
+    button.fillRoundedRect(0, 0, width, height, radius);
+  }
+
+
   makeMenuButton() {
     const x = GAME_WIDTH - 80 * UI_CONFIG.scale;
     const y = GAME_HEIGHT - 40 * UI_CONFIG.scale;
@@ -451,25 +458,19 @@ export class GameScene extends Phaser.Scene {
     this.#peekButton.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
       .on('pointerdown', () => {
         this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
-        this.#peekButton.clear();
-        this.#peekButton.fillStyle(0x0288c7, 1);
-        this.#peekButton.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+        this.#setButtonColour(this.#peekButton, 0x0288c7, buttonWidth, buttonHeight);
         if (!this.#isPeeking) {
           this.#startPeekMode();
         }
       })
       .on('pointerup', () => {
-        this.#peekButton.clear();
-        this.#peekButton.fillStyle(0x03befc, 1);
-        this.#peekButton.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+        this.#setButtonColour(this.#peekButton, 0x03befc, buttonWidth, buttonHeight);
         if (this.#isPeeking) {
           this.#endPeekMode();
         }
       })
       .on('pointerout', () => {
-        this.#peekButton.clear();
-        this.#peekButton.fillStyle(0x03befc, 1);
-        this.#peekButton.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+        this.#setButtonColour(this.#peekButton, 0x03befc, buttonWidth, buttonHeight);
         if (this.#isPeeking) {
           this.#endPeekMode();
         }
@@ -556,9 +557,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   #setRewindColour(width: number, height: number, colour: number): void {
-    this.#rewindButton.clear();
-    this.#rewindButton.fillStyle(colour, 1);
-    this.#rewindButton.fillRoundedRect(0, 0, width, height, 24);
+    this.#setButtonColour(this.#rewindButton, colour, width, height);
   }
 
 
@@ -1625,14 +1624,10 @@ export class GameScene extends Phaser.Scene {
     const hitArea = new Phaser.Geom.Rectangle(0, 0, buttonWidth, buttonHeight);
     buttonGraphics.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
       .on('pointerover', () => {
-        buttonGraphics.clear();
-        buttonGraphics.fillStyle(0xffed4e, 1);
-        buttonGraphics.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+        this.#setButtonColour(buttonGraphics, 0xffed4e, buttonWidth, buttonHeight);
       })
       .on('pointerout', () => {
-        buttonGraphics.clear();
-        buttonGraphics.fillStyle(0xffd700, 1);
-        buttonGraphics.fillRoundedRect(0, 0, buttonWidth, buttonHeight, 24);
+        this.#setButtonColour(buttonGraphics, 0xffd700, buttonWidth, buttonHeight);
       })
       .on('pointerdown', () => {
         this.sound.play(AUDIO_KEYS.BUTTON_PRESS, { volume: 1 });
